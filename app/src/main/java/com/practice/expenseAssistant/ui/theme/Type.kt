@@ -20,21 +20,21 @@ val Lora = FontFamily(
 // Set of Material typography styles to start with
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontSize = 16.sp,
+        fontSize = 20.sp,
         fontFamily = Lora,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
         fontWeight = FontWeight.Bold
     ),
     displayMedium = TextStyle(
-        fontSize = 12.sp,
+        fontSize = 18.sp,
         fontFamily = Lora,
         lineHeight = 20.sp,
         letterSpacing = 0.4.sp,
         fontWeight = FontWeight.Bold
     ),
     displaySmall = TextStyle(
-        fontSize = 12.sp,
+        fontSize = 16.sp,
         fontFamily = Lora,
         lineHeight = 20.sp,
         letterSpacing = 0.4.sp,
@@ -48,7 +48,7 @@ val Typography = Typography(
         fontWeight = FontWeight.SemiBold
     ),
     headlineMedium = TextStyle(
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         fontFamily = Lora,
         lineHeight = 20.sp,
         letterSpacing = 0.4.sp,
@@ -69,7 +69,7 @@ val Typography = Typography(
         fontWeight = FontWeight.Medium
     ),
     titleMedium = TextStyle(
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         fontFamily = Lora,
         lineHeight = 20.sp,
         letterSpacing = 0.4.sp,
