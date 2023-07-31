@@ -2,12 +2,13 @@ package com.practice.expenseAssistant.ui.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
@@ -36,12 +37,26 @@ fun CalendarView(modifier: Modifier = Modifier, localDate: LocalDate) {
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.element_spacing)))
             CalendarIcon(date = localDate)
         }
+        Divider(color = Color.Gray)
         LazyVerticalGrid(
             columns = GridCells.Fixed(Utils.daysMap.size),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            items(Utils.daysMap.keys.toList()) { items -> Text(text = items.substring(0, 3)) }
-            items(combinedDates) { items -> Text(text = items.toString()) }
+            items(Utils.daysMap.keys.toList()) { items ->
+                Text(
+                    text = items.substring(0, 3),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+            items(combinedDates) { items ->
+                CalendarCard(
+                    date = items.toString(),
+                    content = "15k",
+                    isSelected = false,
+                    isInvalidDate = false
+                )
+            }
         }
     }
 }
