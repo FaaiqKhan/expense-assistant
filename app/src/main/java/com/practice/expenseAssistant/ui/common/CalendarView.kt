@@ -11,6 +11,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.data.ExpenseModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
 import java.time.LocalDate
@@ -18,7 +19,7 @@ import java.time.LocalDate
 @Composable
 fun CalendarView(modifier: Modifier = Modifier, localDate: LocalDate) {
 
-    val combinedDates = Utils.createCalenderDays(localDate)
+    val combinedDates: List<ExpenseModel> = Utils.createCalenderDays(localDate)
 
     Column(modifier = modifier) {
         Row(
@@ -51,10 +52,10 @@ fun CalendarView(modifier: Modifier = Modifier, localDate: LocalDate) {
             }
             items(combinedDates) { items ->
                 CalendarCard(
-                    date = items.toString(),
+                    date = items.date,
                     content = "15k",
-                    isSelected = false,
-                    isInvalidDate = false
+                    isSelected = items.isSelected,
+                    isCurrentMonthDate = items.isCurrentMonthDate
                 )
             }
         }

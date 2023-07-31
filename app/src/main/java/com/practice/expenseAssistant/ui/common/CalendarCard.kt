@@ -20,13 +20,13 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import java.time.LocalDate
 
 @Composable
-fun CalendarCard(date: String, content: String, isSelected: Boolean, isInvalidDate: Boolean) {
+fun CalendarCard(date: Int, content: String, isSelected: Boolean, isCurrentMonthDate: Boolean) {
     val cardColor = if (isSelected) {
         Color.Green
-    } else if (isInvalidDate) {
-        Color.LightGray
-    } else {
+    } else if (isCurrentMonthDate) {
         Color.Transparent
+    } else {
+        Color.LightGray
     }
     Column(
         modifier = Modifier
@@ -45,7 +45,7 @@ fun CalendarCard(date: String, content: String, isSelected: Boolean, isInvalidDa
             style = MaterialTheme.typography.labelSmall,
         )
         Text(
-            text = date,
+            text = date.toString(),
             modifier = Modifier.padding(dimensionResource(id = R.dimen.calendar_padding)),
             style = MaterialTheme.typography.bodyMedium
         )
@@ -60,10 +60,10 @@ private fun PreviewCalendarCard() {
         LazyVerticalGrid(columns = GridCells.Fixed(3)) {
             items(6) {
                 CalendarCard(
-                    date = LocalDate.now().dayOfWeek.value.toString(),
+                    date = LocalDate.now().dayOfWeek.value,
                     content = "${it + 1}k",
                     isSelected = it == 4,
-                    isInvalidDate = it == 3,
+                    isCurrentMonthDate = it == 3,
                 )
             }
         }
