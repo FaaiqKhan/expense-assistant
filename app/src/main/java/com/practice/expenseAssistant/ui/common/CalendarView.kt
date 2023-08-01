@@ -23,9 +23,11 @@ fun CalendarView(modifier: Modifier = Modifier, localDate: LocalDate) {
 
     Column(modifier = modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.element_spacing)),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = "${localDate.month} ${localDate.year}",
@@ -53,7 +55,7 @@ fun CalendarView(modifier: Modifier = Modifier, localDate: LocalDate) {
             items(combinedDates) { items ->
                 CalendarCard(
                     date = items.date,
-                    content = "15k",
+                    content = items.expense,
                     isSelected = items.isSelected,
                     isCurrentMonthDate = items.isCurrentMonthDate
                 )
