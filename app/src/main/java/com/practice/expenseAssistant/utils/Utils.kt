@@ -20,13 +20,15 @@ object Utils {
 
         val previousMonth = localDate.minusMonths(1)
         val nextMonth = localDate.plusMonths(1)
-        val datesToAdvance = previousMonth.month.maxLength() - daysToAdvance
+        val startDateOfPreviousMonth = previousMonth.withDayOfMonth(
+            previousMonth.month.maxLength() - daysToAdvance
+        )
         // 42 is total number of grids shown in grid view
         val nextMonthDays = 42 - daysToAdvance - localDate.month.maxLength()
 
         val numberOfDaysInPreviousMonth = List(daysToAdvance) {
             ExpenseModel(
-                date = previousMonth.withDayOfMonth(datesToAdvance).plusDays((it + 1).toLong()),
+                date = startDateOfPreviousMonth.plusDays((it + 1).toLong()),
                 isSelected = false,
                 isCurrentMonthDate = false
             )
