@@ -30,22 +30,22 @@ object Utils {
             ExpenseModel(
                 date = startDateOfPreviousMonth.plusDays((it + 1).toLong()),
                 isSelected = false,
-                isCurrentMonthDate = false
+                isCurrentMonthDate = LocalDate.now().month == localDate.month
             )
         }
         val numberOfDaysInCurrentMonth = List(localDate.month.maxLength()) {
             ExpenseModel(
                 date = localDate.plusDays(it.toLong()),
                 expense = ((it + 1) * 20).toString(),
-                isSelected = LocalDate.now().dayOfMonth == it + 1,
-                isCurrentMonthDate = true
+                isSelected = false,
+                isCurrentMonthDate = LocalDate.now().month == localDate.month
             )
         }
         val numberOfDaysInNextMonth = List(nextMonthDays) {
             ExpenseModel(
                 date = nextMonth.plusDays(it.toLong()),
                 isSelected = false,
-                isCurrentMonthDate = false
+                isCurrentMonthDate = LocalDate.now().month == localDate.month
             )
         }
 
