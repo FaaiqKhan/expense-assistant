@@ -38,6 +38,7 @@ fun CalendarView(modifier: Modifier = Modifier, localDate: LocalDate) {
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.element_spacing)))
             CalendarIcon(date = localDate)
         }
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         Divider(color = Color.Gray)
         LazyVerticalGrid(
             columns = GridCells.Fixed(Utils.daysMap.size),

@@ -9,8 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.ui.common.CalendarView
-import com.practice.expenseAssistant.ui.common.TotalExpenseCard
+import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import java.time.LocalDate
 
@@ -24,7 +23,14 @@ fun HomeScreen(modifier: Modifier = Modifier, userName: String) {
             modifier = Modifier.fillMaxWidth(),
             onClickViewAll = { }
         )
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         CalendarView(localDate = LocalDate.now())
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
+        OpenCloseBalanceCard(
+            modifier = Modifier.fillMaxWidth(),
+            openBalance = 123,
+            closeBalance = 123
+        )
     }
 }
 
