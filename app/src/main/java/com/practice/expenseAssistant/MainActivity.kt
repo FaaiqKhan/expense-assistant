@@ -4,15 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.practice.expenseAssistant.ui.common.CalendarView
+import androidx.compose.ui.res.dimensionResource
+import com.practice.expenseAssistant.ui.ExpenseAssistantApp
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
 
@@ -25,25 +23,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CalendarView(localDate = LocalDate.now())
+                    ExpenseAssistantApp(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(dimensionResource(id = R.dimen.screen_content_padding))
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ExpenseAssistantTheme {
-        Greeting("Android")
     }
 }

@@ -1,5 +1,6 @@
 package com.practice.expenseAssistant.ui.common
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,7 +36,8 @@ fun CalendarIcon(modifier: Modifier = Modifier, date: LocalDate) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewCalendarView() {
     ExpenseAssistantTheme {

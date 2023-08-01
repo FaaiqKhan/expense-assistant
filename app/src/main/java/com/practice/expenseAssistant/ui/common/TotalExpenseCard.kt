@@ -13,7 +13,7 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
-fun ShowTotalExpenseCard(
+fun TotalExpenseCard(
     modifier: Modifier = Modifier,
     totalExpense: Double,
     onClickViewAll: () -> Unit
@@ -48,6 +48,6 @@ fun ShowTotalExpenseCard(
 @Composable
 private fun PreviewShowTotalExpenseCard() {
     ExpenseAssistantTheme {
-        ShowTotalExpenseCard(totalExpense = 13500.00, modifier = Modifier.fillMaxWidth()) { }
+        TotalExpenseCard(totalExpense = 13500.00, modifier = Modifier.fillMaxWidth()) { }
     }
 }
