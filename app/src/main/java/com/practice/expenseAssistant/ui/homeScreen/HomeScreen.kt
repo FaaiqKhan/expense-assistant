@@ -8,15 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import java.time.LocalDate
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, userName: String) {
+fun HomeScreen(modifier: Modifier = Modifier, homeViewModel: HomeScreenViewModel) {
     Column(modifier = modifier) {
-        Text(text = "Hi $userName", style = MaterialTheme.typography.displayLarge)
+        Text(
+            text = "Hi ${homeViewModel.userModel.name}",
+            style = MaterialTheme.typography.displayLarge
+        )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         TotalExpenseCard(
             totalExpense = 13500.00,
@@ -24,7 +27,7 @@ fun HomeScreen(modifier: Modifier = Modifier, userName: String) {
             onClickViewAll = { }
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
-        CalendarView(localDate = LocalDate.now())
+        CalendarView(homeViewModel = homeViewModel)
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         OpenCloseBalanceCard(
             modifier = Modifier.fillMaxWidth(),
@@ -40,7 +43,7 @@ fun HomeScreen(modifier: Modifier = Modifier, userName: String) {
 private fun PreviewHomeScreen() {
     ExpenseAssistantTheme {
         HomeScreen(
-            userName = "FaaiqKhan",
+            homeViewModel = viewModel(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(id = R.dimen.screen_content_padding))

@@ -1,6 +1,6 @@
 package com.practice.expenseAssistant.utils
 
-import com.practice.expenseAssistant.data.ExpenseModel
+import com.practice.expenseAssistant.data.CalendarDateModel
 import java.time.LocalDate
 
 object Utils {
@@ -15,7 +15,7 @@ object Utils {
         "SATURDAY" to 6
     )
 
-    fun createCalenderDays(localDate: LocalDate): List<ExpenseModel> {
+    fun createCalenderDays(localDate: LocalDate, todayDate: LocalDate): List<CalendarDateModel> {
         val daysToAdvance = daysMap.getValue(localDate.withDayOfMonth(1).dayOfWeek.name)
 
         val previousMonth = localDate.minusMonths(1)
@@ -25,24 +25,30 @@ object Utils {
         )
         // 42 is total number of grids shown in grid view
         val nextMonthDays = 42 - daysToAdvance - localDate.month.maxLength()
-
+        var index = -1
         val numberOfDaysInPreviousMonth = List(daysToAdvance) {
-            ExpenseModel(
+            index++
+            CalendarDateModel(
+                id = index,
                 date = startDateOfPreviousMonth.plusDays((it + 1).toLong()),
                 isSelected = false,
                 isCurrentMonthDate = previousMonth.month == localDate.month
             )
         }
         val numberOfDaysInCurrentMonth = List(localDate.month.maxLength()) {
-            ExpenseModel(
-                date = localDate.plusDays(it.toLong()),
-                expense = ((it + 1) * 20).toString(),
-                isSelected = false,
+            index++
+            val calculatedDate = localDate.plusDays(it.toLong())
+            CalendarDateModel(
+                id = index,
+                date = calculatedDate,
+                isSelected = calculatedDate.dayOfMonth == todayDate.dayOfMonth,
                 isCurrentMonthDate = LocalDate.now().month == localDate.month
             )
         }
         val numberOfDaysInNextMonth = List(nextMonthDays) {
-            ExpenseModel(
+            index++
+            CalendarDateModel(
+                id = index,
                 date = nextMonth.plusDays(it.toLong()),
                 isSelected = false,
                 isCurrentMonthDate = nextMonth.month == localDate.month

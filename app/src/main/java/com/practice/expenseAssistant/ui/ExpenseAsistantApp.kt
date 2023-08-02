@@ -7,13 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
 fun ExpenseAssistantApp(modifier: Modifier = Modifier) {
-    HomeScreen(userName = "Faaiq Ali Khan", modifier = modifier)
+    HomeScreen(
+        homeViewModel = viewModel(), modifier = modifier
+    )
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
