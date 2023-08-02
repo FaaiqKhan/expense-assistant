@@ -4,8 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,15 +15,17 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarIcon(modifier: Modifier = Modifier, date: LocalDate) {
+fun CalendarIcon(modifier: Modifier = Modifier, date: LocalDate, onClick: () -> Unit) {
     Card(
         modifier = modifier.width(dimensionResource(id = R.dimen.calendar_icon_width)),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero)),
         border = BorderStroke(
             width = dimensionResource(id = R.dimen.border_stroke),
             color = Color.Gray
-        )
+        ),
+        onClick = onClick
     ) {
         Text(
             modifier = Modifier
@@ -41,6 +42,6 @@ fun CalendarIcon(modifier: Modifier = Modifier, date: LocalDate) {
 @Composable
 private fun PreviewCalendarView() {
     ExpenseAssistantTheme {
-        CalendarIcon(date = LocalDate.now())
+        CalendarIcon(date = LocalDate.now()) {}
     }
 }

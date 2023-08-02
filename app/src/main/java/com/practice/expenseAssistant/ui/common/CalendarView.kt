@@ -15,6 +15,7 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
+import java.time.LocalDate
 
 @Composable
 fun CalendarView(
@@ -38,7 +39,7 @@ fun CalendarView(
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.element_spacing)))
-            CalendarIcon(date = homeViewModel.selectedDate)
+            CalendarIcon(date = LocalDate.now(), onClick = homeViewModel::backToCurrentDate)
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         Divider(color = Color.Gray)

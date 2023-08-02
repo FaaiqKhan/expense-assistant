@@ -34,17 +34,29 @@ class HomeScreenViewModel : ViewModel() {
 
     val calenderDates: StateFlow<List<CalendarDateModel>> = _calenderDates
 
-    var selectedDate: LocalDate = LocalDate.now()
-        private set
-
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
             _calenderDates.emit(
-                dates.map { item ->
-                    if (item.id == listIndex) {
-                        item.copy(isSelected = true)
+                dates.map {
+                    if (it.id == listIndex) {
+                        it.copy(isSelected = true)
                     } else {
-                        item.copy(isSelected = false)
+                        it.copy(isSelected = false)
+                    }
+                }
+            )
+        }
+    }
+
+    fun backToCurrentDate() {
+        viewModelScope.launch {
+            _calenderDates.emit(
+                dates.map {
+                    if (it.date == LocalDate.now()) {
+                        it.copy(isSelected = true)
+                    }
+                    else {
+                        it.copy(isSelected = false)
                     }
                 }
             )
