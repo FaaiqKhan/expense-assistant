@@ -88,4 +88,19 @@ class HomeScreenViewModel : ViewModel() {
             _totalExpenseOfMonth.emit(totalExpenseOfMonth)
         }
     }
+
+    fun removeExpense(selectedDate: LocalDate, expenseModel: ExpenseModel) {
+        viewModelScope.launch {
+            dates = dates.map {
+                if (it.date == selectedDate) {
+                    totalExpenseOfMonth -= expenseModel.expense
+                    it.copy(isSelected = true, expenseModel = expenseModel)
+                } else {
+                    it.copy(isSelected = false)
+                }
+            }
+            _calenderDates.emit(dates)
+            _totalExpenseOfMonth.emit(totalExpenseOfMonth)
+        }
+    }
 }
