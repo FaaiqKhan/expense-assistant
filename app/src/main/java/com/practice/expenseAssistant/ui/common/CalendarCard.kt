@@ -9,22 +9,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.CalendarDateModel
+import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import java.time.LocalDate
 
 @Composable
 fun CalendarCard(
     indexInList: Int,
-    content: String? = null,
     onSelect: (listIndex: Int) -> Unit,
     calendarDateState: CalendarDateModel
 ) {
+    val expenseOpacity = if (calendarDateState.expenseModel?.expense == null) 0f else 1f
     val cardColor = if (calendarDateState.isSelected) {
         Color.Green
     } else if (calendarDateState.isCurrentMonthDate) {
@@ -42,11 +43,12 @@ fun CalendarCard(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = content ?: "",
+            text = calendarDateState.expenseModel?.expense.toString(),
             textAlign = TextAlign.End,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.element_spacing)),
+                .padding(dimensionResource(id = R.dimen.element_spacing))
+                .alpha(expenseOpacity),
             style = MaterialTheme.typography.labelSmall,
         )
         Text(
@@ -70,9 +72,13 @@ private fun PreviewCalendarCard() {
                         id = it,
                         date = LocalDate.now().plusDays(it.toLong()),
                         isSelected = it == 3,
-                        isCurrentMonthDate = it == 2
+                        isCurrentMonthDate = it == 2,
+                        expenseModel = if (it == 0) null else ExpenseModel(
+                            expenseType = ExpenseType.BILL,
+                            expenseNote = "Water and pipe maintenance",
+                            expense = it * 200
+                        )
                     ),
-                    content = "${it + 1}k",
                     onSelect = { }
                 )
             }

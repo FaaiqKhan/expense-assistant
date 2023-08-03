@@ -1,5 +1,6 @@
 package com.practice.expenseAssistant.ui.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material3.*
@@ -8,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,7 +17,6 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
-import java.time.LocalDate
 
 @Composable
 fun CalendarView(
@@ -26,7 +27,9 @@ fun CalendarView(
 
     Column(modifier = modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -38,10 +41,12 @@ fun CalendarView(
                 text = "01 - ${homeViewModel.calendarOfMonth.month.maxLength()} ${homeViewModel.calendarOfMonth.month}",
                 style = MaterialTheme.typography.headlineMedium
             )
-            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.element_spacing)))
-            CalendarIcon(date = LocalDate.now(), onClick = homeViewModel::backToCurrentDate)
+            Text(
+                text = stringResource(R.string.today),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.clickable { homeViewModel.backToToday() }
+            )
         }
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         Divider(color = Color.Gray)
         LazyVerticalGrid(
             columns = GridCells.Fixed(Utils.daysMap.size),
@@ -58,7 +63,6 @@ fun CalendarView(
                 CalendarCard(
                     indexInList = item.id,
                     calendarDateState = item,
-                    content = "",
                     onSelect = homeViewModel::updateSelectedDate
                 )
             }

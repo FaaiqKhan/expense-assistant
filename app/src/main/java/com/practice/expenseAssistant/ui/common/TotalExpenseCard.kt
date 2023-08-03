@@ -3,21 +3,24 @@ package com.practice.expenseAssistant.ui.common
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
 fun TotalExpenseCard(
     modifier: Modifier = Modifier,
-    totalExpense: Double,
-    onClickViewAll: () -> Unit
+    homeViewModel: HomeScreenViewModel,
+    onClickViewAll: () -> Unit,
 ) {
+    val totalExpense by homeViewModel.totalExpenseOfMonthState.collectAsState()
     Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(
             modifier = modifier.padding(dimensionResource(id = R.dimen.card_padding)),
@@ -26,7 +29,8 @@ fun TotalExpenseCard(
         ) {
             Column {
                 Text(
-                    text = stringResource(id = R.string.euro_symbol, totalExpense),
+                    text = if (totalExpense == 0) stringResource(R.string.no_expense_yet)
+                    else stringResource(id = R.string.euro_symbol, totalExpense),
                     style = MaterialTheme.typography.displayMedium
                 )
                 Text(
@@ -48,6 +52,10 @@ fun TotalExpenseCard(
 @Composable
 private fun PreviewShowTotalExpenseCard() {
     ExpenseAssistantTheme {
-        TotalExpenseCard(totalExpense = 13500.00, modifier = Modifier.fillMaxWidth()) { }
+        TotalExpenseCard(
+            modifier = Modifier.fillMaxWidth(),
+            homeViewModel = viewModel(),
+            onClickViewAll = {}
+        )
     }
 }

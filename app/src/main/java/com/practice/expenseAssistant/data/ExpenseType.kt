@@ -1,0 +1,27 @@
+package com.practice.expenseAssistant.data
+
+enum class ExpenseType(val value: String) {
+    OTHER("Other"),
+    BILL("Bill"),
+    BABY("Baby"),
+    CLOTHING("Clothing"),
+    COSMETICS("Cosmetics"),
+    DINING("Dining"),
+    ENTERTAINMENT("Entertainment"),
+    EDUCATION("Education"),
+    FAMILY_FRIEND("Family&Friend"),
+    FINE("Fine"),
+    FOOD("Food"),
+    GIFTS("Gifts"),
+    HEALTHCARE("Healthcare"),
+    HOME("Home"),
+    INVESTMENT("Investment"),
+    LENDING("Lending"),
+    RENT("Rent"),
+    SHOPPING("Shopping"),
+    TRANSPORT("Transport"),
+    TRAVEL("Travel"),
+    GIVE_AWAY("Give-away"),
+    SAVING("Saving"),
+    TAXES("Taxes"),
+}

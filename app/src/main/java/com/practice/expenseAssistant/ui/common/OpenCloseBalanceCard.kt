@@ -19,25 +19,19 @@ fun OpenCloseBalanceCard(modifier: Modifier = Modifier, openBalance: Int, closeB
         modifier = modifier,
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero)),
     ) {
-        Text(
-            text = stringResource(id = R.string.opening_balance, openBalance),
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = dimensionResource(id = R.dimen.card_padding))
-                .padding(top = dimensionResource(id = R.dimen.card_padding)),
-            textAlign = TextAlign.End
-        )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
-        Text(
-            text = stringResource(id = R.string.closing_balance, closeBalance),
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = dimensionResource(id = R.dimen.card_padding))
-                .padding(bottom = dimensionResource(id = R.dimen.card_padding)),
-            textAlign = TextAlign.End
-        )
+        Row(modifier = Modifier.padding(dimensionResource(id = R.dimen.card_padding))) {
+            Text(
+                text = stringResource(id = R.string.opening_balance, openBalance),
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = stringResource(id = R.string.closing_balance, closeBalance),
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End
+            )
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,24 +16,26 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, homeViewModel: HomeScreenViewModel) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
             text = "Hi ${homeViewModel.userModel.name}",
-            style = MaterialTheme.typography.displayLarge
+            style = MaterialTheme.typography.displayLarge,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         TotalExpenseCard(
-            totalExpense = 13500.00,
             modifier = Modifier.fillMaxWidth(),
+            homeViewModel = homeViewModel,
             onClickViewAll = { }
         )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         CalendarView(homeViewModel = homeViewModel)
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
         OpenCloseBalanceCard(
             modifier = Modifier.fillMaxWidth(),
-            openBalance = 123,
-            closeBalance = 123
+            openBalance = homeViewModel.monthOpeningBalance,
+            closeBalance = homeViewModel.monthClosingBalance,
         )
     }
 }
@@ -44,9 +47,7 @@ private fun PreviewHomeScreen() {
     ExpenseAssistantTheme {
         HomeScreen(
             homeViewModel = viewModel(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.screen_content_padding))
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

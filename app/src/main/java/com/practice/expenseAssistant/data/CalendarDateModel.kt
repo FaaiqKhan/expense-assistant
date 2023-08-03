@@ -6,5 +6,6 @@ data class CalendarDateModel(
     val id: Int,
     val date: LocalDate,
     val isSelected: Boolean,
-    val isCurrentMonthDate: Boolean
+    val isCurrentMonthDate: Boolean,
+    val expenseModel: ExpenseModel? = null,
 )

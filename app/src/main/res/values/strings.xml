@@ -5,4 +5,7 @@
     <string name="view_all">View all</string>
     <string name="closing_balance">Closing: %1$s</string>
     <string name="opening_balance">Opening: %1$s</string>
+    <string name="add_expense">Add expense</string>
+    <string name="today">Today</string>
+    <string name="no_expense_yet">No expense yet!</string>
 </resources>
