@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.ExpenseModel
-import com.practice.expenseAssistant.data.ExpenseType
+import com.practice.expenseAssistant.utils.ExpenseType
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable

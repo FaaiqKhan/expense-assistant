@@ -9,10 +9,6 @@ D
 app/build.gradle.kts,d/2/d2a4383452aad84a18429a5844d31330a012a9e6
 @
 build.gradle.kts,d/b/dbcff70658daf80b53ce624f6adcaa529df5ed8d
-n
->app/src/main/java/com/practice/expenseAssistant/utils/Utils.kt,c/f/cfa83036533a955aed5127ff3c3fc3a0bbf7a9c3
-s
-Capp/src/main/java/com/practice/expenseAssistant/data/ExpenseType.kt,c/9/c999e9a62f04f137b36c1077eca39031991929da
 o
 ?app/src/main/java/com/practice/expenseAssistant/MainActivity.kt,1/d/1d578923fc3aab74daed51a1db2dc2213714acd4
 q

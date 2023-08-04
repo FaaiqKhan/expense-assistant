@@ -1,7 +1,7 @@
-package com.practice.expenseAssistant.data
+package com.practice.expenseAssistant.utils
 
 enum class ExpenseType(val value: String) {
-    OTHER("Other"),
+    OTHERS("Others"),
     BILL("Bill"),
     BABY("Baby"),
     CLOTHING("Clothing"),

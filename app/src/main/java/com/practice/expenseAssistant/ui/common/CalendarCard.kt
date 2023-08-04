@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.utils.ExpenseType
 import java.time.LocalDate
 
 @Composable
