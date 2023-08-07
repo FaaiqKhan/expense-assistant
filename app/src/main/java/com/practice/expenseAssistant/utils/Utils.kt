@@ -57,4 +57,12 @@ object Utils {
 
         return numberOfDaysInPreviousMonth + numberOfDaysInCurrentMonth + numberOfDaysInNextMonth
     }
+
+    val currencyIcons = mapOf(
+        "Euro" to "€",
+        "Dollar" to "$",
+        "Pakistani Rupee" to "₨",
+        "Ponds" to "£",
+        "Lira" to "₤",
+    )
 }
