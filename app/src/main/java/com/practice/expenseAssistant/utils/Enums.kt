@@ -14,5 +14,12 @@ enum class Screens(@StringRes val title: Int) {
     CATEGORY(title = R.string.category),
     TRANSACTION(title = R.string.transaction),
     PROFILE(title = R.string.profile),
-    VIEW_ALL(title = R.string.view_all)
+    VIEW_ALL(title = R.string.view_all),
+    EXPENSE(title = R.string.expense),
+    INCOME(title = R.string.income)
+}
+
+enum class CategoryType {
+    EXPENSE,
+    INCOME
 }

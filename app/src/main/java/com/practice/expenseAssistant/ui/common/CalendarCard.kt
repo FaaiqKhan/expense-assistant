@@ -28,11 +28,11 @@ fun CalendarCard(
 ) {
     val expenseOpacity = if (calendarDateState.expenseModel?.expense == null) 0f else 1f
     val cardColor = if (calendarDateState.isSelected) {
-        Color.Green
+        MaterialTheme.colorScheme.primaryContainer
     } else if (calendarDateState.isCurrentMonthDate) {
         Color.Transparent
     } else {
-        Color.LightGray
+        MaterialTheme.colorScheme.secondary
     }
     Column(
         modifier = Modifier

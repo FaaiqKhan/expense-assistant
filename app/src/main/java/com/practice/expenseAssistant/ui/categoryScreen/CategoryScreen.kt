@@ -9,38 +9,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CategoryScreen(modifier: Modifier = Modifier) {
     var tabState by remember { mutableStateOf(0) }
     val titles = listOf("Expense", "Income")
 
-    Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
+     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         AnimatedVisibility(
             visible = tabState == 0,
-            modifier = modifier,
             enter = slideInHorizontally(),
-            exit = slideOutHorizontally()
+            exit = scaleOut()
         ) {
             ExpenseCategories(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
             )
         }
         AnimatedVisibility(
             visible = tabState == 1,
-            modifier = modifier,
             enter = slideInHorizontally(),
+            exit = scaleOut()
         ) {
             IncomeCategories(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
             )
         }
         TabRow(selectedTabIndex = tabState) {
@@ -52,7 +50,7 @@ fun CategoryScreen(modifier: Modifier = Modifier) {
                 )
             }
         }
-    }
+     }
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
@@ -60,6 +58,6 @@ fun CategoryScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun PreviewTransactionCategory() {
     ExpenseAssistantTheme {
-        CategoryScreen()
+        CategoryScreen(modifier = Modifier.fillMaxWidth())
     }
 }

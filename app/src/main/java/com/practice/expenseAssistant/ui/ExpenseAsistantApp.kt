@@ -17,10 +17,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.NavigationBarItem
-import com.practice.expenseAssistant.ui.categoryScreen.CategoryScreen
+import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.common.BottomNavigationBar
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
 import com.practice.expenseAssistant.utils.*
@@ -28,7 +28,6 @@ import com.practice.expenseAssistant.utils.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpenseAssistantApp(
-    modifier: Modifier = Modifier,
     expenseAssistant: ExpenseAssistantViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
@@ -57,18 +56,25 @@ fun ExpenseAssistantApp(
     )
 
     Scaffold(
-        topBar = { ExpenseAssistantTopBar(screenTitleId = currentScreen.title) },
+        topBar = {
+            ExpenseAssistantTopBar(
+                screenTitleId = currentScreen.title,
+                canNavigateBack = navController.previousBackStackEntry != null,
+                navigateBack = navController::popBackStack
+            )
+        },
         bottomBar = {
-            if (currentScreen.name == Screens.HOME.name)
+            if (currentScreen.name == Screens.HOME.name) {
                 ExpenseAssistantBottomBar(items = bottomNavigationItem)
+            }
         },
         floatingActionButton = {
             if (currentScreen.name == Screens.HOME.name)
-                ExpenseAssistantActionButton(expenseAssistant, navController)
+                ExpenseAssistantActionButton(navController)
         }
     ) {
         NavigationHost(
-            modifier = modifier.padding(it),
+            modifier = Modifier.padding(it),
             navController = navController,
             expenseAssistant = expenseAssistant
         )
@@ -77,7 +83,12 @@ fun ExpenseAssistantApp(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpenseAssistantTopBar(modifier: Modifier = Modifier, @StringRes screenTitleId: Int) {
+fun ExpenseAssistantTopBar(
+    modifier: Modifier = Modifier,
+    @StringRes screenTitleId: Int,
+    canNavigateBack: Boolean,
+    navigateBack: () -> Unit,
+) {
     TopAppBar(
         modifier = modifier,
         title = {
@@ -91,7 +102,17 @@ fun ExpenseAssistantTopBar(modifier: Modifier = Modifier, @StringRes screenTitle
             titleContentColor = MaterialTheme.colorScheme.onPrimary,
             navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
             actionIconContentColor = MaterialTheme.colorScheme.onSecondary
-        )
+        ),
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(onClick = navigateBack) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        }
     )
 }
 
@@ -107,10 +128,7 @@ fun ExpenseAssistantBottomBar(modifier: Modifier = Modifier, items: List<Navigat
 }
 
 @Composable
-fun ExpenseAssistantActionButton(
-    expenseAssistant: ExpenseAssistantViewModel,
-    navController: NavHostController
-) {
+fun ExpenseAssistantActionButton(navController: NavHostController) {
     FloatingActionButton(onClick = {
         navController.navigate(Screens.CATEGORY.name)
 //        expenseAssistant.addExpense(
@@ -140,7 +158,7 @@ fun NavigationHost(
             HomeScreen(expenseAssistant = expenseAssistant, modifier = modifier)
         }
         composable(route = Screens.CATEGORY.name) {
-            CategoryScreen(modifier = modifier)
+            CategoryScreen(modifier = modifier.fillMaxHeight())
         }
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(modifier = modifier, onTransaction = {})
@@ -153,8 +171,6 @@ fun NavigationHost(
 @Composable
 private fun PreviewExpenseAssistantApp() {
     ExpenseAssistantTheme {
-        ExpenseAssistantApp(
-            modifier = Modifier.fillMaxSize()
-        )
+        ExpenseAssistantApp()
     }
 }
