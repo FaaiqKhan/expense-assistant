@@ -11,16 +11,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
+import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
 fun TotalExpenseCard(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeScreenViewModel,
+    expenseAssistant: ExpenseAssistantViewModel,
     onClickViewAll: () -> Unit,
 ) {
-    val totalExpense by homeViewModel.totalExpenseOfMonthState.collectAsState()
+    val totalExpense by expenseAssistant.totalExpenseOfMonthState.collectAsState()
     Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(
             modifier = modifier.padding(dimensionResource(id = R.dimen.card_padding)),
@@ -54,7 +54,7 @@ private fun PreviewShowTotalExpenseCard() {
     ExpenseAssistantTheme {
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
-            homeViewModel = viewModel(),
+            expenseAssistant = viewModel(),
             onClickViewAll = {}
         )
     }

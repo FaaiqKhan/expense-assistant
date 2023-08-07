@@ -14,16 +14,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
+import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
 
 @Composable
 fun CalendarView(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeScreenViewModel,
+    expenseAssistant: ExpenseAssistantViewModel,
 ) {
-    val calendarDatesState by homeViewModel.calenderDates.collectAsState()
+    val calendarDatesState by expenseAssistant.calenderDates.collectAsState()
 
     Column(modifier = modifier) {
         Row(
@@ -34,17 +34,17 @@ fun CalendarView(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "${homeViewModel.calendarOfMonth.month} ${homeViewModel.calendarOfMonth.year}",
+                text = "${expenseAssistant.calendarOfMonth.month} ${expenseAssistant.calendarOfMonth.year}",
                 style = MaterialTheme.typography.displaySmall
             )
             Text(
-                text = "01 - ${homeViewModel.calendarOfMonth.month.maxLength()} ${homeViewModel.calendarOfMonth.month}",
+                text = "01 - ${expenseAssistant.calendarOfMonth.month.maxLength()} ${expenseAssistant.calendarOfMonth.month}",
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
                 text = stringResource(R.string.today),
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.clickable { homeViewModel.backToToday() }
+                modifier = Modifier.clickable { expenseAssistant.backToToday() }
             )
         }
         Divider(color = Color.Gray)
@@ -63,7 +63,7 @@ fun CalendarView(
                 CalendarCard(
                     indexInList = item.id,
                     calendarDateState = item,
-                    onSelect = homeViewModel::updateSelectedDate
+                    onSelect = expenseAssistant::updateSelectedDate
                 )
             }
         }
@@ -74,6 +74,6 @@ fun CalendarView(
 @Composable
 private fun PreviewCalendarView() {
     ExpenseAssistantTheme {
-        CalendarView(homeViewModel = viewModel())
+        CalendarView(expenseAssistant = viewModel())
     }
 }

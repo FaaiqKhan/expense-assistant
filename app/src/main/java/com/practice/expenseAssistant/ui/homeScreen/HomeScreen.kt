@@ -15,10 +15,10 @@ import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, homeViewModel: HomeScreenViewModel) {
+fun HomeScreen(modifier: Modifier = Modifier, expenseAssistant: ExpenseAssistantViewModel) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
-            text = "Hi ${homeViewModel.userModel.name}",
+            text = "Hi ${expenseAssistant.userModel.name}",
             style = MaterialTheme.typography.displayLarge,
             modifier = Modifier
                 .fillMaxWidth()
@@ -27,15 +27,15 @@ fun HomeScreen(modifier: Modifier = Modifier, homeViewModel: HomeScreenViewModel
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
-            homeViewModel = homeViewModel,
+            expenseAssistant = expenseAssistant,
             onClickViewAll = { }
         )
-        CalendarView(homeViewModel = homeViewModel)
+        CalendarView(expenseAssistant = expenseAssistant)
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
         OpenCloseBalanceCard(
             modifier = Modifier.fillMaxWidth(),
-            openBalance = homeViewModel.monthOpeningBalance,
-            closeBalance = homeViewModel.monthClosingBalance,
+            openBalance = expenseAssistant.monthOpeningBalance,
+            closeBalance = expenseAssistant.monthClosingBalance,
         )
     }
 }
@@ -46,7 +46,7 @@ fun HomeScreen(modifier: Modifier = Modifier, homeViewModel: HomeScreenViewModel
 private fun PreviewHomeScreen() {
     ExpenseAssistantTheme {
         HomeScreen(
-            homeViewModel = viewModel(),
+            expenseAssistant = viewModel(),
             modifier = Modifier.fillMaxSize()
         )
     }

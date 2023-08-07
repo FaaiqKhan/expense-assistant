@@ -9,4 +9,9 @@
     <string name="today">Today</string>
     <string name="no_expense_yet">No expense yet!</string>
     <string name="transaction">transaction</string>
+    <string name="home"></string>
+    <string name="profile">Profile</string>
+    <string name="information">Info</string>
+    <string name="navigation_bottom">Navigation Bottom</string>
+    <string name="category">Category</string>
 </resources>

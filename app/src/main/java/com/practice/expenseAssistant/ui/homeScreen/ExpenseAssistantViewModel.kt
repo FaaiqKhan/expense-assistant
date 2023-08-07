@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-class HomeScreenViewModel : ViewModel() {
+class ExpenseAssistantViewModel : ViewModel() {
 
     val userModel = UserModel(
         name = "FaaiqKhan",
