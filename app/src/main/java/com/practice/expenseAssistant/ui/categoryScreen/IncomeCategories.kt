@@ -16,7 +16,11 @@ import com.practice.expenseAssistant.utils.IncomeType
 
 @Composable
 fun IncomeCategories(modifier: Modifier = Modifier) {
-    LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(2)) {
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.screen_content_padding))
+    ) {
         items(IncomeType.values()) {
             Row {
                 Icon(
@@ -25,8 +29,7 @@ fun IncomeCategories(modifier: Modifier = Modifier) {
                 )
                 Text(
                     text = it.value,
-                    modifier = Modifier
-                        .padding(start = dimensionResource(id = R.dimen.card_padding)),
+                    modifier = Modifier.padding(start = dimensionResource(id = R.dimen.card_padding)),
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )

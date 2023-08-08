@@ -15,7 +15,11 @@ import com.practice.expenseAssistant.utils.ExpenseCategoriesIcon
 
 @Composable
 fun ExpenseCategories(modifier: Modifier = Modifier) {
-    LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(2)) {
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.screen_content_padding))
+    ) {
         items(ExpenseType.values()) {
             Row {
                 Icon(
