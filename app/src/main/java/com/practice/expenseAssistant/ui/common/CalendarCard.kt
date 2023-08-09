@@ -1,6 +1,7 @@
 package com.practice.expenseAssistant.ui.common
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -35,30 +37,51 @@ fun CalendarCard(
     } else {
         MaterialTheme.colorScheme.secondary
     }
-    val totalExpenseOfDay = calendarDateState.expenseModel.sumOf { it.expense }
+    val totalExpenseOfDay = calendarDateState.transactionModel.sumOf {
+        if (it.categoryType == CategoryType.EXPENSE) it.amount else 0
+    }
+    val totalIncomeOfDay = calendarDateState.transactionModel.sumOf {
+        if (it.categoryType == CategoryType.INCOME) it.amount else 0
+    }
     val expenseOpacity = if (totalExpenseOfDay == 0) 0f else 1f
-    Column(
+    Box(
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.calendar_card_width))
             .height(dimensionResource(id = R.dimen.calendar_card_height))
             .border(dimensionResource(id = R.dimen.border_stroke), color = Color.Gray)
             .background(color = cardColor)
             .clickable { onSelect(indexInList) },
-        verticalArrangement = Arrangement.SpaceBetween,
+        contentAlignment = Alignment.BottomStart
     ) {
-        Text(
-            text = totalExpenseOfDay.toString(),
-            textAlign = TextAlign.End,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.element_spacing))
-                .alpha(expenseOpacity),
-            style = MaterialTheme.typography.labelSmall,
-        )
+        Column(
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            AnimatedVisibility(visible = totalIncomeOfDay > 0) {
+                Text(
+                    text = totalIncomeOfDay.toString(),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimensionResource(id = R.dimen.element_spacing)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Text(
+                text = totalExpenseOfDay.toString(),
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(id = R.dimen.element_spacing))
+                    .alpha(expenseOpacity),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
         Text(
             text = calendarDateState.date.dayOfMonth.toString(),
             modifier = Modifier.padding(dimensionResource(id = R.dimen.element_spacing)),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }
@@ -77,15 +100,15 @@ private fun PreviewCalendarCard() {
                         date = LocalDate.now().plusDays(it.toLong()),
                         isSelected = it == 3,
                         isCurrentMonthDate = it == 2,
-                        expenseModel = listOf(
-                            ExpenseModel(
+                        transactionModel = listOf(
+                            TransactionModel(
                                 categoryType = CategoryType.EXPENSE,
                                 category = ExpenseType.BILL,
-                                expenseNote = "Water and pipe maintenance",
-                                expense = it * 200,
+                                note = "Water and pipe maintenance",
+                                amount = it * 200,
                                 date = LocalDate.now(),
                                 time = LocalTime.now()
-                            )
+                            ),
                         )
                     ),
                     onSelect = { }

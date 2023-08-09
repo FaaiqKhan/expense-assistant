@@ -2,6 +2,7 @@ package com.practice.expenseAssistant.ui.transactionScreen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,12 +20,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.ExpenseModel
+import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.*
-import java.time.LocalDate
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,16 +36,17 @@ fun TransactionScreen(
 ) {
     var amount by remember { mutableStateOf("") }
     var expenseNote by remember { mutableStateOf("") }
+    var transactionDate by remember { mutableStateOf(expenseAssistant.today) }
+    var transactionTime by remember { mutableStateOf(LocalTime.now()) }
+
     val maxChar = 100
     val height = dimensionResource(id = R.dimen.field_height)
+    val elementSpacing = dimensionResource(id = R.dimen.element_spacing)
 
     val category = when (expenseAssistant.categoryType) {
         CategoryType.INCOME -> expenseAssistant.category as IncomeType
         else -> expenseAssistant.category as ExpenseType
     }
-
-    var date: LocalDate = expenseAssistant.today
-    var time: LocalTime = LocalTime.now()
 
     Column(
         modifier = modifier,
@@ -67,40 +69,44 @@ fun TransactionScreen(
                 onClick = { navController.navigate(Screens.CATEGORY.name) }
             ) { Text(text = "Change") }
         }
-        Divider()
-        TextField(
+        Spacer(modifier = Modifier.height(elementSpacing))
+        OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
             leadingIcon = { Text(text = expenseAssistant.currencyType) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = stringResource(R.string.amount)) }
+            placeholder = { Text(text = stringResource(R.string.amount)) },
+            singleLine = true,
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))
         )
-        Divider()
+        Spacer(modifier = Modifier.height(elementSpacing))
         Dropdown(
             modifier = Modifier.fillMaxWidth(),
             data = expenseAssistant.backAccounts,
             onSelect = {}
         )
-        Divider()
+        Spacer(modifier = Modifier.height(elementSpacing))
         DatePicker(
             Modifier
                 .fillMaxWidth()
                 .height(height)
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
-            onSelect = { date = it },
+            onSelect = { transactionDate = it },
         )
+        Spacer(modifier = Modifier.height(elementSpacing))
         Divider()
         TimePicker(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
-            onSelect = { time = it },
+            onSelect = { transactionTime = it },
         )
-
-        Divider()
-        TextField(
+        OutlinedTextField(
             value = expenseNote,
             onValueChange = { if (it.length < maxChar) expenseNote = it },
             label = { Text(text = stringResource(R.string.expense_note)) },
@@ -114,7 +120,9 @@ fun TransactionScreen(
                     textAlign = TextAlign.End,
                     style = MaterialTheme.typography.labelMedium
                 )
-            }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))
         )
         Box(
             modifier = Modifier
@@ -124,14 +132,16 @@ fun TransactionScreen(
         ) {
             FloatingActionButton(
                 onClick = {
-                    expenseAssistant.addExpense(ExpenseModel(
-                        categoryType = expenseAssistant.categoryType,
-                        category = category,
-                        expenseNote = expenseNote,
-                        expense = amount.toInt(),
-                        date = date,
-                        time = time
-                    ))
+                    expenseAssistant.addTransaction(
+                        TransactionModel(
+                            categoryType = expenseAssistant.categoryType,
+                            category = category,
+                            note = expenseNote,
+                            amount = amount.toInt(),
+                            date = transactionDate,
+                            time = transactionTime
+                        )
+                    )
                     navController.popBackStack()
                 }
             ) {

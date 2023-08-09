@@ -81,16 +81,17 @@ class ExpenseAssistantViewModel : ViewModel() {
         }
     }
 
-    fun addExpense(expenseModel: ExpenseModel) {
+    fun addTransaction(transactionModel: TransactionModel) {
         viewModelScope.launch {
             dates = dates.map {
-                if (it.date == expenseModel.date) {
-                    totalExpenseOfMonth += expenseModel.expense
-                    val expenses = it.expenseModel.toMutableList()
-                    expenses.add(expenseModel)
+                if (it.date == transactionModel.date) {
+                    if (transactionModel.categoryType == CategoryType.EXPENSE)
+                        totalExpenseOfMonth += transactionModel.amount
+                    val expenses = it.transactionModel.toMutableList()
+                    expenses.add(transactionModel)
                     it.copy(
-                        isSelected = expenseModel.date == today,
-                        expenseModel = expenses.toList()
+                        isSelected = transactionModel.date == today,
+                        transactionModel = expenses.toList()
                     )
                 } else {
                     it.copy(isSelected = it.date == today)
@@ -101,16 +102,16 @@ class ExpenseAssistantViewModel : ViewModel() {
         }
     }
 
-    fun removeExpense(selectedDate: LocalDate, expenseModel: ExpenseModel) {
+    fun removeExpense(selectedDate: LocalDate, transactionModel: TransactionModel) {
         viewModelScope.launch {
             dates = dates.map {
-                if (it.date == expenseModel.date) {
-                    totalExpenseOfMonth -= expenseModel.expense
-                    val expenses = it.expenseModel.toMutableList()
-                    expenses.remove(expenseModel)
+                if (it.date == transactionModel.date) {
+                    totalExpenseOfMonth -= transactionModel.amount
+                    val expenses = it.transactionModel.toMutableList()
+                    expenses.remove(transactionModel)
                     it.copy(
-                        isSelected = expenseModel.date == today,
-                        expenseModel = expenses.toList()
+                        isSelected = transactionModel.date == today,
+                        transactionModel = expenses.toList()
                     )
                 } else {
                     it.copy(isSelected = it.date == today)

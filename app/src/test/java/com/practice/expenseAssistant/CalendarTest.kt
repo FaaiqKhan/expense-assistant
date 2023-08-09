@@ -1,6 +1,6 @@
 package com.practice.expenseAssistant
 
-import com.practice.expenseAssistant.data.ExpenseModel
+import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.utils.Utils
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,7 +15,7 @@ class CalendarTest {
         val monthOfSeptember = LocalDate.of(2023, 8, 1)
 
         val julyDates = List(6) {
-            ExpenseModel(
+            TransactionModel(
                 date = monthOfJuly.plusDays(it.toLong()),
                 isSelected = false,
                 isCurrentMonthDate = false
@@ -23,16 +23,16 @@ class CalendarTest {
         }
 
         val augustDates = List(monthOfAugust.month.maxLength()) {
-            ExpenseModel(
+            TransactionModel(
                 date = monthOfAugust.plusDays(it.toLong()),
-                expense = ((it + 1) * 20).toString(),
+                amount = ((it + 1) * 20).toString(),
                 isSelected = LocalDate.now().dayOfMonth == it + 1,
                 isCurrentMonthDate = true
             )
         }
 
         val septemberDates = List(5) {
-            ExpenseModel(
+            TransactionModel(
                 date = monthOfSeptember.plusDays(it.toLong()),
                 isSelected = false,
                 isCurrentMonthDate = false
@@ -40,7 +40,7 @@ class CalendarTest {
         }
 
         val expectedDates = julyDates + augustDates + septemberDates
-        val dates: List<ExpenseModel> = Utils.createCalenderDays(monthOfAugust)
+        val dates: List<TransactionModel> = Utils.createCalenderDays(monthOfAugust)
         assertEquals(dates.size, expectedDates.size)
     }
 }

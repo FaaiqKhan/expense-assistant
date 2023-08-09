@@ -2,10 +2,13 @@ package com.practice.expenseAssistant.ui.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -23,12 +26,13 @@ fun Dropdown(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
-        TextField(
+        OutlinedTextField(
             value = selectedText,
             onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))
         )
         ExposedDropdownMenu(
             expanded = expanded,

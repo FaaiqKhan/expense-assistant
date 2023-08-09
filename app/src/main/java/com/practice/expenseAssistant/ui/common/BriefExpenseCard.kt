@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.ExpenseModel
+import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.utils.ExpenseType
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.CategoryType
@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
-fun BriefExpenseCard(modifier: Modifier = Modifier, expenseBriefing: ExpenseModel) {
+fun BriefExpenseCard(modifier: Modifier = Modifier, expenseBriefing: TransactionModel) {
     Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(
             modifier = Modifier
@@ -30,13 +30,13 @@ fun BriefExpenseCard(modifier: Modifier = Modifier, expenseBriefing: ExpenseMode
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = expenseBriefing.expenseNote,
+                text = expenseBriefing.note,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1.7f),
                 maxLines = 1,
             )
             Text(
-                text = stringResource(id = R.string.euro_symbol, expenseBriefing.expense),
+                text = stringResource(id = R.string.euro_symbol, expenseBriefing.amount),
                 modifier = Modifier.weight(0.5f),
                 textAlign = TextAlign.End
             )
@@ -51,11 +51,11 @@ private fun PreviewBriefExpenseCard() {
     ExpenseAssistantTheme {
         BriefExpenseCard(
             modifier = Modifier.fillMaxWidth(),
-            expenseBriefing = ExpenseModel(
+            expenseBriefing = TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                expenseNote = "Computer repair on galaxy computer shop w",
-                expense = 3500,
+                note = "Computer repair on galaxy computer shop w",
+                amount = 3500,
                 date = LocalDate.now(),
                 time = LocalTime.now()
             )
