@@ -1,6 +1,7 @@
 package com.practice.expenseAssistant.ui.categoryScreen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material3.*
@@ -15,14 +16,13 @@ import com.practice.expenseAssistant.utils.IncomeCategoriesIcon
 import com.practice.expenseAssistant.utils.IncomeType
 
 @Composable
-fun IncomeCategories(modifier: Modifier = Modifier) {
+fun IncomeCategories(modifier: Modifier = Modifier, onSelect: (incomeType: IncomeType) -> Unit) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(dimensionResource(id = R.dimen.screen_content_padding))
     ) {
         items(IncomeType.values()) {
-            Row {
+            Row(modifier = Modifier.clickable { onSelect(it) }) {
                 Icon(
                     imageVector = IncomeCategoriesIcon.icons.getValue(it.value),
                     contentDescription = it.name
@@ -43,6 +43,6 @@ fun IncomeCategories(modifier: Modifier = Modifier) {
 @Composable
 private fun PreviewIncomeCategories() {
     ExpenseAssistantTheme {
-        IncomeCategories(modifier = Modifier.fillMaxWidth())
+        IncomeCategories(modifier = Modifier.fillMaxWidth(), onSelect = {})
     }
 }

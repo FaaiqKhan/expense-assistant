@@ -17,4 +17,6 @@
     <string name="back_button">Back button</string>
     <string name="expense">Expense</string>
     <string name="income">Income</string>
+    <string name="amount">Amount</string>
+    <string name="expense_note">Expense Note</string>
 </resources>

@@ -7,5 +7,5 @@ data class CalendarDateModel(
     val date: LocalDate,
     val isSelected: Boolean,
     val isCurrentMonthDate: Boolean,
-    val expenseModel: ExpenseModel? = null,
+    val expenseModel: List<ExpenseModel> = listOf(),
 )

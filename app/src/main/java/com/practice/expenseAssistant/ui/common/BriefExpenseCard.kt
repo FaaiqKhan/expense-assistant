@@ -16,6 +16,9 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.ExpenseModel
 import com.practice.expenseAssistant.utils.ExpenseType
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.utils.CategoryType
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun BriefExpenseCard(modifier: Modifier = Modifier, expenseBriefing: ExpenseModel) {
@@ -49,9 +52,12 @@ private fun PreviewBriefExpenseCard() {
         BriefExpenseCard(
             modifier = Modifier.fillMaxWidth(),
             expenseBriefing = ExpenseModel(
-                expenseType = ExpenseType.BILL,
+                categoryType = CategoryType.EXPENSE,
+                category = ExpenseType.BILL,
                 expenseNote = "Computer repair on galaxy computer shop w",
-                expense = 3500
+                expense = 3500,
+                date = LocalDate.now(),
+                time = LocalTime.now()
             )
         )
     }

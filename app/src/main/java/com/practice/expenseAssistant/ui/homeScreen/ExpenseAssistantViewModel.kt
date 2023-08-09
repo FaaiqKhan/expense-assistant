@@ -3,7 +3,7 @@ package com.practice.expenseAssistant.ui.homeScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
-import com.practice.expenseAssistant.utils.Utils
+import com.practice.expenseAssistant.utils.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,16 +22,18 @@ class ExpenseAssistantViewModel : ViewModel() {
         )
     )
 
+    val backAccounts = mapOf("HBL" to "123234235134", "Meezan" to "50387395032")
+    val currencyType = Utils.currencyIcons.getValue("Euro")
+
     val calendarOfMonth: LocalDate = LocalDate.of(
         LocalDate.now().year,
         LocalDate.now().month,
         1
     )
 
-    var selectedDate: LocalDate = LocalDate.now()
-        private set
+    var today: LocalDate = LocalDate.now()
 
-    private var dates = Utils.createCalenderDays(calendarOfMonth, selectedDate)
+    private var dates = Utils.createCalenderDays(calendarOfMonth, today)
 
     private val _calenderDates: MutableStateFlow<List<CalendarDateModel>> = MutableStateFlow(dates)
     val calenderDates: StateFlow<List<CalendarDateModel>> = _calenderDates
@@ -44,12 +46,17 @@ class ExpenseAssistantViewModel : ViewModel() {
     private val _totalExpenseOfMonth: MutableStateFlow<Int> = MutableStateFlow(totalExpenseOfMonth)
     val totalExpenseOfMonthState: StateFlow<Int> = _totalExpenseOfMonth
 
+    var categoryType: CategoryType = CategoryType.EXPENSE
+        private set
+    var category: Any = ExpenseType.OTHERS
+        private set
+
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
             _calenderDates.emit(
                 dates.map {
                     if (it.id == listIndex) {
-                        selectedDate = it.date
+                        today = it.date
                         it.copy(isSelected = true)
                     } else {
                         it.copy(isSelected = false)
@@ -64,7 +71,7 @@ class ExpenseAssistantViewModel : ViewModel() {
             _calenderDates.emit(
                 dates.map {
                     if (it.date == LocalDate.now()) {
-                        selectedDate = it.date
+                        today = it.date
                         it.copy(isSelected = true)
                     } else {
                         it.copy(isSelected = false)
@@ -74,14 +81,19 @@ class ExpenseAssistantViewModel : ViewModel() {
         }
     }
 
-    fun addExpense(selectedDate: LocalDate, expenseModel: ExpenseModel) {
+    fun addExpense(expenseModel: ExpenseModel) {
         viewModelScope.launch {
             dates = dates.map {
-                if (it.date == selectedDate) {
+                if (it.date == expenseModel.date) {
                     totalExpenseOfMonth += expenseModel.expense
-                    it.copy(isSelected = true, expenseModel = expenseModel)
+                    val expenses = it.expenseModel.toMutableList()
+                    expenses.add(expenseModel)
+                    it.copy(
+                        isSelected = expenseModel.date == today,
+                        expenseModel = expenses.toList()
+                    )
                 } else {
-                    it.copy(isSelected = false)
+                    it.copy(isSelected = it.date == today)
                 }
             }
             _calenderDates.emit(dates)
@@ -92,15 +104,25 @@ class ExpenseAssistantViewModel : ViewModel() {
     fun removeExpense(selectedDate: LocalDate, expenseModel: ExpenseModel) {
         viewModelScope.launch {
             dates = dates.map {
-                if (it.date == selectedDate) {
+                if (it.date == expenseModel.date) {
                     totalExpenseOfMonth -= expenseModel.expense
-                    it.copy(isSelected = true, expenseModel = expenseModel)
+                    val expenses = it.expenseModel.toMutableList()
+                    expenses.remove(expenseModel)
+                    it.copy(
+                        isSelected = expenseModel.date == today,
+                        expenseModel = expenses.toList()
+                    )
                 } else {
-                    it.copy(isSelected = false)
+                    it.copy(isSelected = it.date == today)
                 }
             }
             _calenderDates.emit(dates)
             _totalExpenseOfMonth.emit(totalExpenseOfMonth)
         }
+    }
+
+    fun updateCategory(type: CategoryType, category: Any) {
+        categoryType = type
+        this.category = category
     }
 }

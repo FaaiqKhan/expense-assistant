@@ -9,4 +9,6 @@
     <dimen name="calendar_card_width">40dp</dimen>
     <dimen name="calendar_card_height">50dp</dimen>
     <dimen name="calendar_icon_width">28dp</dimen>
+    <dimen name="expense_note_height">200dp</dimen>
+    <dimen name="field_height">50dp</dimen>
 </resources>

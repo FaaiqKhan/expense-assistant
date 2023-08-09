@@ -1,9 +1,14 @@
 package com.practice.expenseAssistant.data
 
-import com.practice.expenseAssistant.utils.ExpenseType
+import com.practice.expenseAssistant.utils.CategoryType
+import java.time.LocalDate
+import java.time.LocalTime
 
 data class ExpenseModel(
-    val expenseType: ExpenseType,
+    val categoryType: CategoryType,
+    val category: Any,
     val expenseNote: String,
-    val expense: Int
+    val expense: Int,
+    val date: LocalDate,
+    val time: LocalTime
 )

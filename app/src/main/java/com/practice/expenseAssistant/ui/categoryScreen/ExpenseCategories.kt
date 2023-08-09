@@ -1,6 +1,7 @@
 package com.practice.expenseAssistant.ui.categoryScreen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material3.*
@@ -14,14 +15,13 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.ExpenseCategoriesIcon
 
 @Composable
-fun ExpenseCategories(modifier: Modifier = Modifier) {
+fun ExpenseCategories(modifier: Modifier = Modifier, onSelect: (expenseType: ExpenseType) -> Unit) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(dimensionResource(id = R.dimen.screen_content_padding))
     ) {
         items(ExpenseType.values()) {
-            Row {
+            Row(modifier = Modifier.clickable { onSelect(it) }) {
                 Icon(
                     imageVector = ExpenseCategoriesIcon.icons.getValue(it.value),
                     contentDescription = it.name
@@ -40,6 +40,6 @@ fun ExpenseCategories(modifier: Modifier = Modifier) {
 @Composable
 private fun PreviewExpenseCategory() {
     ExpenseAssistantTheme {
-        ExpenseCategories(modifier = Modifier.fillMaxWidth())
+        ExpenseCategories(modifier = Modifier.fillMaxWidth(), onSelect = {})
     }
 }

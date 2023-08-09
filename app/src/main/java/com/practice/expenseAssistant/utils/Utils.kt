@@ -65,4 +65,10 @@ object Utils {
         "Ponds" to "£",
         "Lira" to "₤",
     )
+
+    fun updateTo2Digits(hour: Int, minute: Int): String {
+        val twoDigitHours = if (hour < 10) "0$hour" else hour
+        val twoDigitMinutes = if (minute < 10) "0$minute" else minute
+        return "$twoDigitHours:$twoDigitMinutes"
+    }
 }

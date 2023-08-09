@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.NavigationBarItem
@@ -129,17 +129,7 @@ fun ExpenseAssistantBottomBar(modifier: Modifier = Modifier, items: List<Navigat
 
 @Composable
 fun ExpenseAssistantActionButton(navController: NavHostController) {
-    FloatingActionButton(onClick = {
-        navController.navigate(Screens.CATEGORY.name)
-//        expenseAssistant.addExpense(
-//            selectedDate = expenseAssistant.selectedDate,
-//            expenseModel = ExpenseModel(
-//                expense = 2300,
-//                expenseType = ExpenseType.BILL,
-//                expenseNote = "Water utilities with maintenance"
-//            )
-//        )
-    }) {
+    FloatingActionButton(onClick = { navController.navigate(Screens.CATEGORY.name) }) {
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = stringResource(id = R.string.add_expense)
@@ -158,10 +148,22 @@ fun NavigationHost(
             HomeScreen(expenseAssistant = expenseAssistant, modifier = modifier)
         }
         composable(route = Screens.CATEGORY.name) {
-            CategoryScreen(modifier = modifier.fillMaxHeight())
+            CategoryScreen(
+                modifier = modifier.fillMaxHeight(),
+                onSelect = { type, category ->
+                    expenseAssistant.updateCategory(type, category)
+                    navController.navigate(Screens.TRANSACTION.name) {
+                        popUpTo(Screens.HOME.name)
+                    }
+                }
+            )
         }
         composable(route = Screens.TRANSACTION.name) {
-            TransactionScreen(modifier = modifier, onTransaction = {})
+            TransactionScreen(
+                modifier = modifier,
+                expenseAssistant = expenseAssistant,
+                navController = navController,
+            )
         }
     }
 }

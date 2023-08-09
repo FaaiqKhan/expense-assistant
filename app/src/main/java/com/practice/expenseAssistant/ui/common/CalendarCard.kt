@@ -17,8 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.utils.CategoryType
 import com.practice.expenseAssistant.utils.ExpenseType
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun CalendarCard(
@@ -26,7 +28,6 @@ fun CalendarCard(
     onSelect: (listIndex: Int) -> Unit,
     calendarDateState: CalendarDateModel
 ) {
-    val expenseOpacity = if (calendarDateState.expenseModel?.expense == null) 0f else 1f
     val cardColor = if (calendarDateState.isSelected) {
         MaterialTheme.colorScheme.primaryContainer
     } else if (calendarDateState.isCurrentMonthDate) {
@@ -34,6 +35,8 @@ fun CalendarCard(
     } else {
         MaterialTheme.colorScheme.secondary
     }
+    val totalExpenseOfDay = calendarDateState.expenseModel.sumOf { it.expense }
+    val expenseOpacity = if (totalExpenseOfDay == 0) 0f else 1f
     Column(
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.calendar_card_width))
@@ -44,7 +47,7 @@ fun CalendarCard(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = calendarDateState.expenseModel?.expense.toString(),
+            text = totalExpenseOfDay.toString(),
             textAlign = TextAlign.End,
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,10 +77,15 @@ private fun PreviewCalendarCard() {
                         date = LocalDate.now().plusDays(it.toLong()),
                         isSelected = it == 3,
                         isCurrentMonthDate = it == 2,
-                        expenseModel = if (it == 0) null else ExpenseModel(
-                            expenseType = ExpenseType.BILL,
-                            expenseNote = "Water and pipe maintenance",
-                            expense = it * 200
+                        expenseModel = listOf(
+                            ExpenseModel(
+                                categoryType = CategoryType.EXPENSE,
+                                category = ExpenseType.BILL,
+                                expenseNote = "Water and pipe maintenance",
+                                expense = it * 200,
+                                date = LocalDate.now(),
+                                time = LocalTime.now()
+                            )
                         )
                     ),
                     onSelect = { }
