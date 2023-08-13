@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -30,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -59,10 +60,18 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    //noinspection GradleDependency
     implementation("androidx.compose.material:material:1.4.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.navigation:navigation-compose:${rootProject.extra["navigation_version"]}")
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+    //noinspection GradleDependency
+    implementation("androidx.compose.material:material-icons-extended:${rootProject.extra["extended_material_icon_version"]}")
+    implementation("com.google.code.gson:gson:${rootProject.extra["gson_version"]}")
+
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
 
     testImplementation("junit:junit:4.13.2")
 

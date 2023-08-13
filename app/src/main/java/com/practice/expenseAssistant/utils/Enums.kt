@@ -10,6 +10,7 @@ enum class NavigationItemType {
 }
 
 enum class Screens(@StringRes val title: Int) {
+    LOGIN(title = R.string.login),
     HOME(title = R.string.app_name),
     CATEGORY(title = R.string.category),
     TRANSACTION(title = R.string.transaction),

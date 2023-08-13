@@ -19,4 +19,13 @@
     <string name="income">Income</string>
     <string name="amount">Amount</string>
     <string name="expense_note">Expense Note</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="user_name">User Name</string>
+    <string name="sign_in">Sign In</string>
+    <string name="or">Or</string>
+    <string name="sign_up">Sign Up</string>
 </resources>
