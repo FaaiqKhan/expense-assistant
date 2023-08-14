@@ -28,4 +28,5 @@
     <string name="sign_in">Sign In</string>
     <string name="or">Or</string>
     <string name="sign_up">Sign Up</string>
+    <string name="expense_assistant">expense_assistant</string>
 </resources>

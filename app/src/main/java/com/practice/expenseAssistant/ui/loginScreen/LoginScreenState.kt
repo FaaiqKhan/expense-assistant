@@ -1,6 +1,6 @@
 package com.practice.expenseAssistant.ui.loginScreen
 
-import com.practice.expenseAssistant.repository.database.User
+import com.practice.expenseAssistant.repository.database.entities.User
 
 sealed class LoginScreenState {
     object Ideal : LoginScreenState()

@@ -15,7 +15,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
@@ -23,7 +23,7 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginScreenViewModel = viewModel()
+    loginViewModel: LoginScreenViewModel
 ) {
     val loginScreenState by loginViewModel.loginScreenState.collectAsState()
 
@@ -90,11 +90,11 @@ fun LoginScreen(
             if (loginScreenState is LoginScreenState.Loading) {
                 CircularProgressIndicator()
             } else {
-                Button(onClick = { loginViewModel.login(userName, password) }) {
+                Button(onClick = { loginViewModel.signIn(userName, password) }) {
                     Text(text = stringResource(id = R.string.sign_in))
                 }
                 Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.card_padding)))
-                Button(onClick = { loginViewModel.login(userName, password) }) {
+                Button(onClick = { loginViewModel.signIn(userName, password) }) {
                     Text(text = stringResource(id = R.string.sign_up))
                 }
             }
@@ -107,6 +107,6 @@ fun LoginScreen(
 @Composable
 private fun PreviewLoginScreen() {
     ExpenseAssistantTheme {
-        LoginScreen(modifier = Modifier.fillMaxSize())
+        LoginScreen(modifier = Modifier.fillMaxSize(), hiltViewModel())
     }
 }

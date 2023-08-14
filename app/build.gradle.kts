@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -64,13 +65,17 @@ dependencies {
     implementation("androidx.compose.material:material:1.4.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
+    //noinspection GradleDependency
     implementation("androidx.navigation:navigation-compose:${rootProject.extra["navigation_version"]}")
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
     //noinspection GradleDependency
     implementation("androidx.compose.material:material-icons-extended:${rootProject.extra["extended_material_icon_version"]}")
     implementation("com.google.code.gson:gson:${rootProject.extra["gson_version"]}")
+    implementation("com.google.dagger:hilt-android:${rootProject.extra["hilt_version"]}")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
+    ksp("com.google.dagger:hilt-android-compiler:${rootProject.extra["hilt_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
 
     testImplementation("junit:junit:4.13.2")
