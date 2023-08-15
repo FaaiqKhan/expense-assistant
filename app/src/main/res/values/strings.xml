@@ -29,4 +29,9 @@
     <string name="or">Or</string>
     <string name="sign_up">Sign Up</string>
     <string name="expense_assistant">expense_assistant</string>
+    <string name="bank_name">Bank Name</string>
+    <string name="iban">Iban</string>
+    <string name="account_number">Account number</string>
+    <string name="account_balance">Account balance</string>
+    <string name="add_bank_account">Add bank account</string>
 </resources>

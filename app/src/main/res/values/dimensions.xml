@@ -12,4 +12,6 @@
     <dimen name="expense_note_height">200dp</dimen>
     <dimen name="field_height">50dp</dimen>
     <dimen name="letter_spacing_zero">0sp</dimen>
+    <dimen name="button_width">120dp</dimen>
+    <dimen name="circular_indicator_height">12dp</dimen>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,6 +22,7 @@ import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.common.BottomNavigationBar
 import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
+import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
 import com.practice.expenseAssistant.utils.*
@@ -143,7 +145,14 @@ fun NavigationHost(
     navController: NavHostController,
     expenseAssistant: ExpenseAssistantViewModel
 ) {
-    NavHost(navController = navController, startDestination = Screens.HOME.name) {
+    NavHost(navController = navController, startDestination = Screens.LOGIN.name) {
+        composable(route = Screens.LOGIN.name) {
+            LoginScreen(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(id = R.dimen.screen_content_padding))
+            )
+        }
         composable(route = Screens.HOME.name) {
             HomeScreen(expenseAssistant = expenseAssistant, modifier = modifier)
         }

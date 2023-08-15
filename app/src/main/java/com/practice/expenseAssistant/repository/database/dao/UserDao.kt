@@ -16,5 +16,5 @@ interface UserDao {
     fun deleteUser(user: User)
 
     @Query("SELECT * from user WHERE name = :name AND password = :password")
-    fun getUser(name: String, password: String): User
+    fun getUser(name: String, password: String): User?
 }
