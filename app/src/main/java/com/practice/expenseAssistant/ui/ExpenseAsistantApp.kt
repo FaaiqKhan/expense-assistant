@@ -150,11 +150,12 @@ fun NavigationHost(
             LoginScreen(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(dimensionResource(id = R.dimen.screen_content_padding))
+                    .padding(dimensionResource(id = R.dimen.screen_content_padding)),
+                navController = navController
             )
         }
         composable(route = Screens.HOME.name) {
-            HomeScreen(expenseAssistant = expenseAssistant, modifier = modifier)
+            HomeScreen(modifier = modifier.fillMaxSize(), expenseAssistant = expenseAssistant)
         }
         composable(route = Screens.CATEGORY.name) {
             CategoryScreen(
