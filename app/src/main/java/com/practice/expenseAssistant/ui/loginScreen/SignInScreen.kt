@@ -46,7 +46,10 @@ fun SignInScreen(
                     contentDescription = stringResource(id = R.string.user_name)
                 )
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Sentences
+            ),
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.user_name)) },
             isError = uiState is LoginScreenState.Failure,
