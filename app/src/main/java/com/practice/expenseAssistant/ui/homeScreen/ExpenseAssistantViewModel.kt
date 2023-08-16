@@ -3,26 +3,20 @@ package com.practice.expenseAssistant.ui.homeScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
+import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
 import com.practice.expenseAssistant.utils.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import javax.inject.Inject
 
-class ExpenseAssistantViewModel : ViewModel() {
+@HiltViewModel
+class ExpenseAssistantViewModel @Inject constructor(
+    private val expenseAssistantRepository: ExpenseAssistantRepository
+) : ViewModel() {
 
-    val userModel = UserModel(
-        name = "FaaiqKhan",
-        accounts = listOf(
-            BankAccountModel(
-                accountNumber = 123324,
-                accountName = "MEEZAN",
-                accountBalance = 123.4
-            )
-        )
-    )
-
-    val backAccounts = mapOf("HBL" to "123234235134", "Meezan" to "50387395032")
     val currencyType = Utils.currencyIcons.getValue("Euro")
 
     val calendarOfMonth: LocalDate = LocalDate.of(
@@ -50,6 +44,13 @@ class ExpenseAssistantViewModel : ViewModel() {
         private set
     var category: Any = ExpenseType.OTHERS
         private set
+
+    var bankAccount: BankAccount = BankAccount(
+        iBan = "MZN000813415322408213",
+        name = "Mezzanine Bank Limited",
+        number = "00200395038219",
+        balance = 160000.00
+    )
 
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
@@ -102,7 +103,7 @@ class ExpenseAssistantViewModel : ViewModel() {
         }
     }
 
-    fun removeExpense(selectedDate: LocalDate, transactionModel: TransactionModel) {
+    fun removeExpense(transactionModel: TransactionModel) {
         viewModelScope.launch {
             dates = dates.map {
                 if (it.date == transactionModel.date) {
@@ -126,4 +127,10 @@ class ExpenseAssistantViewModel : ViewModel() {
         categoryType = type
         this.category = category
     }
+
+    fun updateBankAccount(bankAccount: BankAccount) {
+        this.bankAccount = bankAccount
+    }
+
+    fun getUser(): UserModel = expenseAssistantRepository.getUser()
 }

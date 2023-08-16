@@ -3,6 +3,8 @@ package com.practice.expenseAssistant.ui.loginScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.BankAccount
+import com.practice.expenseAssistant.data.UserModel
+import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
 import com.practice.expenseAssistant.repository.database.dao.UserDao
 import com.practice.expenseAssistant.repository.database.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(private val userDao: UserDao) : ViewModel() {
+class LoginScreenViewModel @Inject constructor(
+    private val userDao: UserDao,
+    private val expenseAssistantRepository: ExpenseAssistantRepository,
+) : ViewModel() {
 
     private val _loginScreenViewState = MutableStateFlow<LoginScreenState>(LoginScreenState.Ideal)
 
@@ -21,27 +26,32 @@ class LoginScreenViewModel @Inject constructor(private val userDao: UserDao) : V
     fun signIn(
         userName: String,
         password: String,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("CoroutineExceptionHandler of signIn got $exception")
+            return@CoroutineExceptionHandler
         }
         viewModelScope.launch(handler) {
-            withContext(dispatcher) {
-                if (userName.isBlank() || password.isBlank()) {
-                    _loginScreenViewState.emit(LoginScreenState.Failure("Field cannot be empty"))
-                    return@withContext
-                }
-                _loginScreenViewState.emit(LoginScreenState.Loading)
-                delay(timeMillis = 500L)
-                val user: User? = userDao.getUser(userName, password)
-                if (user == null) {
-                    _loginScreenViewState.emit(LoginScreenState.Failure("Invalid username of password"))
-                    return@withContext
-                }
-                _loginScreenViewState.emit(LoginScreenState.Success(user))
+            if (userName.isBlank() || password.isBlank()) {
+                _loginScreenViewState.emit(LoginScreenState.Failure("Field cannot be empty"))
+                return@launch
             }
+            _loginScreenViewState.emit(LoginScreenState.Loading)
+            delay(timeMillis = 500L)
+            val user: User? = userDao.getUser(userName, password)
+            if (user == null) {
+                _loginScreenViewState.emit(LoginScreenState.Failure("Invalid username of password"))
+                return@launch
+            }
+            expenseAssistantRepository.setUser(
+                UserModel(
+                    user.name,
+                    user.bankAccount
+                )
+            )
+            _loginScreenViewState.emit(LoginScreenState.Success)
         }
+
     }
 
     fun signUp(
@@ -52,6 +62,7 @@ class LoginScreenViewModel @Inject constructor(private val userDao: UserDao) : V
     ) {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("CoroutineExceptionHandler of signUp got $exception")
+            return@CoroutineExceptionHandler
         }
         viewModelScope.launch(handler) {
             withContext(dispatcher) {
@@ -71,7 +82,13 @@ class LoginScreenViewModel @Inject constructor(private val userDao: UserDao) : V
                     bankAccount = bankAccounts
                 )
                 userDao.setUser(user)
-                _loginScreenViewState.emit(LoginScreenState.Success(user))
+                expenseAssistantRepository.setUser(
+                    UserModel(
+                        user.name,
+                        user.bankAccount
+                    )
+                )
+                _loginScreenViewState.emit(LoginScreenState.Success)
             }
         }
     }

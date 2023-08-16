@@ -34,8 +34,8 @@ fun LoginScreen(
     }
 
     if (loginScreenState is LoginScreenState.Success) {
-        navController.navigate(Screens.HOME.name) {
-            popUpTo(0)
+        LaunchedEffect(key1 = Screens.HOME.name) {
+            navController.navigate(Screens.HOME.name) { popUpTo(0) }
         }
     }
 

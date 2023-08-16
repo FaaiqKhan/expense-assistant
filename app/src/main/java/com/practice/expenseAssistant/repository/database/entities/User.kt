@@ -6,7 +6,7 @@ import com.practice.expenseAssistant.data.BankAccount
 @Entity(tableName = "user")
 data class User(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Int = 1,
     val name: String,
     val password: String,
     @ColumnInfo("bank_account")

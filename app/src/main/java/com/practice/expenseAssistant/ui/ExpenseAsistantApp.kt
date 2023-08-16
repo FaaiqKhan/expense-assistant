@@ -141,7 +141,7 @@ fun ExpenseAssistantActionButton(navController: NavHostController) {
 
 @Composable
 fun NavigationHost(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     navController: NavHostController,
     expenseAssistant: ExpenseAssistantViewModel
 ) {
