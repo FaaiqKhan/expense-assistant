@@ -175,7 +175,7 @@ fun SignUpScreen(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewSignUpScreen() {
+private fun PreviewSignUpScreen() {
     ExpenseAssistantTheme {
         SignUpScreen(uiState = LoginScreenState.Ideal, signUp = { _, _, _ -> })
     }
