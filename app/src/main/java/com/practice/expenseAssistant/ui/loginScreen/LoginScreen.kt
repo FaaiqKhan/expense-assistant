@@ -27,17 +27,17 @@ fun LoginScreen(
     loginViewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     var isSignUp by remember { mutableStateOf(true) }
-    val uiState by loginViewModel.loginScreenState.collectAsState()
+    val uiState by loginViewModel.loginScreenUiState.collectAsState()
 
-    if (uiState is LoginScreenState.Failure) {
+    if (uiState is LoginScreenUiState.Failure) {
         Toast.makeText(
             LocalContext.current,
-            (uiState as LoginScreenState.Failure).msg,
+            (uiState as LoginScreenUiState.Failure).msg,
             Toast.LENGTH_LONG
         ).show()
     }
 
-    if (uiState is LoginScreenState.Success) {
+    if (uiState is LoginScreenUiState.Success) {
         LaunchedEffect(key1 = Screens.HOME.name) {
             navController.navigate(Screens.HOME.name) { popUpTo(0) }
         }
@@ -46,7 +46,7 @@ fun LoginScreen(
     LoginScreenContent(
         modifier = modifier,
         isSignUp = isSignUp,
-        loginScreenState = uiState,
+        loginScreenUiState = uiState,
         signIn = loginViewModel::signIn,
         signUp = loginViewModel::signUp,
         onClick = { isSignUp = !isSignUp },
@@ -57,7 +57,7 @@ fun LoginScreen(
 private fun LoginScreenContent(
     modifier: Modifier,
     isSignUp: Boolean,
-    loginScreenState: LoginScreenState,
+    loginScreenUiState: LoginScreenUiState,
     signIn: (name: String, password: String) -> Unit,
     signUp: (name: String, password: String, bankAccounts: List<BankAccount>) -> Unit,
     onClick: () -> Unit,
@@ -68,10 +68,10 @@ private fun LoginScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AnimatedVisibility(visible = !isSignUp) {
-            SignUpScreen(uiState = loginScreenState, signUp = signUp)
+            SignUpScreen(uiState = loginScreenUiState, signUp = signUp)
         }
         AnimatedVisibility(visible = isSignUp) {
-            SignInScreen(uiState = loginScreenState, signIn = signIn)
+            SignInScreen(uiState = loginScreenUiState, signIn = signIn)
         }
         val textId = if (isSignUp) R.string.sign_up else R.string.sign_in
         TextButton(onClick = onClick) {
@@ -88,7 +88,7 @@ private fun PreviewLoginScreen() {
         LoginScreenContent(
             modifier = Modifier,
             isSignUp = false,
-            loginScreenState = LoginScreenState.Ideal,
+            loginScreenUiState = LoginScreenUiState.Ideal,
             signIn = { _, _ -> },
             signUp = { _, _, _ -> },
             onClick = {},

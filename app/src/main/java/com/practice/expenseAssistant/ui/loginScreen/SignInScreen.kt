@@ -23,7 +23,7 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 @Composable
 fun SignInScreen(
     modifier: Modifier = Modifier,
-    uiState: LoginScreenState,
+    uiState: LoginScreenUiState,
     signIn: (name: String, password: String) -> Unit
 ) {
     var userName by remember { mutableStateOf("") }
@@ -52,7 +52,7 @@ fun SignInScreen(
             ),
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.user_name)) },
-            isError = uiState is LoginScreenState.Failure,
+            isError = uiState is LoginScreenUiState.Failure,
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
@@ -88,7 +88,7 @@ fun SignInScreen(
             },
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.password)) },
-            isError = uiState is LoginScreenState.Failure,
+            isError = uiState is LoginScreenUiState.Failure,
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_content_padding)))
@@ -99,7 +99,7 @@ fun SignInScreen(
                 signIn(userName, password)
             },
         ) {
-            if (uiState is LoginScreenState.Loading)
+            if (uiState is LoginScreenUiState.Loading)
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.inversePrimary,
                     modifier = Modifier.height(
@@ -117,6 +117,6 @@ fun SignInScreen(
 @Composable
 private fun PreviewSignInScreen() {
     ExpenseAssistantTheme {
-        SignInScreen(uiState = LoginScreenState.Ideal, signIn = { _, _ -> })
+        SignInScreen(uiState = LoginScreenUiState.Ideal, signIn = { _, _ -> })
     }
 }

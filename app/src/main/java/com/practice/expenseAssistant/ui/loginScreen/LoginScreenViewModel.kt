@@ -19,9 +19,9 @@ class LoginScreenViewModel @Inject constructor(
     private val expenseAssistantRepository: ExpenseAssistantRepository,
 ) : ViewModel() {
 
-    private val _loginScreenViewState = MutableStateFlow<LoginScreenState>(LoginScreenState.Ideal)
+    private val _loginScreenViewState = MutableStateFlow<LoginScreenUiState>(LoginScreenUiState.Ideal)
 
-    val loginScreenState: StateFlow<LoginScreenState> = _loginScreenViewState
+    val loginScreenUiState: StateFlow<LoginScreenUiState> = _loginScreenViewState
 
     fun signIn(
         userName: String,
@@ -33,14 +33,14 @@ class LoginScreenViewModel @Inject constructor(
         }
         viewModelScope.launch(handler) {
             if (userName.isBlank() || password.isBlank()) {
-                _loginScreenViewState.emit(LoginScreenState.Failure("Field cannot be empty"))
+                _loginScreenViewState.emit(LoginScreenUiState.Failure("Field cannot be empty"))
                 return@launch
             }
-            _loginScreenViewState.emit(LoginScreenState.Loading)
+            _loginScreenViewState.emit(LoginScreenUiState.Loading)
             delay(timeMillis = 500L)
             val user: User? = userDao.getUser(userName, password)
             if (user == null) {
-                _loginScreenViewState.emit(LoginScreenState.Failure("Invalid username of password"))
+                _loginScreenViewState.emit(LoginScreenUiState.Failure("Invalid username of password"))
                 return@launch
             }
             expenseAssistantRepository.setUser(
@@ -49,7 +49,7 @@ class LoginScreenViewModel @Inject constructor(
                     user.bankAccount
                 )
             )
-            _loginScreenViewState.emit(LoginScreenState.Success)
+            _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
 
     }
@@ -67,14 +67,14 @@ class LoginScreenViewModel @Inject constructor(
         viewModelScope.launch(handler) {
             withContext(dispatcher) {
                 if (userName.isBlank() || password.isBlank()) {
-                    _loginScreenViewState.emit(LoginScreenState.Failure("User name & password cannot be empty"))
+                    _loginScreenViewState.emit(LoginScreenUiState.Failure("User name & password cannot be empty"))
                     return@withContext
                 }
                 if (bankAccounts.isEmpty()) {
-                    _loginScreenViewState.emit(LoginScreenState.Failure("Please add bank account"))
+                    _loginScreenViewState.emit(LoginScreenUiState.Failure("Please add bank account"))
                     return@withContext
                 }
-                _loginScreenViewState.emit(LoginScreenState.Loading)
+                _loginScreenViewState.emit(LoginScreenUiState.Loading)
                 delay(timeMillis = 500L)
                 val user = User(
                     name = userName,
@@ -88,7 +88,7 @@ class LoginScreenViewModel @Inject constructor(
                         user.bankAccount
                     )
                 )
-                _loginScreenViewState.emit(LoginScreenState.Success)
+                _loginScreenViewState.emit(LoginScreenUiState.Success)
             }
         }
     }

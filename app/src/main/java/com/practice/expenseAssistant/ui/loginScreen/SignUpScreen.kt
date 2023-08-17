@@ -29,7 +29,7 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    uiState: LoginScreenState,
+    uiState: LoginScreenUiState,
     signUp: (name: String, password: String, bankAccount: List<BankAccount>) -> Unit
 ) {
 
@@ -60,7 +60,7 @@ fun SignUpScreen(
             ),
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.user_name)) },
-            isError = uiState is LoginScreenState.Failure,
+            isError = uiState is LoginScreenUiState.Failure,
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
@@ -96,7 +96,7 @@ fun SignUpScreen(
             },
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.password)) },
-            isError = uiState is LoginScreenState.Failure,
+            isError = uiState is LoginScreenUiState.Failure,
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
@@ -161,7 +161,7 @@ fun SignUpScreen(
                 signUp(userName, password, bankAccounts.toList())
             },
         ) {
-            if (uiState is LoginScreenState.Loading)
+            if (uiState is LoginScreenUiState.Loading)
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.inversePrimary,
                     modifier = Modifier.height(dimensionResource(id = R.dimen.circular_indicator_height))
@@ -177,6 +177,6 @@ fun SignUpScreen(
 @Composable
 private fun PreviewSignUpScreen() {
     ExpenseAssistantTheme {
-        SignUpScreen(uiState = LoginScreenState.Ideal, signUp = { _, _, _ -> })
+        SignUpScreen(uiState = LoginScreenUiState.Ideal, signUp = { _, _, _ -> })
     }
 }
