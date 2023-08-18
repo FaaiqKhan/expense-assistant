@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.*
@@ -20,7 +21,7 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.NavigationBarItem
 import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.common.BottomNavigationBar
-import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
@@ -30,7 +31,7 @@ import com.practice.expenseAssistant.utils.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpenseAssistantApp(
-    expenseAssistant: ExpenseAssistantViewModel = viewModel(),
+    expenseAssistant: HomeScreenViewModel = hiltViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
 
@@ -143,7 +144,7 @@ fun ExpenseAssistantActionButton(navController: NavHostController) {
 fun NavigationHost(
     modifier: Modifier,
     navController: NavHostController,
-    expenseAssistant: ExpenseAssistantViewModel
+    expenseAssistant: HomeScreenViewModel
 ) {
     NavHost(navController = navController, startDestination = Screens.LOGIN.name) {
         composable(route = Screens.LOGIN.name) {
@@ -170,7 +171,7 @@ fun NavigationHost(
         }
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(
-                modifier = modifier,
+                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
                 expenseAssistant = expenseAssistant,
                 navController = navController,
             )

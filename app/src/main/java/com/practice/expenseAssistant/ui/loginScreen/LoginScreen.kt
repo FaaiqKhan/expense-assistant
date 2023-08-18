@@ -59,7 +59,7 @@ private fun LoginScreenContent(
     isSignUp: Boolean,
     loginScreenUiState: LoginScreenUiState,
     signIn: (name: String, password: String) -> Unit,
-    signUp: (name: String, password: String, bankAccounts: List<BankAccount>) -> Unit,
+    signUp: (name: String, password: String, bankAccounts: List<BankAccount>, selectedBankAccount: BankAccount) -> Unit,
     onClick: () -> Unit,
 ) {
     Column(
@@ -81,7 +81,6 @@ private fun LoginScreenContent(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewLoginScreen() {
     ExpenseAssistantTheme {
@@ -90,7 +89,7 @@ private fun PreviewLoginScreen() {
             isSignUp = false,
             loginScreenUiState = LoginScreenUiState.Ideal,
             signIn = { _, _ -> },
-            signUp = { _, _, _ -> },
+            signUp = { _, _, _, _-> },
             onClick = {},
         )
     }

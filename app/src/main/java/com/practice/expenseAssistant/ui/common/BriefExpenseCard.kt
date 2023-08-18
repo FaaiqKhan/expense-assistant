@@ -55,7 +55,7 @@ private fun PreviewBriefExpenseCard() {
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
                 note = "Computer repair on galaxy computer shop w",
-                amount = 3500,
+                amount = 3500.0,
                 date = LocalDate.now(),
                 time = LocalTime.now()
             )

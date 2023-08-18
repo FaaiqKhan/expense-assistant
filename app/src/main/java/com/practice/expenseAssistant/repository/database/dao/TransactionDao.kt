@@ -1,16 +1,24 @@
 package com.practice.expenseAssistant.repository.database.dao
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room.*
 import com.practice.expenseAssistant.repository.database.entities.Transaction
 import com.practice.expenseAssistant.utils.CategoryType
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransactionDao {
-    @Query("SELECT * from `transaction` WHERE category_type = :categoryType")
-    fun getTransactionsByCategory(categoryType: CategoryType): Flow<List<Transaction>>
+
+    @Insert
+    suspend fun addTransaction(transaction: Transaction)
+
+    @Update
+    suspend fun updateTransaction(transaction: Transaction)
+
+    @Delete
+    suspend fun removeTransaction(transaction: Transaction)
 
     @Query("SELECT * from `transaction`")
-    fun getAllTransactions(): Flow<List<Transaction>>
+    suspend fun getAllTransactions(): List<Transaction>
+
+    @Query("SELECT * from `transaction` WHERE category_type = :categoryType")
+    suspend fun getTransactionsByCategory(categoryType: CategoryType): List<Transaction>
 }

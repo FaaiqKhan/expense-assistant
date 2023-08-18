@@ -9,7 +9,7 @@ import java.time.LocalTime
 @Entity(tableName = "transaction")
 data class Transaction(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
     @ColumnInfo(name = "amount")
     val amount: Double,
     @ColumnInfo(name = "transaction_note")

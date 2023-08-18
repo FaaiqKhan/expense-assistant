@@ -4,21 +4,46 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.data.BalanceModel
+import com.practice.expenseAssistant.data.CalendarDataModel
 import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.utils.Utils
+import java.time.LocalDate
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, expenseAssistant: ExpenseAssistantViewModel) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    expenseAssistant: HomeScreenViewModel
+) {
+    val name = expenseAssistant.getUser().name
+    val localCalendarState by expenseAssistant.localCalender.collectAsState()
+    HomeScreenContent(
+        modifier = modifier,
+        userName = name,
+        calendarUiState = localCalendarState,
+        onToday = expenseAssistant::backToToday,
+        onDateUpdate = expenseAssistant::updateSelectedDate
+    )
+}
+
+@Composable
+private fun HomeScreenContent(
+    modifier: Modifier,
+    userName: String,
+    calendarUiState: HomeScreenUiState,
+    onToday: () -> Unit,
+    onDateUpdate: (index: Int) -> Unit
+) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
-            text = "Hi ${expenseAssistant.userModel.name}",
+            text = "Hi $userName",
             style = MaterialTheme.typography.displayLarge,
             modifier = Modifier
                 .fillMaxWidth()
@@ -27,16 +52,18 @@ fun HomeScreen(modifier: Modifier = Modifier, expenseAssistant: ExpenseAssistant
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
-            expenseAssistant = expenseAssistant,
+            uiState = calendarUiState,
             onClickViewAll = { }
         )
-        CalendarView(expenseAssistant = expenseAssistant)
+        CalendarView(uiState = calendarUiState, backToToday = onToday, updateDate = onDateUpdate)
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
-        OpenCloseBalanceCard(
-            modifier = Modifier.fillMaxWidth(),
-            openBalance = expenseAssistant.monthOpeningBalance,
-            closeBalance = expenseAssistant.monthClosingBalance,
-        )
+        if (calendarUiState is HomeScreenUiState.Success) {
+            OpenCloseBalanceCard(
+                modifier = Modifier.fillMaxWidth(),
+                openBalanceOfMonth = calendarUiState.balanceModel.openingBalance,
+                closeBalanceOfMonth = calendarUiState.balanceModel.closingBalance,
+            )
+        }
     }
 }
 
@@ -44,10 +71,24 @@ fun HomeScreen(modifier: Modifier = Modifier, expenseAssistant: ExpenseAssistant
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewHomeScreen() {
+    val dates = Utils.createCalenderDays(LocalDate.now(), LocalDate.now())
     ExpenseAssistantTheme {
-        HomeScreen(
-            expenseAssistant = viewModel(),
-            modifier = Modifier.fillMaxSize()
+        HomeScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            userName = "Faiq Ali Khan",
+            calendarUiState = HomeScreenUiState.Success(
+                CalendarDataModel(
+                    localDate = LocalDate.now(),
+                    localCalendar = dates,
+                ),
+                balanceModel = BalanceModel(
+                    totalExpense = 400.00,
+                    openingBalance = 1000.00,
+                    closingBalance = 600.00
+                )
+            ),
+            onToday = {},
+            onDateUpdate = {}
         )
     }
 }

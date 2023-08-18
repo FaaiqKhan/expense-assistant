@@ -38,12 +38,12 @@ fun CalendarCard(
         MaterialTheme.colorScheme.secondary
     }
     val totalExpenseOfDay = calendarDateState.transactionModel.sumOf {
-        if (it.categoryType == CategoryType.EXPENSE) it.amount else 0
+        if (it.categoryType == CategoryType.EXPENSE) it.amount else 0.0
     }
     val totalIncomeOfDay = calendarDateState.transactionModel.sumOf {
-        if (it.categoryType == CategoryType.INCOME) it.amount else 0
+        if (it.categoryType == CategoryType.INCOME) it.amount else 0.0
     }
-    val expenseOpacity = if (totalExpenseOfDay == 0) 0f else 1f
+    val expenseOpacity = if (totalExpenseOfDay == 0.0) 0f else 1f
     Box(
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.calendar_card_width))
@@ -105,7 +105,7 @@ private fun PreviewCalendarCard() {
                                 categoryType = CategoryType.EXPENSE,
                                 category = ExpenseType.BILL,
                                 note = "Water and pipe maintenance",
-                                amount = it * 200,
+                                amount = it * 200.0,
                                 date = LocalDate.now(),
                                 time = LocalTime.now()
                             ),

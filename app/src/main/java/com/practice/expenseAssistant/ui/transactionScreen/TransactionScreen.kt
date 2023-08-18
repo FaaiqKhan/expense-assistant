@@ -16,37 +16,71 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.TransactionModel
+import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
-import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.*
+import java.time.LocalDate
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionScreen(
     modifier: Modifier = Modifier,
-    expenseAssistant: ExpenseAssistantViewModel,
     navController: NavHostController,
+    expenseAssistant: HomeScreenViewModel,
 ) {
-    var amount by remember { mutableStateOf("") }
-    var expenseNote by remember { mutableStateOf("") }
-    var transactionDate by remember { mutableStateOf(expenseAssistant.today) }
-    var transactionTime by remember { mutableStateOf(LocalTime.now()) }
+    val categoryType: Any
+    val category = when (expenseAssistant.categoryType) {
+        CategoryType.INCOME -> {
+            categoryType = CategoryType.INCOME
+            (expenseAssistant.category as IncomeType).value
+        }
+
+        else -> {
+            categoryType = CategoryType.EXPENSE
+            (expenseAssistant.category as ExpenseType).value
+        }
+    }
+
+    TransactionScreenContent(
+        modifier = modifier,
+        date = expenseAssistant.today,
+        categoryType = categoryType,
+        category = category,
+        user = expenseAssistant.getUser(),
+        onNavigate = {
+            if (it == null) navController.popBackStack()
+            else navController.navigate(it)
+        },
+        addTransaction = expenseAssistant::addTransaction
+    )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TransactionScreenContent(
+    modifier: Modifier,
+    user: UserModel,
+    date: LocalDate,
+    category: Any,
+    categoryType: CategoryType,
+    onNavigate: (screenName: String?) -> Unit,
+    addTransaction: (transaction: TransactionModel, bankAccount: BankAccount) -> Unit
+) {
 
     val maxChar = 100
     val height = dimensionResource(id = R.dimen.field_height)
     val elementSpacing = dimensionResource(id = R.dimen.element_spacing)
 
-    val category = when (expenseAssistant.categoryType) {
-        CategoryType.INCOME -> expenseAssistant.category as IncomeType
-        else -> expenseAssistant.category as ExpenseType
-    }
+    var amount by remember { mutableStateOf("") }
+    var expenseNote by remember { mutableStateOf("") }
+    var transactionDate by remember { mutableStateOf(date) }
+    var transactionTime by remember { mutableStateOf(LocalTime.now()) }
+    var bankAccount by remember { mutableStateOf(user.selectedBankAccount) }
 
     Column(
         modifier = modifier,
@@ -63,11 +97,9 @@ fun TransactionScreen(
                 text = "Category: $category",
                 modifier = Modifier
                     .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineLarge,
             )
-            TextButton(
-                onClick = { navController.navigate(Screens.CATEGORY.name) }
-            ) { Text(text = "Change") }
+            TextButton(onClick = { onNavigate(Screens.CATEGORY.name) }) { Text(text = "Change") }
         }
         Spacer(modifier = Modifier.height(elementSpacing))
         OutlinedTextField(
@@ -77,7 +109,7 @@ fun TransactionScreen(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
-            leadingIcon = { Text(text = expenseAssistant.currencyType) },
+            leadingIcon = { Text(text = user.currencyType.icon) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(text = stringResource(R.string.amount)) },
             singleLine = true,
@@ -86,8 +118,9 @@ fun TransactionScreen(
         Spacer(modifier = Modifier.height(elementSpacing))
         Dropdown(
             modifier = Modifier.fillMaxWidth(),
-            data = expenseAssistant.backAccounts,
-            onSelect = {}
+            data = user.bankAccounts,
+            bankAccount = bankAccount,
+            onSelect = { bankAccount = it }
         )
         Spacer(modifier = Modifier.height(elementSpacing))
         DatePicker(
@@ -132,17 +165,18 @@ fun TransactionScreen(
         ) {
             FloatingActionButton(
                 onClick = {
-                    expenseAssistant.addTransaction(
+                    addTransaction(
                         TransactionModel(
-                            categoryType = expenseAssistant.categoryType,
+                            categoryType = categoryType,
                             category = category,
                             note = expenseNote,
-                            amount = amount.toInt(),
+                            amount = amount.toDouble(),
                             date = transactionDate,
                             time = transactionTime
-                        )
+                        ),
+                        bankAccount
                     )
-                    navController.popBackStack()
+                    onNavigate(null)
                 }
             ) {
                 Icon(
@@ -155,14 +189,37 @@ fun TransactionScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewTransactionScreen() {
     ExpenseAssistantTheme {
-        TransactionScreen(
-            modifier = Modifier.fillMaxSize(),
-            expenseAssistant = viewModel(),
-            navController = rememberNavController(),
+        TransactionScreenContent(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+            date = LocalDate.now(),
+            categoryType = CategoryType.INCOME,
+            category = IncomeType.BUSINESS_INCOME,
+            user = UserModel(
+                name = "Faiq",
+                bankAccounts = listOf(
+                    BankAccount(
+                        name = "Meezan",
+                        iBan = "DKLJ#SDKJF#()",
+                        number = "1231212312",
+                        balance = 30000.0
+                    )
+                ),
+                currencyType = CurrencyType.Dollar,
+                selectedBankAccount = BankAccount(
+                    name = "Meezan",
+                    iBan = "DKLJ#SDKJF#()",
+                    number = "1231212312",
+                    balance = 30000.0
+                ),
+                listOf()
+            ),
+            onNavigate = {},
+            addTransaction = {_, _ -> }
         )
     }
 }

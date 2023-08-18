@@ -24,3 +24,11 @@ enum class CategoryType {
     EXPENSE,
     INCOME
 }
+
+enum class CurrencyType(val icon: String) {
+    Euro(icon = "€"),
+    Dollar(icon = "$"),
+    PakistaniRupee(icon = "₨"),
+    Ponds(icon = "£"),
+    Lira(icon = "₤"),
+}

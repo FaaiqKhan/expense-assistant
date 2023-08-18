@@ -13,69 +13,73 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.ui.homeScreen.ExpenseAssistantViewModel
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreenUiState
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
 
 @Composable
 fun CalendarView(
     modifier: Modifier = Modifier,
-    expenseAssistant: ExpenseAssistantViewModel,
+    uiState: HomeScreenUiState,
+    backToToday: () -> Unit,
+    updateDate: (index: Int) -> Unit,
 ) {
-    val calendarDatesState by expenseAssistant.calenderDates.collectAsState()
-
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = "${expenseAssistant.calendarOfMonth.month} ${expenseAssistant.calendarOfMonth.year}",
-                style = MaterialTheme.typography.displaySmall
-            )
-            Text(
-                text = "01 - ${expenseAssistant.calendarOfMonth.month.maxLength()} ${expenseAssistant.calendarOfMonth.month}",
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Text(
-                text = stringResource(R.string.today),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.clickable { expenseAssistant.backToToday() }
-            )
-        }
-        Divider(color = Color.Gray)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(Utils.daysMap.size),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            items(Utils.daysMap.keys.toList()) { items ->
-                Text(
-                    text = items.substring(0, 3),
+    when (uiState) {
+        is HomeScreenUiState.Loading -> {}
+        is HomeScreenUiState.Failure -> {}
+        is HomeScreenUiState.Success -> {
+            Column(modifier = modifier) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "${uiState.calendarData.localDate.month} ${uiState.calendarData.localDate.year}",
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    Text(
+                        text = "01 - ${uiState.calendarData.localDate.month.maxLength()} ${uiState.calendarData.localDate.month}",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.today),
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.clickable { backToToday() }
+                    )
+                }
+                Divider(color = Color.Gray)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(Utils.daysMap.size),
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }
-            items(calendarDatesState) { item ->
-                CalendarCard(
-                    indexInList = item.id,
-                    calendarDateState = item,
-                    onSelect = expenseAssistant::updateSelectedDate
-                )
+                ) {
+                    items(Utils.daysMap.keys.toList()) { items ->
+                        Text(
+                            text = items.substring(0, 3),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    items(uiState.calendarData.localCalendar) { item ->
+                        CalendarCard(
+                            indexInList = item.id,
+                            calendarDateState = item,
+                            onSelect = updateDate
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewCalendarView() {
     ExpenseAssistantTheme {
-        CalendarView(expenseAssistant = viewModel())
+        CalendarView(uiState = HomeScreenUiState.Loading, backToToday = {}, updateDate = {})
     }
 }

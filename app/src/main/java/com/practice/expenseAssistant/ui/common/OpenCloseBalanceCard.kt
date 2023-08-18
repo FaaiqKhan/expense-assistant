@@ -11,22 +11,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.data.BalanceModel
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreenUiState
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.utils.Utils
 
 @Composable
-fun OpenCloseBalanceCard(modifier: Modifier = Modifier, openBalance: Int, closeBalance: Int) {
+fun OpenCloseBalanceCard(
+    modifier: Modifier = Modifier,
+    openBalanceOfMonth: Double,
+    closeBalanceOfMonth: Double
+) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero)),
     ) {
         Row(modifier = Modifier.padding(dimensionResource(id = R.dimen.card_padding))) {
             Text(
-                text = stringResource(id = R.string.opening_balance, openBalance),
+                text = stringResource(id = R.string.opening_balance, openBalanceOfMonth),
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = stringResource(id = R.string.closing_balance, closeBalance),
+                text = stringResource(id = R.string.closing_balance, closeBalanceOfMonth),
                 style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End
@@ -42,8 +49,8 @@ private fun PreviewOpenCloseBalanceCard() {
     ExpenseAssistantTheme {
         OpenCloseBalanceCard(
             modifier = Modifier.fillMaxWidth(),
-            openBalance = 123,
-            closeBalance = 123
+            openBalanceOfMonth = 1000.0,
+            closeBalanceOfMonth = 400.0
         )
     }
 }

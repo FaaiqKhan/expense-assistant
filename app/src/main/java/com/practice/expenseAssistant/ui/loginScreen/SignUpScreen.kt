@@ -30,7 +30,7 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     uiState: LoginScreenUiState,
-    signUp: (name: String, password: String, bankAccount: List<BankAccount>) -> Unit
+    signUp: (name: String, password: String, bankAccount: List<BankAccount>, selectedBankAccount: BankAccount) -> Unit
 ) {
 
     var userName by remember { mutableStateOf("") }
@@ -157,9 +157,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_content_padding)))
         Button(
             modifier = Modifier.width(dimensionResource(id = R.dimen.button_width)),
-            onClick = {
-                signUp(userName, password, bankAccounts.toList())
-            },
+            onClick = { signUp(userName, password, bankAccounts.toList(), bankAccounts.first()) },
         ) {
             if (uiState is LoginScreenUiState.Loading)
                 CircularProgressIndicator(
@@ -173,10 +171,9 @@ fun SignUpScreen(
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewSignUpScreen() {
     ExpenseAssistantTheme {
-        SignUpScreen(uiState = LoginScreenUiState.Ideal, signUp = { _, _, _ -> })
+        SignUpScreen(uiState = LoginScreenUiState.Ideal, signUp = { _, _, _, _-> })
     }
 }

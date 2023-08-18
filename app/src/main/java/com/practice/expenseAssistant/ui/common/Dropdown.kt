@@ -9,16 +9,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.data.BankAccount
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Dropdown(
     modifier: Modifier = Modifier,
-    data: Map<String, String>,
-    onSelect: (accountDetails: Map.Entry<String, String>) -> Unit
+    data: List<BankAccount>,
+    bankAccount: BankAccount,
+    onSelect: (account: BankAccount) -> Unit
 ) {
-    val selectedText by remember { mutableStateOf(data.values.first()) }
+    var account by remember { mutableStateOf(bankAccount) }
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -27,7 +29,7 @@ fun Dropdown(
         onExpandedChange = { expanded = !expanded },
     ) {
         OutlinedTextField(
-            value = selectedText,
+            value = "${account.name}: ${account.number}",
             onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -42,9 +44,10 @@ fun Dropdown(
         {
             data.forEach { item ->
                 DropdownMenuItem(
-                    content = { Text(text = item.value) },
+                    content = { Text(text = "${item.name}: ${item.number}") },
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
+                        account = item
                         onSelect(item)
                         expanded = false
                     },
@@ -61,7 +64,26 @@ private fun PreviewDropdown() {
     ExpenseAssistantTheme {
         Dropdown(
             modifier = Modifier,
-            data = mapOf("HBL" to "123234235134", "Meezan" to "50387395032"),
+            data = listOf(
+                BankAccount(
+                    iBan = "HBL000928324321498213",
+                    name = "Habib Bank Limited",
+                    number = "0010031239412830",
+                    balance = 60000.00
+                ),
+                BankAccount(
+                    iBan = "MZN000813415322408213",
+                    name = "Mezzanine Bank Limited",
+                    number = "00200395038219",
+                    balance = 160000.00
+                ),
+            ),
+            bankAccount = BankAccount(
+                iBan = "MZN000813415322408213",
+                name = "Mezzanine Bank Limited",
+                number = "00200395038219",
+                balance = 160000.00
+            ),
             onSelect = {}
         )
     }

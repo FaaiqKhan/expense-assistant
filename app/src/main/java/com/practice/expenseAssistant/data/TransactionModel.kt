@@ -5,10 +5,11 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class TransactionModel(
+    var transactionId: Int = 0,
     val categoryType: CategoryType,
     val category: Any,
     val note: String,
-    val amount: Int,
+    val amount: Double,
     val date: LocalDate,
-    val time: LocalTime
+    val time: LocalTime,
 )

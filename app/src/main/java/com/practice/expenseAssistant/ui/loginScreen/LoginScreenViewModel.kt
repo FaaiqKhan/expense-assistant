@@ -2,11 +2,12 @@ package com.practice.expenseAssistant.ui.loginScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practice.expenseAssistant.data.BankAccount
-import com.practice.expenseAssistant.data.UserModel
+import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
+import com.practice.expenseAssistant.repository.database.dao.TransactionDao
 import com.practice.expenseAssistant.repository.database.dao.UserDao
 import com.practice.expenseAssistant.repository.database.entities.User
+import com.practice.expenseAssistant.utils.CurrencyType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,17 +17,16 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
     private val userDao: UserDao,
+    private val transactionDao: TransactionDao,
     private val expenseAssistantRepository: ExpenseAssistantRepository,
 ) : ViewModel() {
 
-    private val _loginScreenViewState = MutableStateFlow<LoginScreenUiState>(LoginScreenUiState.Ideal)
+    private val _loginScreenViewState =
+        MutableStateFlow<LoginScreenUiState>(LoginScreenUiState.Ideal)
 
     val loginScreenUiState: StateFlow<LoginScreenUiState> = _loginScreenViewState
 
-    fun signIn(
-        userName: String,
-        password: String,
-    ) {
+    fun signIn(userName: String, password: String) {
         val handler = CoroutineExceptionHandler { _, exception ->
             println("CoroutineExceptionHandler of signIn got $exception")
             return@CoroutineExceptionHandler
@@ -43,21 +43,35 @@ class LoginScreenViewModel @Inject constructor(
                 _loginScreenViewState.emit(LoginScreenUiState.Failure("Invalid username of password"))
                 return@launch
             }
+            val transactions = transactionDao.getAllTransactions().map {
+                TransactionModel(
+                    transactionId = it.id,
+                    categoryType = it.categoryType,
+                    category = it.category,
+                    note = it.note,
+                    amount = it.amount,
+                    date = it.date,
+                    time = it.time
+                )
+            }
             expenseAssistantRepository.setUser(
                 UserModel(
-                    user.name,
-                    user.bankAccount
+                    name = user.name,
+                    bankAccounts = user.bankAccount,
+                    currencyType = user.currencyType,
+                    selectedBankAccount = user.selectedBankAccount,
+                    transactions = transactions
                 )
             )
             _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
-
     }
 
     fun signUp(
         userName: String,
         password: String,
         bankAccounts: List<BankAccount>,
+        selectedBankAccount: BankAccount,
         dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -79,13 +93,18 @@ class LoginScreenViewModel @Inject constructor(
                 val user = User(
                     name = userName,
                     password = password,
-                    bankAccount = bankAccounts
+                    bankAccount = bankAccounts,
+                    currencyType = CurrencyType.Dollar,
+                    selectedBankAccount = selectedBankAccount
                 )
                 userDao.setUser(user)
                 expenseAssistantRepository.setUser(
                     UserModel(
-                        user.name,
-                        user.bankAccount
+                        name = user.name,
+                        bankAccounts = user.bankAccount,
+                        currencyType = user.currencyType,
+                        selectedBankAccount = user.selectedBankAccount,
+                        transactions = listOf()
                     )
                 )
                 _loginScreenViewState.emit(LoginScreenUiState.Success)

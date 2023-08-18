@@ -4,7 +4,6 @@ import com.practice.expenseAssistant.data.CalendarDateModel
 import java.time.LocalDate
 
 object Utils {
-
     val daysMap = mapOf(
         "SUNDAY" to 0,
         "MONDAY" to 1,
@@ -57,14 +56,6 @@ object Utils {
 
         return numberOfDaysInPreviousMonth + numberOfDaysInCurrentMonth + numberOfDaysInNextMonth
     }
-
-    val currencyIcons = mapOf(
-        "Euro" to "€",
-        "Dollar" to "$",
-        "Pakistani Rupee" to "₨",
-        "Ponds" to "£",
-        "Lira" to "₤",
-    )
 
     fun updateTo2Digits(hour: Int, minute: Int): String {
         val twoDigitHours = if (hour < 10) "0$hour" else hour
