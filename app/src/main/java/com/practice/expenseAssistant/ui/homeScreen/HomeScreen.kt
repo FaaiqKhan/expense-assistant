@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.BalanceModel
-import com.practice.expenseAssistant.data.CalendarDataModel
+import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
@@ -24,10 +23,14 @@ fun HomeScreen(
 ) {
     val name = expenseAssistant.getUser().name
     val localCalendarState by expenseAssistant.localCalender.collectAsState()
+    val calendar = expenseAssistant.expenseAssistantRepository.getCalender().collectAsState()
+
     HomeScreenContent(
         modifier = modifier,
         userName = name,
         calendarUiState = localCalendarState,
+        date = expenseAssistant.expenseAssistantRepository.getTodayDate(),
+        calendar = calendar.value,
         onToday = expenseAssistant::backToToday,
         onDateUpdate = expenseAssistant::updateSelectedDate
     )
@@ -38,8 +41,10 @@ private fun HomeScreenContent(
     modifier: Modifier,
     userName: String,
     calendarUiState: HomeScreenUiState,
+    date: LocalDate,
+    calendar: List<CalendarDateModel>,
     onToday: () -> Unit,
-    onDateUpdate: (index: Int) -> Unit
+    onDateUpdate: (index: Int) -> Unit,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -55,7 +60,12 @@ private fun HomeScreenContent(
             uiState = calendarUiState,
             onClickViewAll = { }
         )
-        CalendarView(uiState = calendarUiState, backToToday = onToday, updateDate = onDateUpdate)
+        CalendarView(
+            date = date,
+            calendar = calendar,
+            backToToday = onToday,
+            updateDate = onDateUpdate,
+        )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
         if (calendarUiState is HomeScreenUiState.Success) {
             OpenCloseBalanceCard(
@@ -88,7 +98,9 @@ private fun PreviewHomeScreen() {
                 )
             ),
             onToday = {},
-            onDateUpdate = {}
+            onDateUpdate = {},
+            date = LocalDate.now(),
+            calendar = dates
         )
     }
 }

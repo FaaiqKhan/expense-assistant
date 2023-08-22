@@ -12,16 +12,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.CategoryType
-import com.practice.expenseAssistant.utils.ExpenseType
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CategoryScreen(
     modifier: Modifier = Modifier,
-    onSelect: (type: CategoryType, category: Any) -> Unit,
+    onSelect: (category: String, categoryType: CategoryType) -> Unit,
 ) {
     var tabState by remember { mutableStateOf(0) }
-    val titles = listOf("Expense", "Income")
 
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         AnimatedVisibility(
@@ -33,7 +30,7 @@ fun CategoryScreen(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(all = dimensionResource(id = R.dimen.screen_content_padding)),
-                onSelect = { onSelect(CategoryType.EXPENSE, it) }
+                onSelect = { onSelect(it, CategoryType.EXPENSE) }
             )
         }
         AnimatedVisibility(
@@ -45,13 +42,13 @@ fun CategoryScreen(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(all = dimensionResource(id = R.dimen.screen_content_padding)),
-                onSelect = { onSelect(CategoryType.INCOME, it) }
+                onSelect = { onSelect(it, CategoryType.INCOME) }
             )
         }
         TabRow(selectedTabIndex = tabState) {
-            titles.forEachIndexed { index, item ->
+            CategoryType.values().forEachIndexed { index, item ->
                 Tab(
-                    text = { Text(text = item) },
+                    text = { Text(text = item.name) },
                     selected = tabState == index,
                     onClick = { tabState = index }
                 )
@@ -65,6 +62,6 @@ fun CategoryScreen(
 @Composable
 private fun PreviewTransactionCategory() {
     ExpenseAssistantTheme {
-        CategoryScreen(modifier = Modifier.fillMaxWidth(), onSelect = { _, _ -> })
+        CategoryScreen(modifier = Modifier.fillMaxWidth(), onSelect = {_, _ -> })
     }
 }

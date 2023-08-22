@@ -13,8 +13,8 @@ interface TransactionDao {
     @Update
     suspend fun updateTransaction(transaction: Transaction)
 
-    @Delete
-    suspend fun removeTransaction(transaction: Transaction)
+    @Query("DELETE FROM `transaction` WHERE id = :transactionId")
+    suspend fun removeTransaction(transactionId: Int)
 
     @Query("SELECT * from `transaction`")
     suspend fun getAllTransactions(): List<Transaction>

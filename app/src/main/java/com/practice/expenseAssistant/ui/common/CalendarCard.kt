@@ -37,13 +37,6 @@ fun CalendarCard(
     } else {
         MaterialTheme.colorScheme.secondary
     }
-    val totalExpenseOfDay = calendarDateState.transactionModel.sumOf {
-        if (it.categoryType == CategoryType.EXPENSE) it.amount else 0.0
-    }
-    val totalIncomeOfDay = calendarDateState.transactionModel.sumOf {
-        if (it.categoryType == CategoryType.INCOME) it.amount else 0.0
-    }
-    val expenseOpacity = if (totalExpenseOfDay == 0.0) 0f else 1f
     Box(
         modifier = Modifier
             .width(dimensionResource(id = R.dimen.calendar_card_width))
@@ -56,9 +49,9 @@ fun CalendarCard(
         Column(
             modifier = Modifier.fillMaxHeight()
         ) {
-            AnimatedVisibility(visible = totalIncomeOfDay > 0) {
+            AnimatedVisibility(visible = calendarDateState.todayTotalIncome != 0.0) {
                 Text(
-                    text = totalIncomeOfDay.toString(),
+                    text = calendarDateState.todayTotalIncome.toString(),
                     textAlign = TextAlign.End,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -68,12 +61,12 @@ fun CalendarCard(
                 )
             }
             Text(
-                text = totalExpenseOfDay.toString(),
+                text = calendarDateState.todayTotalExpense.toString(),
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = dimensionResource(id = R.dimen.element_spacing))
-                    .alpha(expenseOpacity),
+                    .alpha(if (calendarDateState.todayTotalExpense == 0.0) 0f else 1f),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.error,
             )
@@ -100,16 +93,14 @@ private fun PreviewCalendarCard() {
                         date = LocalDate.now().plusDays(it.toLong()),
                         isSelected = it == 3,
                         isCurrentMonthDate = it == 2,
-                        transactionModel = listOf(
-                            TransactionModel(
-                                categoryType = CategoryType.EXPENSE,
-                                category = ExpenseType.BILL,
-                                note = "Water and pipe maintenance",
-                                amount = it * 200.0,
-                                date = LocalDate.now(),
-                                time = LocalTime.now()
-                            ),
-                        )
+                        todayTransactions = listOf(TransactionModel(
+                            categoryType = CategoryType.EXPENSE,
+                            category = ExpenseType.BILL,
+                            note = "Water and pipe maintenance",
+                            amount = it * 200.0,
+                            date = LocalDate.now(),
+                            time = LocalTime.now()
+                        ))
                     ),
                     onSelect = { }
                 )

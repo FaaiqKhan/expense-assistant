@@ -51,7 +51,7 @@ class CalendarTest {
 
         val expectedDates = julyDates + augustDates + septemberDates
         val dates: List<CalendarDateModel> =
-            Utils.createCalenderDays(localDate = monthOfAugust, todayDate = LocalDate.now())
+            Utils.createCalenderDays(month = monthOfAugust, todayDate = LocalDate.now())
         assertEquals(dates.size, expectedDates.size)
     }
 

@@ -16,13 +16,13 @@ import com.practice.expenseAssistant.utils.IncomeCategoriesIcon
 import com.practice.expenseAssistant.utils.IncomeType
 
 @Composable
-fun IncomeCategories(modifier: Modifier = Modifier, onSelect: (incomeType: IncomeType) -> Unit) {
+fun IncomeCategories(modifier: Modifier = Modifier, onSelect: (incomeType: String) -> Unit) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2),
     ) {
         items(IncomeType.values()) {
-            Row(modifier = Modifier.clickable { onSelect(it) }) {
+            Row(modifier = Modifier.clickable { onSelect(it.value) }) {
                 Icon(
                     imageVector = IncomeCategoriesIcon.icons.getValue(it.value),
                     contentDescription = it.name

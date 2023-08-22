@@ -15,13 +15,13 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.ExpenseCategoriesIcon
 
 @Composable
-fun ExpenseCategories(modifier: Modifier = Modifier, onSelect: (expenseType: ExpenseType) -> Unit) {
+fun ExpenseCategories(modifier: Modifier = Modifier, onSelect: (expenseType: String) -> Unit) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2),
     ) {
         items(ExpenseType.values()) {
-            Row(modifier = Modifier.clickable { onSelect(it) }) {
+            Row(modifier = Modifier.clickable { onSelect(it.value) }) {
                 Icon(
                     imageVector = ExpenseCategoriesIcon.icons.getValue(it.value),
                     contentDescription = it.name

@@ -9,11 +9,5 @@ z
 Japp/src/main/java/com/practice/expenseAssistant/data/CategoryNavBarItem.kt,c/2/c249f7670416958841b5e51956871892dd9c67fc
 Å
 Qapp/src/main/java/com/practice/expenseAssistant/ui/common/CategoryBottomNavBar.kt,c/e/ce07549c17cb3c4e8858b2c03a4a1dd803a5f1f3
-Ö
-Uapp/src/main/java/com/practice/expenseAssistant/ui/categoryScreen/IncomeCategories.kt,6/3/63d540336212f9eb93ee795b6973d84e00b6a20d
-Ü
-Vapp/src/main/java/com/practice/expenseAssistant/ui/categoryScreen/ExpenseCategories.kt,b/7/b7e70992f96a35e43654af8013ccbfbaff192004
 w
 Gapp/src/main/java/com/practice/expenseAssistant/ui/common/TimePicker.kt,c/2/c20268fbbc392881f670e353d7d2c7f992c9e22f
-w
-Gapp/src/main/java/com/practice/expenseAssistant/ui/common/DatePicker.kt,3/1/314555e993d0ad7648a4f4899496dbd5f4c87d1f

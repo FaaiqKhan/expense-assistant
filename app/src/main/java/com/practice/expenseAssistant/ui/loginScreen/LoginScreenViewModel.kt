@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,8 +44,9 @@ class LoginScreenViewModel @Inject constructor(
                 _loginScreenViewState.emit(LoginScreenUiState.Failure("Invalid username of password"))
                 return@launch
             }
-            val transactions = transactionDao.getAllTransactions().map {
-                TransactionModel(
+            val transactions: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
+            transactionDao.getAllTransactions().forEach {
+                val transaction = TransactionModel(
                     transactionId = it.id,
                     categoryType = it.categoryType,
                     category = it.category,
@@ -53,6 +55,11 @@ class LoginScreenViewModel @Inject constructor(
                     date = it.date,
                     time = it.time
                 )
+                if (transactions[it.date] != null) {
+                    transactions.getValue(it.date).add(transaction)
+                } else {
+                    transactions[it.date] = mutableListOf(transaction)
+                }
             }
             expenseAssistantRepository.setUser(
                 UserModel(
@@ -104,7 +111,6 @@ class LoginScreenViewModel @Inject constructor(
                         bankAccounts = user.bankAccount,
                         currencyType = user.currencyType,
                         selectedBankAccount = user.selectedBankAccount,
-                        transactions = listOf()
                     )
                 )
                 _loginScreenViewState.emit(LoginScreenUiState.Success)

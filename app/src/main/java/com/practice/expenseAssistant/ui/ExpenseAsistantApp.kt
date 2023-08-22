@@ -14,15 +14,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.NavigationBarItem
 import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.common.BottomNavigationBar
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
+import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
@@ -31,7 +30,6 @@ import com.practice.expenseAssistant.utils.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpenseAssistantApp(
-    expenseAssistant: HomeScreenViewModel = hiltViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
 
@@ -76,11 +74,7 @@ fun ExpenseAssistantApp(
                 ExpenseAssistantActionButton(navController)
         }
     ) {
-        NavigationHost(
-            modifier = Modifier.padding(it),
-            navController = navController,
-            expenseAssistant = expenseAssistant
-        )
+        NavigationHost(modifier = Modifier.padding(it), navController = navController)
     }
 }
 
@@ -141,11 +135,7 @@ fun ExpenseAssistantActionButton(navController: NavHostController) {
 }
 
 @Composable
-fun NavigationHost(
-    modifier: Modifier,
-    navController: NavHostController,
-    expenseAssistant: HomeScreenViewModel
-) {
+fun NavigationHost(modifier: Modifier, navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.LOGIN.name) {
         composable(route = Screens.LOGIN.name) {
             LoginScreen(
@@ -156,24 +146,26 @@ fun NavigationHost(
             )
         }
         composable(route = Screens.HOME.name) {
-            HomeScreen(modifier = modifier.fillMaxSize(), expenseAssistant = expenseAssistant)
+            val homeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
+            HomeScreen(modifier = modifier.fillMaxSize(), expenseAssistant = homeScreenViewModel)
         }
         composable(route = Screens.CATEGORY.name) {
+            val categoryViewModel: CategoryScreenViewModel = hiltViewModel()
             CategoryScreen(
                 modifier = modifier.fillMaxHeight(),
-                onSelect = { type, category ->
-                    expenseAssistant.updateCategory(type, category)
-                    navController.navigate(Screens.TRANSACTION.name) {
-                        popUpTo(Screens.HOME.name)
-                    }
+                onSelect = { category, categoryType ->
+                    categoryViewModel.updateCategory(type = categoryType, category = category)
+                    navController.navigate(Screens.TRANSACTION.name) { popUpTo(Screens.HOME.name) }
                 }
             )
         }
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(
                 modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
-                expenseAssistant = expenseAssistant,
-                navController = navController,
+                onNavigate = {
+                    if (it == null) navController.popBackStack()
+                    else navController.navigate(it)
+                },
             )
         }
     }

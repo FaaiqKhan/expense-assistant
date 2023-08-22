@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
-import com.practice.expenseAssistant.utils.*
+import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,53 +14,52 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val expenseAssistantRepository: ExpenseAssistantRepository
+    val expenseAssistantRepository: ExpenseAssistantRepository
 ) : ViewModel() {
 
-    private val toDayMonth: LocalDate = LocalDate.of(
-        LocalDate.now().year,
-        LocalDate.now().month,
-        1
+    private var dates: List<CalendarDateModel> = Utils.createCalenderDays(
+        todayDate = expenseAssistantRepository.getTodayDate(),
+        month = expenseAssistantRepository.getCurrentMonth(),
+        transactions = expenseAssistantRepository.getUser().transactions,
     )
 
-    var today: LocalDate = LocalDate.now()
-
-    private var dates = Utils.createCalenderDays(toDayMonth, today)
-
-    private val balanceModel = BalanceModel(
-        openingBalance = 2000.0,
-        closingBalance = 800.0,
-        totalExpense = 1200.0,
-    )
-    private val calendarModel = CalendarDataModel(localDate = toDayMonth, localCalendar = dates)
-
-    private val _calenderDates: MutableStateFlow<HomeScreenUiState> =
-        MutableStateFlow(
-            HomeScreenUiState.Success(calendarData = calendarModel, balanceModel = balanceModel)
+    init {
+        expenseAssistantRepository.setCalenderDates(dates)
+        expenseAssistantRepository.setCalenderData(
+            CalendarDataModel(
+                localDate = expenseAssistantRepository.getCurrentMonth(),
+                localCalendar = dates
+            ),
         )
-    val localCalender = _calenderDates.asStateFlow()
+    }
 
-    var categoryType: CategoryType = CategoryType.EXPENSE
-        private set
-    var category: Any = ExpenseType.OTHERS
-        private set
+    private val _calenderDates: MutableStateFlow<HomeScreenUiState> = MutableStateFlow(
+        HomeScreenUiState.Success(
+            balanceModel = expenseAssistantRepository.getBalance(),
+            calendarData = expenseAssistantRepository.getMonthCalenderModel(),
+        )
+    )
+    val localCalender = _calenderDates.asStateFlow()
 
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
+            val updatedCalendar = dates.map {
+                if (it.id == listIndex) {
+                    expenseAssistantRepository.updateSelectedDate(it.date)
+                    it.copy(isSelected = true)
+                } else {
+                    it.copy(isSelected = false)
+                }
+            }
+//            expenseAssistantRepository.setCalenderDates(updatedCalendar)
+            expenseAssistantRepository.updateCalendar(updatedCalendar)
             _calenderDates.emit(
                 HomeScreenUiState.Success(
                     calendarData = CalendarDataModel(
-                        localDate = toDayMonth,
-                        localCalendar = dates.map {
-                            if (it.id == listIndex) {
-                                today = it.date
-                                it.copy(isSelected = true)
-                            } else {
-                                it.copy(isSelected = false)
-                            }
-                        }
+                        localDate = expenseAssistantRepository.getCurrentMonth(),
+                        localCalendar = updatedCalendar
                     ),
-                    balanceModel = balanceModel
+                    balanceModel = expenseAssistantRepository.getBalance()
                 )
             )
         }
@@ -71,81 +70,20 @@ class HomeScreenViewModel @Inject constructor(
             _calenderDates.emit(
                 HomeScreenUiState.Success(
                     CalendarDataModel(
-                        localDate = toDayMonth,
+                        localDate = expenseAssistantRepository.getCurrentMonth(),
                         localCalendar = dates.map {
                             if (it.date == LocalDate.now()) {
-                                today = it.date
+                                expenseAssistantRepository.setDate(it.date)
                                 it.copy(isSelected = true)
                             } else {
                                 it.copy(isSelected = false)
                             }
                         }
                     ),
-                    balanceModel = balanceModel
+                    balanceModel = expenseAssistantRepository.getBalance()
                 )
             )
         }
-    }
-
-    fun addTransaction(transactionModel: TransactionModel, bankAccount: BankAccount) {
-        viewModelScope.launch {
-            var totalAmount = 0.0
-            dates = dates.map {
-                if (it.date == transactionModel.date) {
-                    if (transactionModel.categoryType == CategoryType.EXPENSE)
-                        totalAmount = balanceModel.totalExpense + transactionModel.amount
-                    val expenses = it.transactionModel.toMutableList()
-                    expenses.add(transactionModel)
-                    it.copy(
-                        isSelected = transactionModel.date == today,
-                        transactionModel = expenses.toList()
-                    )
-                } else {
-                    it.copy(isSelected = it.date == today)
-                }
-            }
-            expenseAssistantRepository.addTransaction(transactionModel, bankAccount)
-            _calenderDates.emit(
-                HomeScreenUiState.Success(
-                    calendarData = CalendarDataModel(localDate = toDayMonth, localCalendar = dates),
-                    balanceModel = balanceModel.copy(totalExpense = totalAmount)
-                )
-            )
-        }
-    }
-
-    fun removeExpense(transactionModel: TransactionModel) {
-        viewModelScope.launch {
-            var totalAmount = 0.0
-            dates = dates.map {
-                if (it.date == transactionModel.date) {
-                    totalAmount = balanceModel.totalExpense - transactionModel.amount
-                    val expenses = it.transactionModel.toMutableList()
-                    expenses.remove(transactionModel)
-                    it.copy(
-                        isSelected = transactionModel.date == today,
-                        transactionModel = expenses.toList()
-                    )
-                } else {
-                    it.copy(isSelected = it.date == today)
-                }
-            }
-            _calenderDates.emit(
-                HomeScreenUiState.Success(
-                    calendarData = CalendarDataModel(localDate = toDayMonth, localCalendar = dates),
-                    balanceModel = balanceModel.copy(totalExpense = totalAmount)
-                )
-            )
-        }
-    }
-
-    fun updateCategory(type: CategoryType, category: Any) {
-        categoryType = type
-        this.category = category
-    }
-
-    fun updateBankAccount(bankAccount: BankAccount) {
-//        this.bankAccount = bankAccount
     }
 
     fun getUser(): UserModel = expenseAssistantRepository.getUser()

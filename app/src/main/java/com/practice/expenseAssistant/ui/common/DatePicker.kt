@@ -13,19 +13,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import java.time.LocalDate
-import java.util.Calendar
 
 @Composable
-fun DatePicker(modifier: Modifier = Modifier, onSelect: (date: LocalDate) -> Unit) {
+fun DatePicker(
+    modifier: Modifier = Modifier,
+    date: LocalDate,
+    onSelect: (date: LocalDate) -> Unit,
+) {
     val context = LocalContext.current
-    val calendar = Calendar.getInstance()
 
-    // Fetching current year, month and day
-    val year = calendar[Calendar.YEAR]
-    val month = calendar[Calendar.MONTH]
-    val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
-
-    var selectedDate by remember { mutableStateOf("$dayOfMonth/${month + 1}/$year") }
+    var selectedDate: String by remember {
+        mutableStateOf("${date.dayOfMonth}/${date.month.value}/${date.year}")
+    }
 
     val datePicker =
         DatePickerDialog(context, { _: DatePicker,
@@ -34,7 +33,7 @@ fun DatePicker(modifier: Modifier = Modifier, onSelect: (date: LocalDate) -> Uni
                                     selectedDayOfMonth: Int ->
             selectedDate = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
             onSelect(LocalDate.of(selectedYear, (selectedMonth + 1), selectedDayOfMonth))
-        }, year, month, dayOfMonth)
+        }, date.year, date.month.value, date.dayOfMonth)
 
     Row(
         modifier = modifier,
@@ -49,8 +48,8 @@ fun DatePicker(modifier: Modifier = Modifier, onSelect: (date: LocalDate) -> Uni
         Text(text = "day/month/year", style = MaterialTheme.typography.labelMedium)
         TextButton(
             onClick = {
-                selectedDate = "$dayOfMonth/${month + 1}/$year"
-                onSelect(LocalDate.of(year, (month + 1), dayOfMonth))
+                selectedDate = "${date.dayOfMonth}/${date.month.value}/${date.year}"
+                onSelect(date)
             }
         ) { Text(text = "Today") }
     }
@@ -61,6 +60,6 @@ fun DatePicker(modifier: Modifier = Modifier, onSelect: (date: LocalDate) -> Uni
 @Composable
 private fun PreviewDatePicker() {
     ExpenseAssistantTheme {
-        DatePicker(modifier = Modifier.fillMaxWidth(), onSelect = {})
+        DatePicker(modifier = Modifier.fillMaxWidth(), date = LocalDate.now(), onSelect = {})
     }
 }

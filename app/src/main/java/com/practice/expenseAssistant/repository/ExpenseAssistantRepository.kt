@@ -1,13 +1,35 @@
 package com.practice.expenseAssistant.repository
 
 import com.practice.expenseAssistant.data.*
-import com.practice.expenseAssistant.repository.database.entities.User
+import com.practice.expenseAssistant.utils.CategoryType
+import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
 
 interface ExpenseAssistantRepository {
 
     fun setUser(user: UserModel)
-    fun getUser(): UserModel
+    fun setDate(date: LocalDate)
+    fun setCalenderData(data: CalendarDataModel)
+    fun setCategoryType(categoryType: CategoryType)
+    fun setCategory(category: String)
+    fun setTotalExpenseOfMonth(expense: Double)
+    fun updateCategoryAndType(category: String, categoryType: CategoryType)
+    fun updateSelectedDate(date: LocalDate)
+    suspend fun updateCalendar(calendar: List<CalendarDateModel>)
     suspend fun addTransaction(transaction: TransactionModel, bankAccount: BankAccount)
-    fun getTransaction(transactionId: Int): TransactionModel?
-    fun getTransactions(): List<TransactionModel>
+    suspend fun removeTransaction(transaction: TransactionModel)
+    fun getUser(): UserModel
+    fun getTransaction(date: LocalDate, transactionId: Int): TransactionModel?
+    fun getTransactions(date: LocalDate): List<TransactionModel>?
+    fun getAllTransactions(): Map<LocalDate, List<TransactionModel>>
+    fun getTodayDate(): LocalDate
+    fun getCurrentMonth(): LocalDate
+    fun getMonthCalenderModel(): CalendarDataModel
+    fun setCalenderDates(dates: List<CalendarDateModel>)
+    fun getCalender(): StateFlow<List<CalendarDateModel>>
+    fun getCategoryType(): CategoryType
+    fun getCategory(): String
+    fun getBalance(): BalanceModel
+    fun getTotalExpenseOfMonth(): Double
+    fun getSelectedDate(): LocalDate
 }

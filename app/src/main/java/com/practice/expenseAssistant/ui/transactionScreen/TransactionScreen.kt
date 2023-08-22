@@ -16,11 +16,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
@@ -29,33 +28,17 @@ import java.time.LocalTime
 @Composable
 fun TransactionScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-    expenseAssistant: HomeScreenViewModel,
+    transactionViewModel: TransactionScreenViewModel = hiltViewModel(),
+    onNavigate: (screenName: String?) -> Unit
 ) {
-    val categoryType: Any
-    val category = when (expenseAssistant.categoryType) {
-        CategoryType.INCOME -> {
-            categoryType = CategoryType.INCOME
-            (expenseAssistant.category as IncomeType).value
-        }
-
-        else -> {
-            categoryType = CategoryType.EXPENSE
-            (expenseAssistant.category as ExpenseType).value
-        }
-    }
-
     TransactionScreenContent(
         modifier = modifier,
-        date = expenseAssistant.today,
-        categoryType = categoryType,
-        category = category,
-        user = expenseAssistant.getUser(),
-        onNavigate = {
-            if (it == null) navController.popBackStack()
-            else navController.navigate(it)
-        },
-        addTransaction = expenseAssistant::addTransaction
+        date = transactionViewModel.getSelectedDate(),
+        categoryType = transactionViewModel.getCategoryType(),
+        category = transactionViewModel.getCategory(),
+        user = transactionViewModel.getUser(),
+        onNavigate = onNavigate,
+        addTransaction = transactionViewModel::addTransaction
     )
 
 }
@@ -66,7 +49,7 @@ private fun TransactionScreenContent(
     modifier: Modifier,
     user: UserModel,
     date: LocalDate,
-    category: Any,
+    category: String,
     categoryType: CategoryType,
     onNavigate: (screenName: String?) -> Unit,
     addTransaction: (transaction: TransactionModel, bankAccount: BankAccount) -> Unit
@@ -128,6 +111,7 @@ private fun TransactionScreenContent(
                 .fillMaxWidth()
                 .height(height)
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+            date = date,
             onSelect = { transactionDate = it },
         )
         Spacer(modifier = Modifier.height(elementSpacing))
@@ -198,7 +182,7 @@ private fun PreviewTransactionScreen() {
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
             date = LocalDate.now(),
             categoryType = CategoryType.INCOME,
-            category = IncomeType.BUSINESS_INCOME,
+            category = IncomeType.BUSINESS_INCOME.value,
             user = UserModel(
                 name = "Faiq",
                 bankAccounts = listOf(
@@ -216,10 +200,9 @@ private fun PreviewTransactionScreen() {
                     number = "1231212312",
                     balance = 30000.0
                 ),
-                listOf()
             ),
             onNavigate = {},
-            addTransaction = {_, _ -> }
+            addTransaction = { _, _ -> }
         )
     }
 }
