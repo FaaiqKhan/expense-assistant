@@ -8,6 +8,7 @@ import com.practice.expenseAssistant.repository.database.dao.TransactionDao
 import com.practice.expenseAssistant.repository.database.dao.UserDao
 import com.practice.expenseAssistant.repository.database.entities.User
 import com.practice.expenseAssistant.utils.CurrencyType
+import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,6 +71,7 @@ class LoginScreenViewModel @Inject constructor(
                     transactions = transactions
                 )
             )
+            initCalendar()
             _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
     }
@@ -113,8 +115,24 @@ class LoginScreenViewModel @Inject constructor(
                         selectedBankAccount = user.selectedBankAccount,
                     )
                 )
+                initCalendar()
                 _loginScreenViewState.emit(LoginScreenUiState.Success)
             }
         }
+    }
+
+    private fun initCalendar() {
+        val calendar = Utils.createCalenderDays(
+            todayDate = expenseAssistantRepository.getTodayDate(),
+            month = expenseAssistantRepository.getCurrentMonth(),
+            transactions = expenseAssistantRepository.getUser().transactions,
+        )
+        expenseAssistantRepository.setCalenderDates(calendar)
+        expenseAssistantRepository.setCalenderData(
+            CalendarDataModel(
+                localDate = expenseAssistantRepository.getCurrentMonth(),
+                localCalendar = calendar
+            ),
+        )
     }
 }

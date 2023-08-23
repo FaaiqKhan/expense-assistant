@@ -17,22 +17,6 @@ class HomeScreenViewModel @Inject constructor(
     val expenseAssistantRepository: ExpenseAssistantRepository
 ) : ViewModel() {
 
-    private var dates: List<CalendarDateModel> = Utils.createCalenderDays(
-        todayDate = expenseAssistantRepository.getTodayDate(),
-        month = expenseAssistantRepository.getCurrentMonth(),
-        transactions = expenseAssistantRepository.getUser().transactions,
-    )
-
-    init {
-        expenseAssistantRepository.setCalenderDates(dates)
-        expenseAssistantRepository.setCalenderData(
-            CalendarDataModel(
-                localDate = expenseAssistantRepository.getCurrentMonth(),
-                localCalendar = dates
-            ),
-        )
-    }
-
     private val _calenderDates: MutableStateFlow<HomeScreenUiState> = MutableStateFlow(
         HomeScreenUiState.Success(
             balanceModel = expenseAssistantRepository.getBalance(),
@@ -43,7 +27,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
-            val updatedCalendar = dates.map {
+            val updatedCalendar = expenseAssistantRepository.getCalender().value.map {
                 if (it.id == listIndex) {
                     expenseAssistantRepository.updateSelectedDate(it.date)
                     it.copy(isSelected = true)
@@ -51,7 +35,6 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(isSelected = false)
                 }
             }
-//            expenseAssistantRepository.setCalenderDates(updatedCalendar)
             expenseAssistantRepository.updateCalendar(updatedCalendar)
             _calenderDates.emit(
                 HomeScreenUiState.Success(
@@ -71,7 +54,7 @@ class HomeScreenViewModel @Inject constructor(
                 HomeScreenUiState.Success(
                     CalendarDataModel(
                         localDate = expenseAssistantRepository.getCurrentMonth(),
-                        localCalendar = dates.map {
+                        localCalendar = expenseAssistantRepository.getCalender().value.map {
                             if (it.date == LocalDate.now()) {
                                 expenseAssistantRepository.setDate(it.date)
                                 it.copy(isSelected = true)

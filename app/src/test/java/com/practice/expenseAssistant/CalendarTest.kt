@@ -21,7 +21,7 @@ class CalendarTest {
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
                 note = "",
-                amount = 15,
+                amount = 15.0,
                 date = monthOfJuly.plusDays(it.toLong()),
                 time = LocalTime.now()
             )
@@ -32,7 +32,7 @@ class CalendarTest {
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
                 note = "",
-                amount = (it + 1) * 20,
+                amount = ((it + 1) * 20).toDouble(),
                 date = monthOfAugust.plusDays(it.toLong()),
                 time = LocalTime.now()
             )
@@ -43,7 +43,7 @@ class CalendarTest {
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
                 note = "",
-                amount = (it + 1) * 20,
+                amount = ((it + 1) * 20).toDouble(),
                 date = monthOfSeptember.plusDays(it.toLong()),
                 time = LocalTime.now()
             )
@@ -57,38 +57,40 @@ class CalendarTest {
 
     @Test
     fun searchInsert() {
-        val nums = listOf(1,3,7); val target = 2
-        val index = searchInsert(nums, target)
-        assertEquals(1, index)
+        val nums = listOf(1,3,5,6); val target = 0
+        val index = binarySearch(nums, target)
+        assertEquals(index, 0)
     }
 
-    private fun searchInsert(nums: List<Int>, target: Int): Int {
-        if (target <= nums.first()) return 0
-        if (target >= nums.last()) return nums.size
-
-        var index = 0; var pivot = nums.size / 2
-        if (nums[pivot] < target) { index = pivot + 1; pivot = nums.size }
-
-        for (i in index until pivot) {
-            val a = nums[i]
-            if (a >= target) return i
+    private fun binarySearch(nums: List<Int>, target: Int): Int {
+        if (nums.first() == 0 || nums.first() > target) return 0
+        if (nums.last() < target) return nums.size
+        var min = 0; var max = nums.size - 1
+        while (min <= max) {
+            val pivot = min + (max - min) / 2
+            if (target == nums[pivot]) return pivot
+            if (target > nums[pivot]) min = pivot + 1
+            else max = pivot - 1
         }
-
-        return pivot
+        return min
     }
 
-    private fun searchInsert11(nums: IntArray, target: Int): Int {
-        if (target == 0) return 0
-        var index = 0
-        var pivot = nums.size / 2
-        if (nums[pivot] < target) {
-            index = pivot + 1
-            pivot = nums.size
+    @Test
+    fun lengthOfLastWord() {
+        val s = "a "
+        val count = lengthOfLastWord(s)
+        assertEquals(1, count)
+    }
+    private fun lengthOfLastWord(s: String): Int {
+        if (s.isEmpty()) return 0
+        var count = 0
+        for (i in (s.length - 1) downTo 0) {
+            if (s[i] == ' ') {
+                if (count == 0) continue
+                else break
+            }
+            else count++
         }
-        for (i in index until pivot) {
-            if (nums[i] == target || nums[i] - target == 1) return i
-            if (nums[i] - target == -1) return i+1
-        }
-        return pivot
+        return count
     }
 }
