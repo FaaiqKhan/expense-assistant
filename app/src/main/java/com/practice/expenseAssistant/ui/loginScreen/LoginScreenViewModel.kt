@@ -121,13 +121,13 @@ class LoginScreenViewModel @Inject constructor(
         }
     }
 
-    private fun initCalendar() {
+    private suspend fun initCalendar() {
         val calendar = Utils.createCalenderDays(
             todayDate = expenseAssistantRepository.getTodayDate(),
             month = expenseAssistantRepository.getCurrentMonth(),
             transactions = expenseAssistantRepository.getUser().transactions,
         )
-        expenseAssistantRepository.setCalenderDates(calendar)
+        expenseAssistantRepository.updateCalendar(calendar)
         expenseAssistantRepository.setCalenderData(
             CalendarDataModel(
                 localDate = expenseAssistantRepository.getCurrentMonth(),

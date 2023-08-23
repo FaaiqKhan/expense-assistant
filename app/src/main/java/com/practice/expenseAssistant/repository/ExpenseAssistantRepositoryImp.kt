@@ -3,7 +3,6 @@ package com.practice.expenseAssistant.repository
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.database.dao.TransactionDao
 import com.practice.expenseAssistant.repository.database.entities.Transaction
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenUiState
 import com.practice.expenseAssistant.utils.CategoryType
 import com.practice.expenseAssistant.utils.ExpenseType
 import kotlinx.coroutines.flow.*
@@ -40,10 +39,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         this.user = user
     }
 
-    override fun setCalenderDates(dates: List<CalendarDateModel>) {
-        _calender.value = dates
-    }
-
     override fun setDate(date: LocalDate) {
         today = date
     }
@@ -74,6 +69,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     }
 
     override suspend fun updateCalendar(calendar: List<CalendarDateModel>) {
+        _calender.value = calendar
         _calender.emit(calendar)
     }
 

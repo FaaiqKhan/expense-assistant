@@ -25,7 +25,6 @@ interface ExpenseAssistantRepository {
     fun getTodayDate(): LocalDate
     fun getCurrentMonth(): LocalDate
     fun getMonthCalenderModel(): CalendarDataModel
-    fun setCalenderDates(dates: List<CalendarDateModel>)
     fun getCalender(): StateFlow<List<CalendarDateModel>>
     fun getCategoryType(): CategoryType
     fun getCategory(): String
