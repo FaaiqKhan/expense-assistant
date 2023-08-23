@@ -21,7 +21,6 @@ import com.practice.expenseAssistant.data.NavigationBarItem
 import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.common.BottomNavigationBar
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenViewModel
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
@@ -146,8 +145,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
             )
         }
         composable(route = Screens.HOME.name) {
-            val homeScreenViewModel = hiltViewModel<HomeScreenViewModel>()
-            HomeScreen(modifier = modifier.fillMaxSize(), expenseAssistant = homeScreenViewModel)
+            HomeScreen(modifier = modifier.fillMaxSize())
         }
         composable(route = Screens.CATEGORY.name) {
             val categoryViewModel: CategoryScreenViewModel = hiltViewModel()

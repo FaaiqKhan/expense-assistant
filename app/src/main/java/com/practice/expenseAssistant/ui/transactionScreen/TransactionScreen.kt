@@ -1,11 +1,13 @@
 package com.practice.expenseAssistant.ui.transactionScreen
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,8 +31,9 @@ import java.time.LocalTime
 fun TransactionScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: TransactionScreenViewModel = hiltViewModel(),
-    onNavigate: (screenName: String?) -> Unit
+    onNavigate: (screenName: String?) -> Unit,
 ) {
+
     TransactionScreenContent(
         modifier = modifier,
         date = transactionViewModel.getSelectedDate(),
@@ -38,7 +41,8 @@ fun TransactionScreen(
         category = transactionViewModel.getCategory(),
         user = transactionViewModel.getUser(),
         onNavigate = onNavigate,
-        addTransaction = transactionViewModel::addTransaction
+        addTransaction = transactionViewModel::addTransaction,
+        removeTransaction = transactionViewModel::removeTransactionFromId
     )
 
 }
@@ -52,23 +56,22 @@ private fun TransactionScreenContent(
     category: String,
     categoryType: CategoryType,
     onNavigate: (screenName: String?) -> Unit,
-    addTransaction: (transaction: TransactionModel, bankAccount: BankAccount) -> Unit
+    addTransaction: (transaction: TransactionModel, bankAccount: BankAccount) -> Unit,
+    removeTransaction: (transitionId: Int) -> Unit,
 ) {
 
     val maxChar = 100
     val height = dimensionResource(id = R.dimen.field_height)
     val elementSpacing = dimensionResource(id = R.dimen.element_spacing)
 
+    var validateField by remember { mutableStateOf(false) }
     var amount by remember { mutableStateOf("") }
     var expenseNote by remember { mutableStateOf("") }
     var transactionDate by remember { mutableStateOf(date) }
     var transactionTime by remember { mutableStateOf(LocalTime.now()) }
     var bankAccount by remember { mutableStateOf(user.selectedBankAccount) }
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.End
-    ) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -82,7 +85,18 @@ private fun TransactionScreenContent(
                     .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
                 style = MaterialTheme.typography.headlineLarge,
             )
-            TextButton(onClick = { onNavigate(Screens.CATEGORY.name) }) { Text(text = "Change") }
+            Row {
+                TextButton(onClick = { onNavigate(Screens.CATEGORY.name) }) { Text(text = "Change") }
+                AnimatedVisibility(visible = false) {
+                    IconButton(onClick = {  }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            tint = MaterialTheme.colorScheme.error,
+                            contentDescription = stringResource(id = R.string.delete_transaction)
+                        )
+                    }
+                }
+            }
         }
         Spacer(modifier = Modifier.height(elementSpacing))
         OutlinedTextField(
@@ -96,7 +110,8 @@ private fun TransactionScreenContent(
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(text = stringResource(R.string.amount)) },
             singleLine = true,
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero)),
+            isError = validateField && amount.isEmpty()
         )
         Spacer(modifier = Modifier.height(elementSpacing))
         Dropdown(
@@ -139,7 +154,7 @@ private fun TransactionScreenContent(
                 )
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero)),
         )
         Box(
             modifier = Modifier
@@ -149,6 +164,8 @@ private fun TransactionScreenContent(
         ) {
             FloatingActionButton(
                 onClick = {
+                    validateField = true
+                    if (amount.isEmpty()) return@FloatingActionButton
                     addTransaction(
                         TransactionModel(
                             categoryType = categoryType,
@@ -202,7 +219,8 @@ private fun PreviewTransactionScreen() {
                 ),
             ),
             onNavigate = {},
-            addTransaction = { _, _ -> }
+            addTransaction = { _, _ -> },
+            removeTransaction = { _ -> },
         )
     }
 }

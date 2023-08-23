@@ -34,4 +34,5 @@
     <string name="account_number">Account number</string>
     <string name="account_balance">Account balance</string>
     <string name="add_bank_account">Add bank account</string>
+    <string name="delete_transaction">Delete transaction</string>
 </resources>

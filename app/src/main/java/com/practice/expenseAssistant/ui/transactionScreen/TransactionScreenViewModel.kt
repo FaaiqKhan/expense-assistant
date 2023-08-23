@@ -65,6 +65,10 @@ class TransactionScreenViewModel @Inject constructor(
         }
     }
 
+    fun removeTransactionFromId(transactionId: Int) {
+
+    }
+
     fun removeTransaction(transaction: TransactionModel) {
         viewModelScope.launch {
             var totalAmount = 0.0

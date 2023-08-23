@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
@@ -19,7 +20,7 @@ import java.time.LocalDate
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    expenseAssistant: HomeScreenViewModel
+    expenseAssistant: HomeScreenViewModel = hiltViewModel(),
 ) {
     val name = expenseAssistant.getUser().name
     val localCalendarState by expenseAssistant.localCalender.collectAsState()
