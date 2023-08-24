@@ -96,7 +96,10 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         return transactions?.find { it.transactionId == transactionId }
     }
 
-    override fun getTransactions(date: LocalDate): List<TransactionModel>? = user.transactions[date]
+    override fun getTransactionsByDate(date: LocalDate): List<TransactionModel>? {
+        return user.transactions[date]
+    }
+
     override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> = user.transactions
     override fun getTodayDate(): LocalDate = today
     override fun getCurrentMonth(): LocalDate = currentMonth
