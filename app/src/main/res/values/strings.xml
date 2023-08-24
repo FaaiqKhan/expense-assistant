@@ -35,4 +35,5 @@
     <string name="account_balance">Account balance</string>
     <string name="add_bank_account">Add bank account</string>
     <string name="delete_transaction">Delete transaction</string>
+    <string name="menu">Menu</string>
 </resources>

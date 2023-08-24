@@ -2,6 +2,7 @@ package com.practice.expenseAssistant.ui.homeScreen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -14,26 +15,27 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import com.practice.expenseAssistant.utils.Utils
+import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    expenseAssistant: HomeScreenViewModel = hiltViewModel(),
+    homeViewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
-    val name = expenseAssistant.getUser().name
-    val localCalendarState by expenseAssistant.localCalender.collectAsState()
-    val calendar = expenseAssistant.expenseAssistantRepository.getCalender().collectAsState()
+    val name = homeViewModel.getUser().name
+    val localCalendarState by homeViewModel.localCalender.collectAsState()
+    val calendar = homeViewModel.getCalender().collectAsState()
 
     HomeScreenContent(
         modifier = modifier,
         userName = name,
         calendarUiState = localCalendarState,
-        date = expenseAssistant.expenseAssistantRepository.getTodayDate(),
         calendar = calendar.value,
-        onToday = expenseAssistant::backToToday,
-        onDateUpdate = expenseAssistant::updateSelectedDate
+        transactions = homeViewModel.getTransactionsBySelectedDate(),
+        onToday = homeViewModel::backToToday,
+        onDateUpdate = homeViewModel::updateSelectedDate
     )
 }
 
@@ -42,8 +44,8 @@ private fun HomeScreenContent(
     modifier: Modifier,
     userName: String,
     calendarUiState: HomeScreenUiState,
-    date: LocalDate,
     calendar: List<CalendarDateModel>,
+    transactions: List<TransactionModel>,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
 ) {
@@ -62,7 +64,7 @@ private fun HomeScreenContent(
             onClickViewAll = { }
         )
         CalendarView(
-            date = date,
+            date = LocalDate.now(),
             calendar = calendar,
             backToToday = onToday,
             updateDate = onDateUpdate,
@@ -75,6 +77,19 @@ private fun HomeScreenContent(
                 closeBalanceOfMonth = calendarUiState.balanceModel.closingBalance,
             )
         }
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
+        LazyColumn(
+            modifier = Modifier.padding(
+                horizontal = dimensionResource(id = R.dimen.border_stroke)
+            ),
+            verticalArrangement = Arrangement.spacedBy(
+                dimensionResource(id = R.dimen.element_spacing)
+            )
+        ) {
+            items(count = transactions.size) {
+                BriefTransactionCard(transaction = transactions[it])
+            }
+        }
     }
 }
 
@@ -82,7 +97,8 @@ private fun HomeScreenContent(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewHomeScreen() {
-    val dates = Utils.createCalenderDays(LocalDate.now(), LocalDate.now())
+    val dates =
+        Utils.createCalenderDays(LocalDate.of(2023, LocalDate.now().month, 1), LocalDate.now())
     ExpenseAssistantTheme {
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
@@ -100,8 +116,27 @@ private fun PreviewHomeScreen() {
             ),
             onToday = {},
             onDateUpdate = {},
-            date = LocalDate.now(),
-            calendar = dates
+            calendar = dates,
+            transactions = listOf(
+                TransactionModel(
+                    transactionId = 1,
+                    categoryType = CategoryType.EXPENSE,
+                    category = ExpenseType.BILL,
+                    note = "Electricity bill with Gas bill and Water bill",
+                    amount = 100.00,
+                    date = LocalDate.now(),
+                    time = LocalTime.now(),
+                ),
+                TransactionModel(
+                    transactionId = 2,
+                    categoryType = CategoryType.EXPENSE,
+                    category = ExpenseType.BILL,
+                    note = "Electricity bill with ",
+                    amount = 100.00,
+                    date = LocalDate.now(),
+                    time = LocalTime.now(),
+                )
+            )
         )
     }
 }

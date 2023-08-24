@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
-import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    val expenseAssistantRepository: ExpenseAssistantRepository
+    private val expenseAssistantRepository: ExpenseAssistantRepository
 ) : ViewModel() {
 
     private val _calenderDates: MutableStateFlow<HomeScreenUiState> = MutableStateFlow(
@@ -70,4 +69,11 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun getUser(): UserModel = expenseAssistantRepository.getUser()
+
+    fun getCalender() = expenseAssistantRepository.getCalender()
+
+    fun getTransactionsBySelectedDate(): List<TransactionModel> {
+        val selectedDate = expenseAssistantRepository.getSelectedDate()
+        return expenseAssistantRepository.getTransactionsByDate(selectedDate) ?: listOf()
+    }
 }
