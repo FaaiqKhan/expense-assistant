@@ -26,7 +26,7 @@ fun HomeScreen(
 ) {
     val calendar by homeViewModel.getCalender().collectAsState()
     val localCalendarState by homeViewModel.localCalender.collectAsState()
-    val transactions by homeViewModel.getTransactionsBySelectedDate().collectAsState()
+    val transactions = homeViewModel.getTransactionsBySelectedDate()
 
     HomeScreenContent(
         modifier = modifier,
@@ -45,7 +45,7 @@ private fun HomeScreenContent(
     userName: String,
     calendarUiState: HomeScreenUiState,
     calendar: List<CalendarDateModel>,
-    transactions: List<TransactionModel>?,
+    transactions: List<TransactionModel>,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
 ) {
@@ -78,18 +78,16 @@ private fun HomeScreenContent(
             )
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
-        if (transactions != null) {
-            LazyColumn(
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(id = R.dimen.border_stroke)
-                ),
-                verticalArrangement = Arrangement.spacedBy(
-                    dimensionResource(id = R.dimen.element_spacing)
-                )
-            ) {
-                items(count = transactions.size, key = { transactions[it].time.nano }) {
-                    BriefTransactionCard(transaction = transactions[it])
-                }
+        LazyColumn(
+            modifier = Modifier.padding(
+                horizontal = dimensionResource(id = R.dimen.border_stroke)
+            ),
+            verticalArrangement = Arrangement.spacedBy(
+                dimensionResource(id = R.dimen.element_spacing)
+            )
+        ) {
+            items(count = transactions.size, key = { transactions[it].time.nano }) {
+                BriefTransactionCard(transaction = transactions[it])
             }
         }
     }

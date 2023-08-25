@@ -70,7 +70,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getCalender() = expenseAssistantRepository.getCalender()
 
-    fun getTransactionsBySelectedDate(): StateFlow<List<TransactionModel>> {
-        return expenseAssistantRepository.getAllTransactionsOfSelectedDate()
+    fun getTransactionsBySelectedDate(): List<TransactionModel> {
+        return expenseAssistantRepository.getTransactionsOfSelectedDate() ?: listOf()
     }
 }
