@@ -93,4 +93,50 @@ class CalendarTest {
         }
         return count
     }
+
+    @Test
+    fun climbStairs() {
+        val count = climbStairs(5)
+        println("count is: $count")
+    }
+
+    private fun climbStairs(n: Int): Int {
+        if (n <= 2) return n
+
+        var maxSteps = 2; var minSteps = 1
+
+        repeat (times = n - 2) {
+            val totalSteps = maxSteps + minSteps
+            minSteps = maxSteps
+            maxSteps = totalSteps
+        }
+
+        return maxSteps
+    }
+
+    @Test
+    fun merge() {
+        val nums1 = mutableListOf(1,2,3,0,0,0); val m = 3; val nums2 = listOf(2,5,6); val n = 3
+        val merged = merge(nums1, m, nums2, n)
+        println("merged list is: $merged")
+    }
+
+    private fun merge(nums1: MutableList<Int>, m: Int, nums2: List<Int>, n: Int) {
+        if (n == 0) return
+
+        var nums1Index = m - 1
+        var nums2Index = n - 1
+
+        for (i in (nums1.size - 1) downTo 0) {
+            val a = nums1[nums1Index]
+            val b = nums2[nums2Index]
+            nums1[i] = if (nums1Index >= 0 && a >= b) {
+                nums1Index--
+                a
+            } else {
+                nums2Index--
+                b
+            }
+        }
+    }
 }

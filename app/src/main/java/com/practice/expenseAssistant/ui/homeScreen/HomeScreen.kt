@@ -24,16 +24,16 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
-    val name = homeViewModel.getUser().name
+    val calendar by homeViewModel.getCalender().collectAsState()
     val localCalendarState by homeViewModel.localCalender.collectAsState()
-    val calendar = homeViewModel.getCalender().collectAsState()
+    val transactions by homeViewModel.getTransactionsBySelectedDate().collectAsState()
 
     HomeScreenContent(
         modifier = modifier,
-        userName = name,
+        userName = homeViewModel.getUser().name,
         calendarUiState = localCalendarState,
-        calendar = calendar.value,
-        transactions = homeViewModel.getTransactionsBySelectedDate(),
+        calendar = calendar,
+        transactions = transactions,
         onToday = homeViewModel::backToToday,
         onDateUpdate = homeViewModel::updateSelectedDate
     )
@@ -45,7 +45,7 @@ private fun HomeScreenContent(
     userName: String,
     calendarUiState: HomeScreenUiState,
     calendar: List<CalendarDateModel>,
-    transactions: List<TransactionModel>,
+    transactions: List<TransactionModel>?,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
 ) {
@@ -78,16 +78,18 @@ private fun HomeScreenContent(
             )
         }
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
-        LazyColumn(
-            modifier = Modifier.padding(
-                horizontal = dimensionResource(id = R.dimen.border_stroke)
-            ),
-            verticalArrangement = Arrangement.spacedBy(
-                dimensionResource(id = R.dimen.element_spacing)
-            )
-        ) {
-            items(count = transactions.size) {
-                BriefTransactionCard(transaction = transactions[it])
+        if (transactions != null) {
+            LazyColumn(
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.border_stroke)
+                ),
+                verticalArrangement = Arrangement.spacedBy(
+                    dimensionResource(id = R.dimen.element_spacing)
+                )
+            ) {
+                items(count = transactions.size, key = { transactions[it].time.nano }) {
+                    BriefTransactionCard(transaction = transactions[it])
+                }
             }
         }
     }
@@ -119,7 +121,6 @@ private fun PreviewHomeScreen() {
             calendar = dates,
             transactions = listOf(
                 TransactionModel(
-                    transactionId = 1,
                     categoryType = CategoryType.EXPENSE,
                     category = ExpenseType.BILL,
                     note = "Electricity bill with Gas bill and Water bill",
@@ -128,7 +129,6 @@ private fun PreviewHomeScreen() {
                     time = LocalTime.now(),
                 ),
                 TransactionModel(
-                    transactionId = 2,
                     categoryType = CategoryType.EXPENSE,
                     category = ExpenseType.BILL,
                     note = "Electricity bill with ",

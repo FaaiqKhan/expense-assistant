@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -55,7 +54,6 @@ class HomeScreenViewModel @Inject constructor(
                         localDate = expenseAssistantRepository.getCurrentMonth(),
                         localCalendar = expenseAssistantRepository.getCalender().value.map {
                             if (it.date == LocalDate.now()) {
-                                expenseAssistantRepository.setDate(it.date)
                                 it.copy(isSelected = true)
                             } else {
                                 it.copy(isSelected = false)
@@ -72,8 +70,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getCalender() = expenseAssistantRepository.getCalender()
 
-    fun getTransactionsBySelectedDate(): List<TransactionModel> {
-        val selectedDate = expenseAssistantRepository.getSelectedDate()
-        return expenseAssistantRepository.getTransactionsByDate(selectedDate) ?: listOf()
+    fun getTransactionsBySelectedDate(): StateFlow<List<TransactionModel>> {
+        return expenseAssistantRepository.getAllTransactionsOfSelectedDate()
     }
 }

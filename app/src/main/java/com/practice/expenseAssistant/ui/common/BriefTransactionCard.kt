@@ -42,7 +42,6 @@ fun BriefTransactionCard(modifier: Modifier = Modifier, transaction: Transaction
 private fun PreviewBriefTransactionCard() {
     BriefTransactionCard(
         transaction = TransactionModel(
-            transactionId = 1,
             categoryType = CategoryType.EXPENSE,
             category = ExpenseType.BILL,
             note = "Electricity bill with Gas bill and Water bill",

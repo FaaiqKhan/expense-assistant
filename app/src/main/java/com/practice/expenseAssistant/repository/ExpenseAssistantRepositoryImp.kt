@@ -7,20 +7,24 @@ import com.practice.expenseAssistant.utils.CategoryType
 import com.practice.expenseAssistant.utils.ExpenseType
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 
 class ExpenseAssistantRepositoryImp @Inject constructor(
     private val transactionDao: TransactionDao,
 ) : ExpenseAssistantRepository {
 
-    private var today: LocalDate = LocalDate.now()
     private var selectedDate: LocalDate = LocalDate.now()
 
     private lateinit var user: UserModel
 
     private lateinit var calendarData: CalendarDataModel
 
-    private val currentMonth: LocalDate = LocalDate.of(today.year, today.month, 1)
+    private val currentMonth: LocalDate = LocalDate.of(
+        LocalDate.now().year,
+        LocalDate.now().month,
+        1,
+    )
 
     private var categoryType: CategoryType = CategoryType.EXPENSE
     private var category: String = ExpenseType.OTHERS.name
@@ -35,12 +39,12 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     private val _calender = MutableStateFlow<List<CalendarDateModel>>(listOf())
     private val calender = _calender.asStateFlow()
 
+    private val _toDayTransactions = MutableStateFlow<List<TransactionModel>>(listOf())
+    private val toDayTransactions = _toDayTransactions.asStateFlow()
+
     override fun setUser(user: UserModel) {
         this.user = user
-    }
-
-    override fun setDate(date: LocalDate) {
-        today = date
+        _toDayTransactions.value = user.transactions[selectedDate] ?: listOf()
     }
 
     override fun setCalenderData(data: CalendarDataModel) {
@@ -64,8 +68,9 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         this.categoryType = categoryType
     }
 
-    override fun updateSelectedDate(date: LocalDate) {
+    override suspend fun updateSelectedDate(date: LocalDate) {
         selectedDate = date
+        _toDayTransactions.emit(user.transactions[date] ?: listOf())
     }
 
     override suspend fun updateCalendar(calendar: List<CalendarDateModel>) {
@@ -74,6 +79,8 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     }
 
     override suspend fun addTransaction(transaction: TransactionModel, bankAccount: BankAccount) {
+        user = user.copy(transactions = addTransaction(transaction))
+        _toDayTransactions.emit(user.transactions[selectedDate] ?: listOf())
         transactionDao.addTransaction(
             Transaction(
                 amount = transaction.amount,
@@ -88,20 +95,22 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     }
 
     override suspend fun removeTransaction(transaction: TransactionModel) {
-        transactionDao.removeTransaction(transaction.transactionId)
+        transactionDao.removeTransaction(date = transaction.date, time = transaction.time)
     }
 
-    override fun getTransaction(date: LocalDate, transactionId: Int): TransactionModel? {
-        val transactions = user.transactions[date]
-        return transactions?.find { it.transactionId == transactionId }
+    override fun getTransaction(date: LocalDate, time: LocalTime): TransactionModel? {
+        return user.transactions[date]?.find { it.time == time }
     }
 
     override fun getTransactionsByDate(date: LocalDate): List<TransactionModel>? {
         return user.transactions[date]
     }
 
-    override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> = user.transactions
-    override fun getTodayDate(): LocalDate = today
+    override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> {
+        return user.transactions
+    }
+
+    override fun getTodayDate(): LocalDate = LocalDate.now()
     override fun getCurrentMonth(): LocalDate = currentMonth
     override fun getMonthCalenderModel(): CalendarDataModel = calendarData
     override fun getCalender(): StateFlow<List<CalendarDateModel>> = calender
@@ -111,4 +120,18 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     override fun getBalance(): BalanceModel = balanceModel
     override fun getTotalExpenseOfMonth(): Double = totalExpenseOfMonth
     override fun getSelectedDate(): LocalDate = selectedDate
+    override fun getAllTransactionsOfSelectedDate(): StateFlow<List<TransactionModel>> =
+        toDayTransactions
+
+    private fun addTransaction(transaction: TransactionModel): Map<LocalDate, List<TransactionModel>> {
+        val tempTransactions = user.transactions.toMutableMap()
+        if (tempTransactions[transaction.date] == null) {
+            tempTransactions[transaction.date] = listOf(transaction)
+        } else {
+            val temp = tempTransactions[transaction.date]!!.toMutableList()
+            temp.add(transaction)
+            tempTransactions[transaction.date] = temp
+        }
+        return tempTransactions
+    }
 }

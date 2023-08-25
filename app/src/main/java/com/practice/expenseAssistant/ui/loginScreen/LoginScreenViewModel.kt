@@ -48,7 +48,6 @@ class LoginScreenViewModel @Inject constructor(
             val transactions: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
             transactionDao.getAllTransactions().forEach {
                 val transaction = TransactionModel(
-                    transactionId = it.id,
                     categoryType = it.categoryType,
                     category = it.category,
                     note = it.note,

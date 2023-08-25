@@ -5,7 +5,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class TransactionModel(
-    var transactionId: Int = 0,
     val categoryType: CategoryType,
     val category: Any,
     val note: String,

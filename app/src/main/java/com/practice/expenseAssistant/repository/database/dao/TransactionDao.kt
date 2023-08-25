@@ -3,6 +3,8 @@ package com.practice.expenseAssistant.repository.database.dao
 import androidx.room.*
 import com.practice.expenseAssistant.repository.database.entities.Transaction
 import com.practice.expenseAssistant.utils.CategoryType
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Dao
 interface TransactionDao {
@@ -13,8 +15,8 @@ interface TransactionDao {
     @Update
     suspend fun updateTransaction(transaction: Transaction)
 
-    @Query("DELETE FROM `transaction` WHERE id = :transactionId")
-    suspend fun removeTransaction(transactionId: Int)
+    @Query("DELETE FROM `transaction` WHERE transaction_date = :date AND transaction_time = :time")
+    suspend fun removeTransaction(date: LocalDate, time: LocalTime)
 
     @Query("SELECT * from `transaction`")
     suspend fun getAllTransactions(): List<Transaction>
