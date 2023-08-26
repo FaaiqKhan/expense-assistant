@@ -2,8 +2,7 @@ package com.practice.expenseAssistant.ui.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -15,18 +14,25 @@ import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BriefTransactionCard(modifier: Modifier = Modifier, transaction: TransactionModel) {
+fun BriefTransactionCard(
+    modifier: Modifier = Modifier,
+    transaction: TransactionModel,
+    onClick: () -> Unit,
+) {
     val time = Utils.updateTo2Digits(transaction.time.hour, transaction.time.minute)
-    Card {
+    Card(onClick = onClick) {
         Row(modifier = modifier.padding(all = dimensionResource(id = R.dimen.card_padding))) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 Text(text = "Amount: ${transaction.amount}")
-                Text(
-                    text = "Note: ${transaction.note}",
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                )
+                if (transaction.note.isNotEmpty()) {
+                    Text(
+                        text = "Note: ${transaction.note}",
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.element_spacing)))
             Column {
@@ -49,5 +55,5 @@ private fun PreviewBriefTransactionCard() {
             date = LocalDate.now(),
             time = LocalTime.now(),
         )
-    )
+    ) {}
 }

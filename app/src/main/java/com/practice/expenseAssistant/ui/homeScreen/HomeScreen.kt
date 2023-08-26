@@ -23,6 +23,7 @@ import java.time.LocalTime
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
+    onTransactionSelect: (transaction: TransactionModel) -> Unit
 ) {
     val calendar by homeViewModel.getCalender().collectAsState()
     val localCalendarState by homeViewModel.localCalender.collectAsState()
@@ -30,12 +31,13 @@ fun HomeScreen(
 
     HomeScreenContent(
         modifier = modifier,
-        userName = homeViewModel.getUser().name,
-        calendarUiState = localCalendarState,
         calendar = calendar,
         transactions = transactions,
+        userName = homeViewModel.getUser().name,
+        calendarUiState = localCalendarState,
         onToday = homeViewModel::backToToday,
-        onDateUpdate = homeViewModel::updateSelectedDate
+        onDateUpdate = homeViewModel::updateSelectedDate,
+        onSelect = onTransactionSelect
     )
 }
 
@@ -48,6 +50,7 @@ private fun HomeScreenContent(
     transactions: List<TransactionModel>,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
+    onSelect: (transaction: TransactionModel) -> Unit
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -87,7 +90,10 @@ private fun HomeScreenContent(
             )
         ) {
             items(count = transactions.size, key = { transactions[it].time.nano }) {
-                BriefTransactionCard(transaction = transactions[it])
+                BriefTransactionCard(
+                    transaction = transactions[it],
+                    onClick = { onSelect(transactions[it]) },
+                )
             }
         }
     }
@@ -134,7 +140,8 @@ private fun PreviewHomeScreen() {
                     date = LocalDate.now(),
                     time = LocalTime.now(),
                 )
-            )
+            ),
+            onSelect = {}
         )
     }
 }

@@ -31,13 +31,14 @@ import java.time.LocalTime
 fun TransactionScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: TransactionScreenViewModel = hiltViewModel(),
+    transaction: TransactionModel? = null,
     onNavigate: (screenName: String?) -> Unit,
 ) {
 
     TransactionScreenContent(
         modifier = modifier,
-        date = transactionViewModel.getSelectedDate(),
-        categoryType = transactionViewModel.getCategoryType(),
+        date = transaction?.date ?: transactionViewModel.getSelectedDate(),
+        categoryType = transaction?.categoryType ?: transactionViewModel.getCategoryType(),
         category = transactionViewModel.getCategory(),
         user = transactionViewModel.getUser(),
         onNavigate = onNavigate,

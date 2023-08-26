@@ -60,11 +60,7 @@ Capp/src/main/java/com/practice/expenseAssistant/utils/IncomeType.kt,1/3/13203a
 t
 Dapp/src/main/java/com/practice/expenseAssistant/utils/ExpenseType.kt,4/a/4a3b4470ed9c1ae66fc395448149c39fe361fb18
 q
-Aapp/src/main/java/com/practice/expenseAssistant/ui/theme/Theme.kt,4/e/4e44bad2f584df1ad723b230ca5f2230451453fe
-q
 Aapp/src/main/java/com/practice/expenseAssistant/ui/theme/Color.kt,2/2/224068310979ea25031144921f1dc4363621e921
-p
-@app/src/main/java/com/practice/expenseAssistant/ui/theme/Type.kt,3/7/37f6198cce7d8b6faa26f56e6ef3ffd776b23d28
 |
 Lapp/src/main/java/com/practice/expenseAssistant/di/ExpenseAssistantModule.kt,0/a/0a486a6fa2456722bf0ccf4229887b5e799658f8
 t
@@ -79,8 +75,6 @@ Uapp/src/main/java/com/practice/expenseAssistant/ui/categoryScreen/IncomeCategor
 Sapp/src/main/java/com/practice/expenseAssistant/ui/categoryScreen/CategoryScreen.kt,0/6/06dfb3155dedcff3d625a5df736a590dd66d82f8
 ‚
 Rapp/src/main/java/com/practice/expenseAssistant/ui/homeScreen/HomeScreenUiState.kt,3/4/344fb75389cf66a60e7f7fa11f99be9e96550877
-}
-Mapp/src/main/java/com/practice/expenseAssistant/ui/loginScreen/LoginScreen.kt,1/4/1497c236f7916f3c3c2b8a541bf5a8f8e872d3c0
 ‹
 [app/src/main/java/com/practice/expenseAssistant/repository/database/entities/Transaction.kt,d/3/d38654fa32ddc08f126d97f99a52cb91d90c5861
 w
@@ -93,7 +87,5 @@ y
 Iapp/src/main/java/com/practice/expenseAssistant/ui/common/CalendarCard.kt,3/9/39b817405f47383a8eab7ef4e5b7ee783200a17f
 y
 Iapp/src/main/java/com/practice/expenseAssistant/data/CalendarDateModel.kt,f/3/f39b1dfff7d7aeca1fbe06788d8bab6bc9ad4b01
-n
->app/src/main/java/com/practice/expenseAssistant/utils/Enums.kt,f/b/fbc815bf235f16817fe13700f7c8741e6564ed29
 ~
 Napp/src/main/java/com/practice/expenseAssistant/ExpenseAssistantApplication.kt,8/7/87622ce62e9156edfbdc07102d9b2b4347f8d778

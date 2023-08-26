@@ -111,7 +111,13 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
             )
         }
         composable(route = Screens.HOME.name) {
-            HomeScreen(modifier = modifier.fillMaxSize())
+            HomeScreen(
+                modifier = modifier.fillMaxSize(),
+                onTransactionSelect = {
+
+                    navController.navigate(Screens.TRANSACTION.name)
+                },
+            )
         }
         composable(route = Screens.CATEGORY.name) {
             val categoryViewModel: CategoryScreenViewModel = hiltViewModel()
