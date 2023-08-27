@@ -25,29 +25,18 @@ class TransactionScreenViewModel @Inject constructor(
                 if (it.date != transaction.date) {
                     it.copy(isSelected = it.date == expenseAssistantRepository.getSelectedDate())
                 } else {
-                    var todayTotalIncome = 0.0
-                    var todayTotalExpense = 0.0
-                    val todayTransactions = mutableListOf<TransactionModel>()
+                    var todayTotalIncome = it.todayTotalIncome
+                    var todayTotalExpense = it.todayTotalExpense
 
                     if (transaction.categoryType == CategoryType.EXPENSE) {
                         totalAmount = expenseAssistantRepository
                             .getBalance().totalExpense + transaction.amount
-                        todayTotalExpense = transaction.amount
+                        todayTotalExpense += transaction.amount
                     } else {
-                        todayTotalIncome = transaction.amount
+                        todayTotalIncome += transaction.amount
                     }
 
-                    if (it.todayTransactions != null) {
-                        it.todayTransactions.forEach { item ->
-                            if (item.categoryType == CategoryType.EXPENSE) {
-                                todayTotalExpense += item.amount
-                            } else {
-                                todayTotalIncome += item.amount
-                            }
-                            todayTransactions.add(item)
-                        }
-                    }
-
+                    val todayTransactions = it.todayTransactions?.toMutableList() ?: mutableListOf()
                     todayTransactions.add(transaction)
 
                     it.copy(
@@ -65,30 +54,38 @@ class TransactionScreenViewModel @Inject constructor(
         }
     }
 
-    fun removeTransactionFromId(transactionId: Int) {
-
-    }
-
     fun removeTransaction(transaction: TransactionModel) {
         viewModelScope.launch {
             var totalAmount = 0.0
             val dates = expenseAssistantRepository.getCalender().value.map {
-                if (it.date == transaction.date) {
-                    totalAmount =
-                        expenseAssistantRepository.getBalance().totalExpense - transaction.amount
-                    val expenses = it.todayTransactions?.toMutableList()
-                    expenses?.remove(transaction)
+                if (it.date != transaction.date) {
+                    it.copy(isSelected = it.date == expenseAssistantRepository.getSelectedDate())
+                } else {
+                    var todayTotalIncome = it.todayTotalIncome
+                    var todayTotalExpense = it.todayTotalExpense
+
+                    if (transaction.categoryType == CategoryType.EXPENSE) {
+                        totalAmount = expenseAssistantRepository
+                            .getBalance().totalExpense - transaction.amount
+                        todayTotalExpense -= transaction.amount
+                    } else {
+                        todayTotalIncome -= transaction.amount
+                    }
+
+                    val todayTransactions = it.todayTransactions!!.toMutableList()
+                    todayTransactions.remove(transaction)
+
                     it.copy(
                         isSelected = transaction.date == expenseAssistantRepository.getSelectedDate(),
-                        todayTransactions = expenses?.toList()
+                        todayTransactions = todayTransactions,
+                        todayTotalIncome = todayTotalIncome,
+                        todayTotalExpense = todayTotalExpense
                     )
-                } else {
-                    it.copy(isSelected = it.date == expenseAssistantRepository.getSelectedDate())
                 }
             }
             expenseAssistantRepository.updateCalendar(dates)
-            expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
             expenseAssistantRepository.removeTransaction(transaction)
+            expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
         }
     }
 

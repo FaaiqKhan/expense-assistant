@@ -20,7 +20,6 @@ class CalendarTest {
             TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                note = "",
                 amount = 15.0,
                 date = monthOfJuly.plusDays(it.toLong()),
                 time = LocalTime.now()
@@ -31,7 +30,6 @@ class CalendarTest {
             TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                note = "",
                 amount = ((it + 1) * 20).toDouble(),
                 date = monthOfAugust.plusDays(it.toLong()),
                 time = LocalTime.now()
@@ -42,7 +40,6 @@ class CalendarTest {
             TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                note = "",
                 amount = ((it + 1) * 20).toDouble(),
                 date = monthOfSeptember.plusDays(it.toLong()),
                 time = LocalTime.now()
@@ -138,5 +135,48 @@ class CalendarTest {
                 b
             }
         }
+    }
+
+    @Test
+    fun pascalTriangle() {
+        val result = generate(5)
+        println("Pascal triangle is: $result")
+    }
+
+    private fun generate(numRows: Int): List<List<Int>> {
+        if (numRows == 1) return listOf(listOf(1))
+        if (numRows == 2) return listOf(listOf(1), listOf(1, 1))
+        val result = mutableListOf(listOf(1), listOf(1, 1))
+        for (i in 1..(numRows - 2)) {
+            var p1 = 0; var p2 = 1
+            val expectedValue = mutableListOf(1)
+            while (p2 < result[i].size) {
+                expectedValue.add(result[i][p1++] + result[i][p2++])
+            }
+            expectedValue.add(1)
+            result.add(expectedValue)
+        }
+        return result
+    }
+
+    @Test
+    fun pascalTriangleRowIndex() {
+        val result = getRow(30)
+        println("Pascal triangle is: $result")
+    }
+
+    private fun getRow(rowIndex: Int): List<Int> {
+        // TODO: To find pascal's triangle nth row use the following formula
+        // nCr = (nCr - 1 * (n - r + 1)) / r
+        // here: n is required row, r is iteration value
+        val result = mutableListOf<Long>(1)
+        for (i in 1..rowIndex) {
+            if (i > 14) {
+                println()
+            }
+            val value = (result[i - 1] * (rowIndex - i + 1)) / i
+            result.add(value)
+        }
+        return result.map { it.toInt() }
     }
 }

@@ -31,5 +31,5 @@ interface ExpenseAssistantRepository {
     fun getBalance(): BalanceModel
     fun getTotalExpenseOfMonth(): Double
     fun getSelectedDate(): LocalDate
-    fun getAllTransactionsOfSelectedDate(): StateFlow<List<TransactionModel>>
+    fun getTransactionsOfSelectedDate(): List<TransactionModel>?
 }
