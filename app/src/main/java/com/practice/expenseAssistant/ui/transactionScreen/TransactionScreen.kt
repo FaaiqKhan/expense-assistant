@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
@@ -31,21 +32,35 @@ import java.time.LocalTime
 fun TransactionScreen(
     modifier: Modifier = Modifier,
     transactionViewModel: TransactionScreenViewModel = hiltViewModel(),
-    transaction: TransactionModel? = null,
-    onNavigate: (screenName: String?) -> Unit,
+    navController: NavHostController,
 ) {
+    val transaction: TransactionModel? =
+        navController.previousBackStackEntry?.savedStateHandle?.get("transaction")
 
     TransactionScreenContent(
         modifier = modifier,
-        date = transaction?.date ?: transactionViewModel.getSelectedDate(),
-        categoryType = transaction?.categoryType ?: transactionViewModel.getCategoryType(),
-        category = transactionViewModel.getCategory(),
         user = transactionViewModel.getUser(),
-        onNavigate = onNavigate,
-        addTransaction = transactionViewModel::addTransaction,
-        removeTransaction = transactionViewModel::removeTransactionFromId
+        transaction = transaction?.copy(edit = true) ?: TransactionModel(
+            categoryType = transactionViewModel.getCategoryType(),
+            category = transactionViewModel.getCategory(),
+            amount = 0.0,
+            date = transactionViewModel.getSelectedDate(),
+            time = LocalTime.now(),
+        ),
+        addTransaction = { tran, account ->
+            transactionViewModel.addTransaction(tran, account)
+            navController.popBackStack()
+        },
+        removeTransaction = {
+            navController.previousBackStackEntry?.savedStateHandle
+                ?.remove<TransactionModel>("transaction")
+            transactionViewModel.removeTransaction(it)
+            navController.popBackStack()
+        },
+        moveToCategoryScreen = {
+            navController.navigate(Screens.CATEGORY.name)
+        }
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,12 +68,10 @@ fun TransactionScreen(
 private fun TransactionScreenContent(
     modifier: Modifier,
     user: UserModel,
-    date: LocalDate,
-    category: String,
-    categoryType: CategoryType,
-    onNavigate: (screenName: String?) -> Unit,
+    transaction: TransactionModel,
     addTransaction: (transaction: TransactionModel, bankAccount: BankAccount) -> Unit,
-    removeTransaction: (transitionId: Int) -> Unit,
+    removeTransaction: (transaction: TransactionModel) -> Unit,
+    moveToCategoryScreen: () -> Unit
 ) {
 
     val maxChar = 100
@@ -66,11 +79,12 @@ private fun TransactionScreenContent(
     val elementSpacing = dimensionResource(id = R.dimen.element_spacing)
 
     var validateField by remember { mutableStateOf(false) }
-    var amount by remember { mutableStateOf("") }
-    var expenseNote by remember { mutableStateOf("") }
-    var transactionDate by remember { mutableStateOf(date) }
-    var transactionTime by remember { mutableStateOf(LocalTime.now()) }
+
+    var amount by remember { mutableStateOf(transaction.amount.toString()) }
     var bankAccount by remember { mutableStateOf(user.selectedBankAccount) }
+    var transactionDate by remember { mutableStateOf(transaction.date) }
+    var transactionTime by remember { mutableStateOf(LocalTime.now()) }
+    var expenseNote by remember { mutableStateOf(transaction.note) }
 
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Row(
@@ -81,15 +95,15 @@ private fun TransactionScreenContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Category: $category",
+                text = "Category: ${transaction.category}",
                 modifier = Modifier
                     .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
                 style = MaterialTheme.typography.headlineLarge,
             )
             Row {
-                TextButton(onClick = { onNavigate(Screens.CATEGORY.name) }) { Text(text = "Change") }
-                AnimatedVisibility(visible = false) {
-                    IconButton(onClick = {  }) {
+                TextButton(onClick = moveToCategoryScreen) { Text(text = "Change") }
+                AnimatedVisibility(visible = transaction.edit) {
+                    IconButton(onClick = { removeTransaction(transaction) }) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             tint = MaterialTheme.colorScheme.error,
@@ -127,7 +141,7 @@ private fun TransactionScreenContent(
                 .fillMaxWidth()
                 .height(height)
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
-            date = date,
+            date = transaction.date,
             onSelect = { transactionDate = it },
         )
         Spacer(modifier = Modifier.height(elementSpacing))
@@ -169,8 +183,8 @@ private fun TransactionScreenContent(
                     if (amount.isEmpty()) return@FloatingActionButton
                     addTransaction(
                         TransactionModel(
-                            categoryType = categoryType,
-                            category = category,
+                            categoryType = transaction.categoryType,
+                            category = transaction.category,
                             note = expenseNote,
                             amount = amount.toDouble(),
                             date = transactionDate,
@@ -178,7 +192,6 @@ private fun TransactionScreenContent(
                         ),
                         bankAccount
                     )
-                    onNavigate(null)
                 }
             ) {
                 Icon(
@@ -198,30 +211,35 @@ private fun PreviewTransactionScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
-            date = LocalDate.now(),
-            categoryType = CategoryType.INCOME,
-            category = IncomeType.BUSINESS_INCOME.value,
             user = UserModel(
                 name = "Faiq",
                 bankAccounts = listOf(
                     BankAccount(
-                        name = "Meezan",
-                        iBan = "DKLJ#SDKJF#()",
+                        name = "ABC",
+                        iBan = "DKL-325546A55MBA",
                         number = "1231212312",
                         balance = 30000.0
                     )
                 ),
                 currencyType = CurrencyType.Dollar,
                 selectedBankAccount = BankAccount(
-                    name = "Meezan",
-                    iBan = "DKLJ#SDKJF#()",
+                    name = "XYZ",
+                    iBan = "DKJ-325546A55MBA",
                     number = "1231212312",
-                    balance = 30000.0
+                    balance = 6000.0
                 ),
             ),
-            onNavigate = {},
+            transaction = TransactionModel(
+                categoryType = CategoryType.EXPENSE,
+                category = ExpenseType.BILL,
+                amount = 300.0,
+                date = LocalDate.now(),
+                time = LocalTime.now(),
+                edit = true
+            ),
             addTransaction = { _, _ -> },
             removeTransaction = { _ -> },
+            moveToCategoryScreen = {}
         )
     }
 }

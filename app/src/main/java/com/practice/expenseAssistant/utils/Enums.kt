@@ -1,7 +1,9 @@
 package com.practice.expenseAssistant.utils
 
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import com.practice.expenseAssistant.R
+import kotlinx.parcelize.Parcelize
 
 enum class NavigationItemType {
     HOME,
@@ -20,7 +22,8 @@ enum class Screens(@StringRes val title: Int) {
     INCOME(title = R.string.income)
 }
 
-enum class CategoryType {
+@Parcelize
+enum class CategoryType: Parcelable {
     EXPENSE,
     INCOME
 }

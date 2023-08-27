@@ -89,6 +89,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     }
 
     override suspend fun removeTransaction(transaction: TransactionModel) {
+        user = user.copy(transactions = deleteTransaction(transaction))
         transactionDao.removeTransaction(date = transaction.date, time = transaction.time)
     }
 
@@ -100,9 +101,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         return user.transactions[date]
     }
 
-    override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> {
-        return user.transactions
-    }
+    override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> = user.transactions
 
     override fun getTodayDate(): LocalDate = LocalDate.now()
     override fun getCurrentMonth(): LocalDate = currentMonth
@@ -127,5 +126,17 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
             tempTransactions[transaction.date] = temp
         }
         return tempTransactions
+    }
+
+    private fun deleteTransaction(transaction: TransactionModel): Map<LocalDate, List<TransactionModel>> {
+        val allTransactions = user.transactions.toMutableMap()
+        val transactions = allTransactions[transaction.date]!!.toMutableList()
+        if (transactions.size == 1) {
+            allTransactions.remove(transaction.date)
+        } else {
+            transactions.removeIf { it.date == transaction.date && it.time == transaction.time}
+            allTransactions[transaction.date] = transactions
+        }
+        return allTransactions
     }
 }

@@ -20,7 +20,6 @@ class CalendarTest {
             TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                note = "",
                 amount = 15.0,
                 date = monthOfJuly.plusDays(it.toLong()),
                 time = LocalTime.now()
@@ -31,7 +30,6 @@ class CalendarTest {
             TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                note = "",
                 amount = ((it + 1) * 20).toDouble(),
                 date = monthOfAugust.plusDays(it.toLong()),
                 time = LocalTime.now()
@@ -42,7 +40,6 @@ class CalendarTest {
             TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL,
-                note = "",
                 amount = ((it + 1) * 20).toDouble(),
                 date = monthOfSeptember.plusDays(it.toLong()),
                 time = LocalTime.now()

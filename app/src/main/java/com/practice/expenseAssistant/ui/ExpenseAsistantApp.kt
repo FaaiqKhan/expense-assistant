@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
@@ -72,7 +73,13 @@ fun ExpenseAssistantTopBar(
         ),
         navigationIcon = {
             if (controller.previousBackStackEntry != null) {
-                IconButton(onClick = controller::popBackStack) {
+                IconButton(onClick = {
+                    if (screen == Screens.TRANSACTION) {
+                        controller.previousBackStackEntry?.savedStateHandle
+                            ?.remove<TransactionModel>("transaction")
+                    }
+                    controller.popBackStack()
+                }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back_button)
@@ -113,8 +120,11 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         composable(route = Screens.HOME.name) {
             HomeScreen(
                 modifier = modifier.fillMaxSize(),
-                onTransactionSelect = {
-
+                onTransactionSelect = { transaction ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "transaction",
+                        transaction
+                    )
                     navController.navigate(Screens.TRANSACTION.name)
                 },
             )
@@ -132,10 +142,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(
                 modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
-                onNavigate = {
-                    if (it == null) navController.popBackStack()
-                    else navController.navigate(it)
-                },
+                navController = navController,
             )
         }
     }
