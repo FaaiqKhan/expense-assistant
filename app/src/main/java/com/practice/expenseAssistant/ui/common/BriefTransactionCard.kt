@@ -2,6 +2,7 @@ package com.practice.expenseAssistant.ui.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +23,7 @@ fun BriefTransactionCard(
     onClick: () -> Unit,
 ) {
     val time = Utils.updateTo2Digits(transaction.time.hour, transaction.time.minute)
-    Card(onClick = onClick) {
+    Card(onClick = onClick, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(modifier = modifier.padding(all = dimensionResource(id = R.dimen.card_padding))) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 Text(text = "Amount: ${transaction.amount}")

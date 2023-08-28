@@ -34,35 +34,20 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             expenseAssistantRepository.updateCalendar(updatedCalendar)
-            _calenderDates.emit(
-                HomeScreenUiState.Success(
-                    calendarData = CalendarDataModel(
-                        localDate = expenseAssistantRepository.getCurrentMonth(),
-                        localCalendar = updatedCalendar
-                    ),
-                    balanceModel = expenseAssistantRepository.getBalance()
-                )
-            )
         }
     }
 
     fun backToToday() {
         viewModelScope.launch {
-            _calenderDates.emit(
-                HomeScreenUiState.Success(
-                    CalendarDataModel(
-                        localDate = expenseAssistantRepository.getCurrentMonth(),
-                        localCalendar = expenseAssistantRepository.getCalender().value.map {
-                            if (it.date == LocalDate.now()) {
-                                it.copy(isSelected = true)
-                            } else {
-                                it.copy(isSelected = false)
-                            }
-                        }
-                    ),
-                    balanceModel = expenseAssistantRepository.getBalance()
-                )
-            )
+            val selectTodayDate = expenseAssistantRepository.getCalender().value.map {
+                if (it.date == LocalDate.now()) {
+                    expenseAssistantRepository.updateSelectedDate(it.date)
+                    it.copy(isSelected = true)
+                } else {
+                    it.copy(isSelected = false)
+                }
+            }
+            expenseAssistantRepository.updateCalendar(selectTodayDate)
         }
     }
 
