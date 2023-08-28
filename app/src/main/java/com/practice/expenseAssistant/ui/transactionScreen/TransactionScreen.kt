@@ -231,7 +231,7 @@ private fun PreviewTransactionScreen() {
             ),
             transaction = TransactionModel(
                 categoryType = CategoryType.EXPENSE,
-                category = ExpenseType.BILL,
+                category = ExpenseType.BILL.value,
                 amount = 300.0,
                 date = LocalDate.now(),
                 time = LocalTime.now(),
