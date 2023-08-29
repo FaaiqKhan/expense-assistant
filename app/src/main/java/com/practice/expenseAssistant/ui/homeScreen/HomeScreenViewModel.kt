@@ -15,14 +15,6 @@ class HomeScreenViewModel @Inject constructor(
     private val expenseAssistantRepository: ExpenseAssistantRepository
 ) : ViewModel() {
 
-    private val _calenderDates: MutableStateFlow<HomeScreenUiState> = MutableStateFlow(
-        HomeScreenUiState.Success(
-            balanceModel = expenseAssistantRepository.getBalance(),
-            calendarData = expenseAssistantRepository.getMonthCalenderModel(),
-        )
-    )
-    val localCalender = _calenderDates.asStateFlow()
-
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
             val updatedCalendar = expenseAssistantRepository.getCalender().value.map {
@@ -57,5 +49,9 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getTransactionsBySelectedDate(): List<TransactionModel> {
         return expenseAssistantRepository.getTransactionsOfSelectedDate() ?: listOf()
+    }
+
+    fun getMonthCashFlow(): StateFlow<MonthCashFlow> {
+        return expenseAssistantRepository.getMonthCashFlow()
     }
 }

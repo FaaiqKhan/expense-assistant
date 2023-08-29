@@ -4,8 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.repository.database.AppDatabase
-import com.practice.expenseAssistant.repository.database.dao.TransactionDao
-import com.practice.expenseAssistant.repository.database.dao.UserDao
+import com.practice.expenseAssistant.repository.database.dao.*
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,6 +21,9 @@ class DatabaseModule {
     @Provides
     fun provideTransactionDao(appDatabase: AppDatabase): TransactionDao =
         appDatabase.getTransactionDao()
+
+    @Provides
+    fun provideCashFLowDao(appDatabase: AppDatabase): CashFlowDao = appDatabase.getCashFlowDao()
 
     @Provides
     @Singleton

@@ -1,7 +1,9 @@
 package com.practice.expenseAssistant.repository
 
 import com.practice.expenseAssistant.data.*
+import com.practice.expenseAssistant.repository.database.dao.CashFlowDao
 import com.practice.expenseAssistant.repository.database.dao.TransactionDao
+import com.practice.expenseAssistant.repository.database.entities.CashFlow
 import com.practice.expenseAssistant.repository.database.entities.Transaction
 import com.practice.expenseAssistant.utils.CategoryType
 import com.practice.expenseAssistant.utils.ExpenseType
@@ -11,6 +13,7 @@ import java.time.LocalTime
 import javax.inject.Inject
 
 class ExpenseAssistantRepositoryImp @Inject constructor(
+    private val cashFlowDao: CashFlowDao,
     private val transactionDao: TransactionDao,
 ) : ExpenseAssistantRepository {
 
@@ -30,14 +33,29 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     private var category: String = ExpenseType.OTHERS.name
     private var totalExpenseOfMonth: Double = 0.0
 
-    private val balanceModel = BalanceModel(
-        openingBalance = 2000.0,
-        closingBalance = 800.0,
-        totalExpense = 1200.0,
-    )
-
     private val _calender = MutableStateFlow<List<CalendarDateModel>>(listOf())
     private val calender = _calender.asStateFlow()
+
+    private val userCashFlow: Map<LocalDate, MonthCashFlow> = mapOf()
+
+    private val _monthCashFlow = MutableStateFlow(
+        MonthCashFlow(
+            income = 0.0,
+            expense = 0.0,
+            openingAmount = 0.0,
+            closingAmount = 0.0
+        )
+    )
+    private val monthCashFlow = _monthCashFlow.asStateFlow()
+
+    private var abc = mapOf(
+        selectedDate to MonthCashFlow(
+            income = 0.0,
+            expense = 0.0,
+            openingAmount = 0.0,
+            closingAmount = 0.0
+        )
+    )
 
     override fun setUser(user: UserModel) {
         this.user = user
@@ -57,6 +75,18 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     override fun setTotalExpenseOfMonth(expense: Double) {
         totalExpenseOfMonth = expense
+    }
+
+    override fun setMonthCashFLow(cashFlow: Map<LocalDate, MonthCashFlow>) {
+        _monthCashFlow.update {
+            cashFlow[selectedDate] ?: MonthCashFlow(
+                income = 0.0,
+                expense = 0.0,
+                openingAmount = 0.0,
+                closingAmount = 0.0
+            )
+        }
+        abc = cashFlow
     }
 
     override fun updateCategoryAndType(category: String, categoryType: CategoryType) {
@@ -102,7 +132,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     }
 
     override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> = user.transactions
-
     override fun getTodayDate(): LocalDate = LocalDate.now()
     override fun getCurrentMonth(): LocalDate = currentMonth
     override fun getMonthCalenderModel(): CalendarDataModel = calendarData
@@ -110,11 +139,21 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     override fun getUser(): UserModel = user
     override fun getCategoryType(): CategoryType = categoryType
     override fun getCategory(): String = category
-    override fun getBalance(): BalanceModel = balanceModel
     override fun getTotalExpenseOfMonth(): Double = totalExpenseOfMonth
     override fun getSelectedDate(): LocalDate = selectedDate
-    override fun getTransactionsOfSelectedDate(): List<TransactionModel>? =
-        user.transactions[selectedDate]
+    override fun getTransactionsOfSelectedDate() = user.transactions[selectedDate]
+    override fun getMonthCashFlow(): StateFlow<MonthCashFlow> = monthCashFlow
+
+    override suspend fun insertCashFlowIntoDb(cashFlow: CashFlow) =
+        cashFlowDao.insertCashFlow(cashFlow)
+
+    override suspend fun getCashFlowFromDb(): List<CashFlow> = cashFlowDao.getAllCashFlows()
+
+    override fun getAbc() = abc
+
+    override fun updateMonthCashFlow(cashFlow: MonthCashFlow) {
+        _monthCashFlow.value = cashFlow
+    }
 
     private fun addTransaction(transaction: TransactionModel): Map<LocalDate, List<TransactionModel>> {
         val tempTransactions = user.transactions.toMutableMap()
@@ -134,7 +173,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         if (transactions.size == 1) {
             allTransactions.remove(transaction.date)
         } else {
-            transactions.removeIf { it.date == transaction.date && it.time == transaction.time}
+            transactions.removeIf { it.date == transaction.date && it.time == transaction.time }
             allTransactions[transaction.date] = transactions
         }
         return allTransactions

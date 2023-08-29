@@ -8,6 +8,5 @@ sealed class HomeScreenUiState {
     data class Failure(val message: String) : HomeScreenUiState()
     data class Success(
         val calendarData: CalendarDataModel,
-        val balanceModel: BalanceModel,
     ) : HomeScreenUiState()
 }

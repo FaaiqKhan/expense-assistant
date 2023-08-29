@@ -26,15 +26,15 @@ fun HomeScreen(
     onTransactionSelect: (transaction: TransactionModel) -> Unit
 ) {
     val calendar by homeViewModel.getCalender().collectAsState()
-    val localCalendarState by homeViewModel.localCalender.collectAsState()
     val transactions = homeViewModel.getTransactionsBySelectedDate()
+    val monthCashFlow = homeViewModel.getMonthCashFlow().collectAsState()
 
     HomeScreenContent(
         modifier = modifier,
         calendar = calendar,
         transactions = transactions,
         userName = homeViewModel.getUser().name,
-        calendarUiState = localCalendarState,
+        cashFlow = monthCashFlow.value,
         onToday = homeViewModel::backToToday,
         onDateUpdate = homeViewModel::updateSelectedDate,
         onSelect = onTransactionSelect
@@ -45,9 +45,9 @@ fun HomeScreen(
 private fun HomeScreenContent(
     modifier: Modifier,
     userName: String,
-    calendarUiState: HomeScreenUiState,
     calendar: List<CalendarDateModel>,
     transactions: List<TransactionModel>,
+    cashFlow: MonthCashFlow,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
     onSelect: (transaction: TransactionModel) -> Unit
@@ -63,7 +63,7 @@ private fun HomeScreenContent(
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
-            uiState = calendarUiState,
+            totalExpense = cashFlow.expense,
             onClickViewAll = { }
         )
         CalendarView(
@@ -73,13 +73,11 @@ private fun HomeScreenContent(
             updateDate = onDateUpdate,
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
-        if (calendarUiState is HomeScreenUiState.Success) {
-            OpenCloseBalanceCard(
-                modifier = Modifier.fillMaxWidth(),
-                openBalanceOfMonth = calendarUiState.balanceModel.openingBalance,
-                closeBalanceOfMonth = calendarUiState.balanceModel.closingBalance,
-            )
-        }
+        OpenCloseBalanceCard(
+            modifier = Modifier.fillMaxWidth(),
+            openBalanceOfMonth = cashFlow.openingAmount,
+            closeBalanceOfMonth = cashFlow.closingAmount,
+        )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
         LazyColumn(
             modifier = Modifier.padding(
@@ -109,16 +107,11 @@ private fun PreviewHomeScreen() {
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
             userName = "Faiq Ali Khan",
-            calendarUiState = HomeScreenUiState.Success(
-                CalendarDataModel(
-                    localDate = LocalDate.now(),
-                    localCalendar = dates,
-                ),
-                balanceModel = BalanceModel(
-                    totalExpense = 400.00,
-                    openingBalance = 1000.00,
-                    closingBalance = 600.00
-                )
+            cashFlow = MonthCashFlow(
+                income = 3000.0,
+                expense = 1000.0,
+                openingAmount = 3000.0,
+                closingAmount = 2000.0
             ),
             onToday = {},
             onDateUpdate = {},

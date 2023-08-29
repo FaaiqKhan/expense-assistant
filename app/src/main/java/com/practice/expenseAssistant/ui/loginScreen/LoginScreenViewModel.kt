@@ -6,6 +6,7 @@ import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
 import com.practice.expenseAssistant.repository.database.dao.TransactionDao
 import com.practice.expenseAssistant.repository.database.dao.UserDao
+import com.practice.expenseAssistant.repository.database.entities.CashFlow
 import com.practice.expenseAssistant.repository.database.entities.User
 import com.practice.expenseAssistant.utils.CurrencyType
 import com.practice.expenseAssistant.utils.Utils
@@ -61,6 +62,17 @@ class LoginScreenViewModel @Inject constructor(
                     transactions[it.date] = mutableListOf(transaction)
                 }
             }
+            val monthlyCashFlow = expenseAssistantRepository.getCashFlowFromDb()
+                .groupBy { it.month }.entries.associate { item ->
+                    val itemValue = item.value.first()
+                    item.key to MonthCashFlow(
+                        income = itemValue.income,
+                        expense = itemValue.expense,
+                        openingAmount = itemValue.openingAmount,
+                        closingAmount = itemValue.closingAmount
+                    )
+                }
+            expenseAssistantRepository.setMonthCashFLow(monthlyCashFlow)
             expenseAssistantRepository.setUser(
                 UserModel(
                     name = user.name,
@@ -112,6 +124,21 @@ class LoginScreenViewModel @Inject constructor(
                         bankAccounts = user.bankAccount,
                         currencyType = user.currencyType,
                         selectedBankAccount = user.selectedBankAccount,
+                    )
+                )
+                expenseAssistantRepository.insertCashFlowIntoDb(
+                    cashFlow = CashFlow(
+                        openingAmount = selectedBankAccount.balance,
+                        closingAmount = selectedBankAccount.balance,
+                        month = expenseAssistantRepository.getSelectedDate(),
+                    )
+                )
+                expenseAssistantRepository.setMonthCashFLow(
+                    mapOf(
+                        expenseAssistantRepository.getSelectedDate() to MonthCashFlow(
+                            openingAmount = selectedBankAccount.balance,
+                            closingAmount = selectedBankAccount.balance,
+                        )
                     )
                 )
                 initCalendar()

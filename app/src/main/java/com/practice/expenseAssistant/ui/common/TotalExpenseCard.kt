@@ -20,17 +20,9 @@ import java.time.LocalDate
 @Composable
 fun TotalExpenseCard(
     modifier: Modifier = Modifier,
-    uiState: HomeScreenUiState,
+    totalExpense: Double = 0.0,
     onClickViewAll: () -> Unit,
 ) {
-    var totalExpense by remember { mutableStateOf<Double>(0.0) }
-    when(uiState) {
-        is HomeScreenUiState.Loading -> {}
-        is HomeScreenUiState.Failure -> {}
-        is HomeScreenUiState.Success -> {
-            totalExpense = uiState.balanceModel.totalExpense
-        }
-    }
     Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(
             modifier = modifier.padding(dimensionResource(id = R.dimen.card_padding)),
@@ -38,13 +30,11 @@ fun TotalExpenseCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                if (uiState is HomeScreenUiState.Success) {
-                    Text(
-                        text = if (totalExpense == 0.0) stringResource(R.string.no_expense_yet)
-                        else stringResource(id = R.string.euro_symbol, totalExpense),
-                        style = MaterialTheme.typography.displayMedium
-                    )
-                }
+                Text(
+                    text = if (totalExpense == 0.0) stringResource(R.string.no_expense_yet)
+                    else stringResource(id = R.string.euro_symbol, totalExpense),
+                    style = MaterialTheme.typography.displayMedium
+                )
                 Text(
                     text = stringResource(id = R.string.total_expense_till_now),
                     style = MaterialTheme.typography.labelMedium
@@ -67,17 +57,7 @@ private fun PreviewShowTotalExpenseCard() {
     ExpenseAssistantTheme {
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
-            uiState = HomeScreenUiState.Success(
-                calendarData = CalendarDataModel(
-                    localDate = LocalDate.now(),
-                    localCalendar = dates
-                ),
-                balanceModel = BalanceModel(
-                    openingBalance = 1000.0,
-                    closingBalance = 400.0,
-                    totalExpense = 600.0
-                )
-            ),
+            totalExpense = 3000.0,
             onClickViewAll = {}
         )
     }
