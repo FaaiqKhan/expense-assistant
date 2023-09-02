@@ -68,18 +68,15 @@ private fun LoginScreenContent(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AnimatedVisibility(visible = isSignUp.not()) {
-            Text(
-                text = stringResource(R.string.hello_there),
-                style = MaterialTheme.typography.displayLarge,
-                modifier = Modifier.padding(
-                    bottom = dimensionResource(id = R.dimen.field_height)
-                ),
-            )
-        }
+        Text(
+            text = stringResource(R.string.hello_there),
+            style = MaterialTheme.typography.displayLarge,
+            modifier = Modifier.padding(
+                vertical = dimensionResource(id = R.dimen.field_height)
+            ),
+        )
         AnimatedVisibility(visible = isSignUp) {
             SignUpScreen(uiState = loginScreenUiState, signUp = signUp)
         }
