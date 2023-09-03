@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -19,6 +18,7 @@ import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
+import com.practice.expenseAssistant.ui.profileScreen.ProfileScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
 import com.practice.expenseAssistant.utils.*
@@ -39,8 +39,6 @@ fun ExpenseAssistantApp(
             ExpenseAssistantTopBar(
                 screen = currentScreen,
                 controller = navController,
-                onAddTransaction = { navController.navigate(Screens.CATEGORY.name) },
-                onViewMenu = {}
             )
         },
     ) {
@@ -54,9 +52,9 @@ fun ExpenseAssistantTopBar(
     modifier: Modifier = Modifier,
     screen: Screens,
     controller: NavHostController,
-    onAddTransaction: () -> Unit,
-    onViewMenu: () -> Unit,
 ) {
+    var isMenuOpen by remember { mutableStateOf(false) }
+
     TopAppBar(
         modifier = modifier,
         title = {
@@ -89,17 +87,34 @@ fun ExpenseAssistantTopBar(
         },
         actions = {
             if (screen == Screens.HOME) {
-                IconButton(onClick = onAddTransaction) {
+                IconButton(onClick = { controller.navigate(Screens.CATEGORY.name) }) {
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = stringResource(id = R.string.add_expense),
                     )
                 }
-                IconButton(onClick = onViewMenu) {
+                IconButton(onClick = { isMenuOpen = !isMenuOpen }) {
                     Icon(
-                        imageVector = Icons.Filled.Menu,
+                        imageVector = Icons.Filled.MoreVert,
                         contentDescription = stringResource(id = R.string.menu),
                     )
+                }
+                DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
+                    TextButton(onClick = { /*TODO*/ }) {
+                        Text(text = stringResource(id = R.string.view_all_expenses))
+                    }
+                    TextButton(onClick = { /*TODO*/ }) {
+                        Text(text = stringResource(id = R.string.view_all_income))
+                    }
+                    TextButton(onClick = {
+                        controller.navigate(Screens.PROFILE.name)
+                        isMenuOpen = false
+                    }) {
+                        Text(text = stringResource(id = R.string.profile))
+                    }
+                    TextButton(onClick = { /*TODO*/ }) {
+                        Text(text = stringResource(id = R.string.about))
+                    }
                 }
             }
         }
@@ -143,6 +158,11 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
             TransactionScreen(
                 modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
                 navController = navController,
+            )
+        }
+        composable(route = Screens.PROFILE.name) {
+            ProfileScreen(
+                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
             )
         }
     }

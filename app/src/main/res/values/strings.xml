@@ -3,6 +3,8 @@
     <string name="euro_symbol">€ %1$s</string>
     <string name="total_expense_till_now">Total expense till now</string>
     <string name="view_all">View all</string>
+    <string name="view_all_expenses">Expenses</string>
+    <string name="view_all_income">Income</string>
     <string name="closing_balance">Closing: %1$s</string>
     <string name="opening_balance">Opening: %1$s</string>
     <string name="add_expense">Add expense</string>
@@ -37,4 +39,8 @@
     <string name="delete_transaction">Delete transaction</string>
     <string name="menu">Menu</string>
     <string name="hello_there">Hello there!</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="bank_accounts">Bank Account(s)</string>
+    <string name="edit_bank_account_details">Edit bank account details</string>
+    <string name="about">About</string>
 </resources>
