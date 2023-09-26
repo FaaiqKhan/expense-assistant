@@ -15,6 +15,7 @@
     <dimen name="button_width">120dp</dimen>
     <dimen name="circular_indicator_height">22dp</dimen>
     <dimen name="circle">100dp</dimen>
+    <dimen name="two_dp">2dp</dimen>
     <dimen name="eight_dp">8dp</dimen>
     <dimen name="twenty_dp">20dp</dimen>
 </resources>
