@@ -102,7 +102,7 @@ fun SignInScreen(
             if (uiState is LoginScreenUiState.Loading)
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.inversePrimary,
-                    modifier = Modifier.height(
+                    modifier = Modifier.size(
                         dimensionResource(id = R.dimen.circular_indicator_height)
                     )
                 )
