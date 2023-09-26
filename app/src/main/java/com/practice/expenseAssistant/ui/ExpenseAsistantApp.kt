@@ -1,6 +1,9 @@
 package com.practice.expenseAssistant.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,6 +19,7 @@ import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.ui.categoryScreen.*
+import com.practice.expenseAssistant.ui.common.NoRippleButton
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.profileScreen.ProfileScreen
@@ -100,20 +104,37 @@ fun ExpenseAssistantTopBar(
                     )
                 }
                 DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = stringResource(id = R.string.view_all_expenses))
+                    NoRippleButton(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                            .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                        text = R.string.view_all_expenses,
+                    ) {
+
                     }
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = stringResource(id = R.string.view_all_income))
+                    NoRippleButton(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                            .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                        text = R.string.view_all_income,
+                    ) {
+
                     }
-                    TextButton(onClick = {
-                        controller.navigate(Screens.PROFILE.name)
+                    NoRippleButton(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                            .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                        text = R.string.profile,
+                    ) {
                         isMenuOpen = false
-                    }) {
-                        Text(text = stringResource(id = R.string.profile))
+                        controller.navigate(Screens.PROFILE.name)
                     }
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = stringResource(id = R.string.about))
+                    NoRippleButton(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.eight_dp)),
+                        text = R.string.about,
+                    ) {
+
                     }
                 }
             }

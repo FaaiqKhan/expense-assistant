@@ -155,7 +155,9 @@ fun SignUpScreen(
             if (uiState is LoginScreenUiState.Loading)
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.inversePrimary,
-                    modifier = Modifier.height(dimensionResource(id = R.dimen.circular_indicator_height))
+                    modifier = Modifier.size(
+                        dimensionResource(id = R.dimen.circular_indicator_height)
+                    )
                 )
             else
                 Text(text = stringResource(id = R.string.sign_up))
@@ -167,6 +169,6 @@ fun SignUpScreen(
 @Composable
 private fun PreviewSignUpScreen() {
     ExpenseAssistantTheme {
-        SignUpScreen(uiState = LoginScreenUiState.Ideal, signUp = { _, _, _, _-> })
+        SignUpScreen(uiState = LoginScreenUiState.Ideal, signUp = { _, _, _, _ -> })
     }
 }

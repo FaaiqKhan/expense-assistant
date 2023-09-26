@@ -47,7 +47,7 @@ class LoginScreenViewModel @Inject constructor(
                 return@launch
             }
             val transactions: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
-            transactionDao.getAllTransactions().forEach {
+            transactionDao.getAllTransactions(user.id).forEach {
                 val transaction = TransactionModel(
                     categoryType = it.categoryType,
                     category = it.category,
@@ -79,7 +79,8 @@ class LoginScreenViewModel @Inject constructor(
                     bankAccounts = user.bankAccount,
                     currencyType = user.currencyType,
                     selectedBankAccount = user.selectedBankAccount,
-                    transactions = transactions
+                    transactions = transactions,
+                    id = user.id
                 )
             )
             initCalendar()
@@ -124,18 +125,21 @@ class LoginScreenViewModel @Inject constructor(
                         bankAccounts = user.bankAccount,
                         currencyType = user.currencyType,
                         selectedBankAccount = user.selectedBankAccount,
+                        id = user.id
                     )
                 )
+                val selectedDate = expenseAssistantRepository.getSelectedDate()
                 expenseAssistantRepository.insertCashFlowIntoDb(
                     cashFlow = CashFlow(
                         openingAmount = selectedBankAccount.balance,
                         closingAmount = selectedBankAccount.balance,
-                        month = expenseAssistantRepository.getSelectedDate(),
+                        month = selectedDate,
+                        userId = user.id
                     )
                 )
                 expenseAssistantRepository.setMonthCashFLow(
                     mapOf(
-                        expenseAssistantRepository.getSelectedDate() to MonthCashFlow(
+                        selectedDate to MonthCashFlow(
                             openingAmount = selectedBankAccount.balance,
                             closingAmount = selectedBankAccount.balance,
                         )

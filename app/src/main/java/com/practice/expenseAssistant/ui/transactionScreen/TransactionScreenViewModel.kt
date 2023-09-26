@@ -27,29 +27,25 @@ class TransactionScreenViewModel @Inject constructor(
                     var todayTotalIncome = it.todayTotalIncome
                     var todayTotalExpense = it.todayTotalExpense
                     if (transaction.categoryType == CategoryType.EXPENSE) {
-                        val totalAmount = expenseAssistantRepository.getMonthCashFlow()
-                            .value.expense + transaction.amount
-                        val closingAmountDelta = expenseAssistantRepository.getMonthCashFlow()
-                            .value.closingAmount - transaction.amount
-                        expenseAssistantRepository.updateMonthCashFlow(
-                            expenseAssistantRepository.getMonthCashFlow().value.copy(
-                                expense = totalAmount,
-                                closingAmount = closingAmountDelta,
-                            )
+                        val cashFlowState = expenseAssistantRepository.getMonthCashFlow().value
+                        val totalAmount = cashFlowState.expense + transaction.amount
+                        val closingAmountDelta = cashFlowState.closingAmount - transaction.amount
+                        val cashFlow = cashFlowState.copy(
+                            expense = totalAmount,
+                            closingAmount = closingAmountDelta,
                         )
+                        expenseAssistantRepository.updateMonthCashFlow(cashFlow, true)
                         todayTotalExpense += transaction.amount
                         expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
                     } else {
-                        val totalAmount = expenseAssistantRepository.getMonthCashFlow()
-                            .value.income + transaction.amount
-                        val closingAmountDiff = expenseAssistantRepository.getMonthCashFlow()
-                            .value.closingAmount + transaction.amount
-                        expenseAssistantRepository.updateMonthCashFlow(
-                            expenseAssistantRepository.getMonthCashFlow().value.copy(
-                                income = totalAmount,
-                                closingAmount = closingAmountDiff
-                            )
+                        val cashFlowState = expenseAssistantRepository.getMonthCashFlow().value
+                        val totalAmount = cashFlowState.income + transaction.amount
+                        val closingAmountDiff = cashFlowState.closingAmount + transaction.amount
+                        val cashFlow = cashFlowState.copy(
+                            income = totalAmount,
+                            closingAmount = closingAmountDiff
                         )
+                        expenseAssistantRepository.updateMonthCashFlow(cashFlow, false)
                         todayTotalIncome += transaction.amount
                     }
 
@@ -80,29 +76,25 @@ class TransactionScreenViewModel @Inject constructor(
                     var todayTotalExpense = it.todayTotalExpense
 
                     if (transaction.categoryType == CategoryType.EXPENSE) {
-                        val totalAmount = expenseAssistantRepository.getMonthCashFlow()
-                            .value.expense - transaction.amount
-                        val closingAmountDiff = expenseAssistantRepository.getMonthCashFlow()
-                            .value.closingAmount + transaction.amount
-                        expenseAssistantRepository.updateMonthCashFlow(
-                            expenseAssistantRepository.getMonthCashFlow().value.copy(
-                                expense = totalAmount,
-                                closingAmount = closingAmountDiff
-                            )
+                        val cashFlowState = expenseAssistantRepository.getMonthCashFlow().value
+                        val totalAmount = cashFlowState.expense - transaction.amount
+                        val closingAmountDiff = cashFlowState.closingAmount + transaction.amount
+                        val cashFlow = cashFlowState.copy(
+                            expense = totalAmount,
+                            closingAmount = closingAmountDiff
                         )
+                        expenseAssistantRepository.updateMonthCashFlow(cashFlow, isExpense = true)
                         expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
                         todayTotalExpense -= transaction.amount
                     } else {
-                        val totalAmount = expenseAssistantRepository.getMonthCashFlow()
-                            .value.income - transaction.amount
-                        val closingAmountDelta = expenseAssistantRepository.getMonthCashFlow()
-                            .value.closingAmount - transaction.amount
-                        expenseAssistantRepository.updateMonthCashFlow(
-                            expenseAssistantRepository.getMonthCashFlow().value.copy(
-                                income = totalAmount,
-                                closingAmount = closingAmountDelta
-                            )
+                        val cashFlowState = expenseAssistantRepository.getMonthCashFlow().value
+                        val totalAmount = cashFlowState.income - transaction.amount
+                        val closingAmountDelta = cashFlowState.closingAmount - transaction.amount
+                        val cashFlow = cashFlowState.copy(
+                            income = totalAmount,
+                            closingAmount = closingAmountDelta
                         )
+                        expenseAssistantRepository.updateMonthCashFlow(cashFlow, isExpense = false)
                         todayTotalIncome -= transaction.amount
                     }
 

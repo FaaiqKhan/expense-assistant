@@ -10,18 +10,20 @@ import java.time.LocalTime
 data class Transaction(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    @ColumnInfo(name = "amount")
+    @ColumnInfo("amount")
     val amount: Double,
-    @ColumnInfo(name = "transaction_note")
+    @ColumnInfo("transaction_note")
     val note: String,
-    @ColumnInfo(name = "back_account")
+    @ColumnInfo("back_account")
     val backAccount: BankAccount,
-    @ColumnInfo(name = "category_type")
+    @ColumnInfo("category_type")
     val categoryType: CategoryType,
-    @ColumnInfo(name = "category")
+    @ColumnInfo("category")
     val category: String,
-    @ColumnInfo(name = "transaction_date")
+    @ColumnInfo("transaction_date")
     val date: LocalDate,
-    @ColumnInfo(name = "transaction_time")
-    val time: LocalTime
+    @ColumnInfo("transaction_time")
+    val time: LocalTime,
+    @ColumnInfo("user_id")
+    val userId: Int,
 )

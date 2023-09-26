@@ -36,6 +36,5 @@ interface ExpenseAssistantRepository {
     fun getMonthCashFlow(): StateFlow<MonthCashFlow>
     suspend fun insertCashFlowIntoDb(cashFlow: CashFlow)
     suspend fun getCashFlowFromDb(): List<CashFlow>
-    fun getAbc(): Map<LocalDate, MonthCashFlow>
-    fun updateMonthCashFlow(cashFlow: MonthCashFlow)
+    suspend fun updateMonthCashFlow(cashFlow: MonthCashFlow, isExpense: Boolean)
 }
