@@ -212,6 +212,7 @@ private fun PreviewTransactionScreen() {
                 .fillMaxSize()
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
             user = UserModel(
+                id = 1,
                 name = "Faiq",
                 bankAccounts = listOf(
                     BankAccount(

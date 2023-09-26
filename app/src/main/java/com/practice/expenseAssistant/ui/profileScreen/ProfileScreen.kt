@@ -321,7 +321,8 @@ private fun PreviewProfileScreen() {
                     bankAccount,
                 ),
                 currencyType = CurrencyType.Dollar,
-                selectedBankAccount = bankAccount
+                selectedBankAccount = bankAccount,
+                id = 1
             ),
             updatePassword = { _, _ -> },
             viewActions = null

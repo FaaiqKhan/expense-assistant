@@ -15,12 +15,12 @@ interface TransactionDao {
     @Update
     suspend fun updateTransaction(transaction: Transaction)
 
-    @Query("DELETE FROM `transaction` WHERE transaction_date = :date AND transaction_time = :time")
-    suspend fun removeTransaction(date: LocalDate, time: LocalTime)
+    @Query("DELETE FROM `transaction` WHERE transaction_date = :date AND transaction_time = :time AND user_id = :userId")
+    suspend fun removeTransaction(date: LocalDate, time: LocalTime, userId: Int)
 
-    @Query("SELECT * from `transaction`")
-    suspend fun getAllTransactions(): List<Transaction>
+    @Query("SELECT * from `transaction` WHERE user_id = :userId")
+    suspend fun getAllTransactions(userId: Int): List<Transaction>
 
-    @Query("SELECT * from `transaction` WHERE category_type = :categoryType")
-    suspend fun getTransactionsByCategory(categoryType: CategoryType): List<Transaction>
+    @Query("SELECT * from `transaction` WHERE category_type = :categoryType AND user_id = :userId")
+    suspend fun getTransactionsByCategory(categoryType: CategoryType, userId: Int): List<Transaction>
 }

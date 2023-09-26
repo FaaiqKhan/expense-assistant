@@ -17,4 +17,6 @@ data class CashFlow(
     val openingAmount: Double,
     @ColumnInfo("month_closing_amount")
     val closingAmount: Double,
+    @ColumnInfo("user_id")
+    val userId: Int,
 )

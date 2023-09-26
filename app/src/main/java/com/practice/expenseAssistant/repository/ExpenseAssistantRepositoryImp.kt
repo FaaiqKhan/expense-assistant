@@ -36,8 +36,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     private val _calender = MutableStateFlow<List<CalendarDateModel>>(listOf())
     private val calender = _calender.asStateFlow()
 
-    private val userCashFlow: Map<LocalDate, MonthCashFlow> = mapOf()
-
     private val _monthCashFlow = MutableStateFlow(
         MonthCashFlow(
             income = 0.0,
@@ -47,15 +45,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         )
     )
     private val monthCashFlow = _monthCashFlow.asStateFlow()
-
-    private var abc = mapOf(
-        selectedDate to MonthCashFlow(
-            income = 0.0,
-            expense = 0.0,
-            openingAmount = 0.0,
-            closingAmount = 0.0
-        )
-    )
 
     override fun setUser(user: UserModel) {
         this.user = user
@@ -86,7 +75,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
                 closingAmount = 0.0
             )
         }
-        abc = cashFlow
     }
 
     override fun updateCategoryAndType(category: String, categoryType: CategoryType) {
@@ -113,14 +101,19 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
                 categoryType = transaction.categoryType,
                 category = transaction.category.toString(),
                 date = transaction.date,
-                time = transaction.time
+                time = transaction.time,
+                userId = user.id
             )
         )
     }
 
     override suspend fun removeTransaction(transaction: TransactionModel) {
         user = user.copy(transactions = deleteTransaction(transaction))
-        transactionDao.removeTransaction(date = transaction.date, time = transaction.time)
+        transactionDao.removeTransaction(
+            date = transaction.date,
+            time = transaction.time,
+            userId = user.id
+        )
     }
 
     override fun getTransaction(date: LocalDate, time: LocalTime): TransactionModel? {
@@ -149,10 +142,11 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     override suspend fun getCashFlowFromDb(): List<CashFlow> = cashFlowDao.getAllCashFlows()
 
-    override fun getAbc() = abc
-
-    override fun updateMonthCashFlow(cashFlow: MonthCashFlow) {
+    override suspend fun updateMonthCashFlow(cashFlow: MonthCashFlow, isExpense: Boolean) {
         _monthCashFlow.value = cashFlow
+        if (isExpense) cashFlowDao.updateExpense(selectedDate, cashFlow.expense)
+        else cashFlowDao.updateIncome(selectedDate, cashFlow.income)
+        cashFlowDao.updateClosingBalance(selectedDate, cashFlow.closingAmount)
     }
 
     private fun addTransaction(transaction: TransactionModel): Map<LocalDate, List<TransactionModel>> {
