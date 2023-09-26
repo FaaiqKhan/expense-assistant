@@ -90,9 +90,5 @@ Qapp/src/main/java/com/practice/expenseAssistant/ui/common/BriefTransactionCard.
 Tapp/src/main/java/com/practice/expenseAssistant/ui/common/BriefAccountDetailsCard.kt,7/6/76e2efddc058e1ae303b5c6b043a7ce304afa516
 D
 app/build.gradle.kts,d/2/d2a4383452aad84a18429a5844d31330a012a9e6
-q
-Aapp/src/main/java/com/practice/expenseAssistant/ui/theme/Theme.kt,4/e/4e44bad2f584df1ad723b230ca5f2230451453fe
 ~
 Napp/src/main/java/com/practice/expenseAssistant/ui/loginScreen/SignInScreen.kt,d/b/db481fbcb47144f28df37be8181b0d78ef94858e
-p
-@app/src/main/java/com/practice/expenseAssistant/ui/theme/Type.kt,3/7/37f6198cce7d8b6faa26f56e6ef3ffd776b23d28

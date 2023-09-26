@@ -160,6 +160,9 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
                     )
                     navController.navigate(Screens.TRANSACTION.name)
                 },
+                viewStatement = {
+                    navController.navigate(Screens.MONTHLY_STATEMENT.name)
+                }
             )
         }
         composable(route = Screens.CATEGORY.name) {

@@ -49,4 +49,8 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="update">Update</string>
+    <string name="monthly_statement">Monthly Statement</string>
+    <string name="monthly_expenses">Monthly Expense</string>
+    <string name="monthly_incomes">Monthly Incomes</string>
+    <string name="about_me">I am a qualified and professional software engineer with 5+ years of experience in mobile application development both native and hybrid. Know how to deliver quality work in all aspects using the latest architectures and modern techniques.</string>
 </resources>
