@@ -3,16 +3,13 @@ package com.practice.expenseAssistant.ui.common
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.BalanceModel
-import com.practice.expenseAssistant.data.CalendarDataModel
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenUiState
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.Utils
 import java.time.LocalDate

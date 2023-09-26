@@ -11,10 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.data.BalanceModel
-import com.practice.expenseAssistant.ui.homeScreen.HomeScreenUiState
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import com.practice.expenseAssistant.utils.Utils
 
 @Composable
 fun OpenCloseBalanceCard(

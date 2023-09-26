@@ -1,6 +1,5 @@
 package com.practice.expenseAssistant.ui.homeScreen
 
-import com.practice.expenseAssistant.data.BalanceModel
 import com.practice.expenseAssistant.data.CalendarDataModel
 
 sealed class HomeScreenUiState {

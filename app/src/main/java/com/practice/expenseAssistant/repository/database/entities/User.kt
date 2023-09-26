@@ -2,7 +2,6 @@ package com.practice.expenseAssistant.repository.database.entities
 
 import androidx.room.*
 import com.practice.expenseAssistant.data.BankAccount
-import com.practice.expenseAssistant.data.MonthCashFlow
 import com.practice.expenseAssistant.utils.CurrencyType
 
 @Entity(tableName = "user")
