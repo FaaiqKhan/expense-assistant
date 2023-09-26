@@ -17,13 +17,14 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.data.BankAccount
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BankAccountDetailsView(
     modifier: Modifier = Modifier,
-    addBankAccount: (name: String, iban: String, number: String, balance: String) -> Unit
+    addBankAccount: (bankAccount: BankAccount) -> Unit
 ) {
 
     var name by remember { mutableStateOf("") }
@@ -110,7 +111,7 @@ fun BankAccountDetailsView(
                     ).show()
                     return@Button
                 }
-                addBankAccount(name, iban, number, balance)
+                addBankAccount(BankAccount(name, iban, number, balance.toDouble()))
                 iban = ""
                 number = ""
                 balance = ""
@@ -130,6 +131,6 @@ fun BankAccountDetailsView(
 @Composable
 fun PreviewBankAccountDetailsView() {
     ExpenseAssistantTheme {
-        BankAccountDetailsView(addBankAccount = { _, _, _, _ -> })
+        BankAccountDetailsView(addBankAccount = {})
     }
 }
