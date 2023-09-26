@@ -115,7 +115,7 @@ private fun TransactionScreenContent(
         }
         Spacer(modifier = Modifier.height(elementSpacing))
         OutlinedTextField(
-            value = amount,
+            value = if (amount == "0.0") "" else amount,
             onValueChange = { amount = it },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -232,7 +232,7 @@ private fun PreviewTransactionScreen() {
             transaction = TransactionModel(
                 categoryType = CategoryType.EXPENSE,
                 category = ExpenseType.BILL.value,
-                amount = 300.0,
+                amount = 0.0,
                 date = LocalDate.now(),
                 time = LocalTime.now(),
                 edit = true

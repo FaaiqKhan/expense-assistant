@@ -1,14 +1,14 @@
 package com.practice.expenseAssistant.ui.profileScreen
 
 import android.content.res.Configuration
-import androidx.compose.foundation.*
+import android.widget.Toast
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
@@ -42,22 +44,79 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     profileViewModel: ProfileScreenViewModel = hiltViewModel(),
 ) {
-    ProfileScreenContent(modifier = modifier, user = profileViewModel.getUser())
+    val actions by profileViewModel.viewActions.collectAsState()
+    ProfileScreenContent(
+        modifier = modifier,
+        user = profileViewModel.getUser(),
+        updatePassword = profileViewModel::updatePassword,
+        viewActions = actions,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-private fun ProfileScreenContent(modifier: Modifier, user: UserModel) {
+private fun ProfileScreenContent(
+    modifier: Modifier,
+    user: UserModel,
+    updatePassword: (oldPassword: String, newPassword: String) -> Unit,
+    viewActions: ViewActions?
+) {
     var userName by remember { mutableStateOf(user.name) }
-    var password by remember { mutableStateOf("abc") }
-    val editProfile by remember { mutableStateOf(false) }
-    var showPassword by remember { mutableStateOf(false) }
+    var isChangePassword by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
-        sheetContent = { BankAccountDetailsView(addBankAccount = { _, _, _, _ -> }) }) {
+        sheetShape = RoundedCornerShape(
+            topStart = dimensionResource(id = R.dimen.eight_dp),
+            topEnd = dimensionResource(id = R.dimen.eight_dp)
+        ),
+        sheetContent = {
+            if (isChangePassword) {
+                ChangePasswordSheetContent(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
+                        .padding(bottom = dimensionResource(id = R.dimen.screen_content_padding)),
+                    updatePassword = { oldPassword, newPassword ->
+                        updatePassword(
+                            oldPassword,
+                            newPassword
+                        )
+                        when (viewActions) {
+                            is ViewActions.PasswordUpdated -> {
+                                Toast.makeText(
+                                    context,
+                                    "Password updated",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                scope.launch {
+                                    sheetState.hide()
+                                }
+                            }
+
+                            is ViewActions.IncorrectPassword -> Toast.makeText(
+                                context,
+                                "Incorrect password",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            else -> {}
+                        }
+                    }
+                )
+            } else {
+                BankAccountDetailsView(
+                    modifier = Modifier
+                        .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
+                        .padding(bottom = dimensionResource(id = R.dimen.screen_content_padding)),
+                    addBankAccount = { }
+                )
+            }
+        }
+    ) {
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -92,41 +151,17 @@ private fun ProfileScreenContent(modifier: Modifier, user: UserModel) {
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(id = R.dimen.element_spacing)),
             )
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                readOnly = !editProfile,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Lock,
-                        contentDescription = stringResource(id = R.string.password)
-                    )
-                },
-                trailingIcon = {
-                    lateinit var image: ImageVector
-                    val content: String = if (!showPassword) {
-                        image = Icons.Filled.VisibilityOff
-                        stringResource(id = R.string.show_password)
-                    } else {
-                        image = Icons.Filled.Visibility
-                        stringResource(id = R.string.hide_password)
-                    }
-                    Icon(
-                        imageVector = image,
-                        contentDescription = content,
-                        modifier = Modifier.clickable { showPassword = !showPassword },
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = if (showPassword) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-
-            )
+            Button(onClick = {
+                isChangePassword = true
+                scope.launch { sheetState.show() }
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ChangeCircle,
+                    contentDescription = stringResource(id = R.string.change_password)
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.eight_dp)))
+                Text(text = stringResource(id = R.string.change_password))
+            }
             Text(
                 text = stringResource(id = R.string.bank_accounts),
                 modifier = Modifier
@@ -136,26 +171,129 @@ private fun ProfileScreenContent(modifier: Modifier, user: UserModel) {
                 style = MaterialTheme.typography.displayLarge
             )
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.element_spacing)),
+                verticalArrangement = Arrangement.spacedBy(
+                    dimensionResource(id = R.dimen.element_spacing)
+                ),
                 modifier = Modifier
                     .weight(1f)
                     .padding(bottom = dimensionResource(id = R.dimen.element_spacing)),
             ) {
-                items(user.bankAccounts) {
+                items(count = user.bankAccounts.size) {
                     BriefAccountDetailsCard(
-                        bankAccount = it,
+                        bankAccount = user.bankAccounts[it],
                         deleteBankAccount = {},
                         editBankAccount = {},
                     )
                 }
             }
-            Button(onClick = { scope.launch { sheetState.show() } }) {
+            Button(onClick = {
+                isChangePassword = false
+                scope.launch { sheetState.show() }
+            }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = stringResource(id = R.string.add_bank_account)
                 )
                 Text(text = stringResource(id = R.string.add_bank_account))
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ChangePasswordSheetContent(
+    modifier: Modifier,
+    updatePassword: (oldPassword: String, newPassword: String) -> Unit
+) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val sheetHeight = (screenHeight * 0.8).dp
+
+    var oldPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var showOldPassword by remember { mutableStateOf(false) }
+    var showNewPassword by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier.height(sheetHeight),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(id = R.string.change_password),
+            style = MaterialTheme.typography.displaySmall
+        )
+        OutlinedTextField(
+            value = oldPassword,
+            onValueChange = { oldPassword = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = stringResource(id = R.string.old_password)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Lock,
+                    contentDescription = stringResource(id = R.string.old_password)
+                )
+            },
+            trailingIcon = {
+                lateinit var image: ImageVector
+                val content: String = if (!showOldPassword) {
+                    image = Icons.Filled.VisibilityOff
+                    stringResource(id = R.string.show_password)
+                } else {
+                    image = Icons.Filled.Visibility
+                    stringResource(id = R.string.hide_password)
+                }
+                Icon(
+                    imageVector = image,
+                    contentDescription = content,
+                    modifier = Modifier.clickable { showOldPassword = !showOldPassword },
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = if (showOldPassword) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+            singleLine = true,
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
+        OutlinedTextField(
+            value = newPassword,
+            onValueChange = { newPassword = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = stringResource(id = R.string.new_password)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Lock,
+                    contentDescription = stringResource(id = R.string.new_password)
+                )
+            },
+            trailingIcon = {
+                lateinit var image: ImageVector
+                val content: String = if (!showNewPassword) {
+                    image = Icons.Filled.VisibilityOff
+                    stringResource(id = R.string.show_password)
+                } else {
+                    image = Icons.Filled.Visibility
+                    stringResource(id = R.string.hide_password)
+                }
+                Icon(
+                    imageVector = image,
+                    contentDescription = content,
+                    modifier = Modifier.clickable { showNewPassword = !showNewPassword },
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = if (showNewPassword) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
+            singleLine = true,
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.twenty_dp)))
+        Button(onClick = { updatePassword(oldPassword, newPassword) }) {
+            Text(text = stringResource(id = R.string.update))
         }
     }
 }
@@ -181,14 +319,12 @@ private fun PreviewProfileScreen() {
                     bankAccount,
                     bankAccount,
                     bankAccount,
-                    bankAccount,
-                    bankAccount,
-                    bankAccount,
-                    bankAccount,
                 ),
                 currencyType = CurrencyType.Dollar,
                 selectedBankAccount = bankAccount
-            )
+            ),
+            updatePassword = { _, _ -> },
+            viewActions = null
         )
     }
 }

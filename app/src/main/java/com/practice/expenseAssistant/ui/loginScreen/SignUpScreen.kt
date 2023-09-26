@@ -142,15 +142,8 @@ fun SignUpScreen(
         }
         BankAccountDetailsView(
             modifier = modifier,
-            addBankAccount = { name, iban, number, balance ->
-                bankAccounts.add(
-                    BankAccount(
-                        name,
-                        iban,
-                        number,
-                        balance.toDouble()
-                    )
-                )
+            addBankAccount = {
+                bankAccounts.add(it)
                 focusManager.clearFocus()
             },
         )

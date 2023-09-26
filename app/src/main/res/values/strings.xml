@@ -43,4 +43,10 @@
     <string name="bank_accounts">Bank Account(s)</string>
     <string name="edit_bank_account_details">Edit bank account details</string>
     <string name="about">About</string>
+    <string name="close_add_account_sheet">Close add account sheet</string>
+    <string name="bank_account_details">Bank Account Details</string>
+    <string name="change_password">Change password</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="update">Update</string>
 </resources>
