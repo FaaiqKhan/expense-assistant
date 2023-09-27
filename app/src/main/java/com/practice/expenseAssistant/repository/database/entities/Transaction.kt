@@ -26,4 +26,8 @@ data class Transaction(
     val time: LocalTime,
     @ColumnInfo("user_id")
     val userId: Int,
+    @ColumnInfo("transaction_month")
+    val month: Int,
+    @ColumnInfo("transaction_year")
+    val year: Int,
 )

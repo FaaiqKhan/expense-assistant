@@ -46,6 +46,8 @@ fun TransactionScreen(
             amount = 0.0,
             date = transactionViewModel.getSelectedDate(),
             time = LocalTime.now(),
+            month = LocalDate.now().monthValue,
+            year = LocalDate.now().year
         ),
         addTransaction = { tran, account ->
             transactionViewModel.addTransaction(tran, account)
@@ -188,7 +190,9 @@ private fun TransactionScreenContent(
                             note = expenseNote,
                             amount = amount.toDouble(),
                             date = transactionDate,
-                            time = transactionTime
+                            time = transactionTime,
+                            month = LocalDate.now().monthValue,
+                            year = LocalDate.now().year
                         ),
                         bankAccount
                     )
@@ -236,7 +240,9 @@ private fun PreviewTransactionScreen() {
                 amount = 0.0,
                 date = LocalDate.now(),
                 time = LocalTime.now(),
-                edit = true
+                edit = true,
+                month = LocalDate.now().monthValue,
+                year = LocalDate.now().year
             ),
             addTransaction = { _, _ -> },
             removeTransaction = { _ -> },

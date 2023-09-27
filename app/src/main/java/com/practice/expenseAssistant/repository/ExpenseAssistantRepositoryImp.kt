@@ -102,7 +102,9 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
                 category = transaction.category.toString(),
                 date = transaction.date,
                 time = transaction.time,
-                userId = user.id
+                userId = user.id,
+                month = transaction.month,
+                year = transaction.year
             )
         )
     }
@@ -147,6 +149,13 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         if (isExpense) cashFlowDao.updateExpense(selectedDate, cashFlow.expense)
         else cashFlowDao.updateIncome(selectedDate, cashFlow.income)
         cashFlowDao.updateClosingBalance(selectedDate, cashFlow.closingAmount)
+    }
+
+    override suspend fun fetchAllTransactionsOfMonthAndYear(
+        month: Int,
+        year: Int
+    ): List<Transaction> {
+        return transactionDao.getAllTransactionOfMonthAndYear(month, year, user.id)
     }
 
     private fun addTransaction(transaction: TransactionModel): Map<LocalDate, List<TransactionModel>> {

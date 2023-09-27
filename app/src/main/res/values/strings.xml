@@ -58,4 +58,6 @@
     <string name="my_email_address">My email address</string>
     <string name="faiqalikhan49_gmail_com">faiqalikhan49@gmail.com</string>
     <string name="about_application">I built this application to practice Kotlin, Jetpack Compose, and Android new concepts.</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
 </resources>

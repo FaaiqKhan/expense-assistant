@@ -54,7 +54,9 @@ class LoginScreenViewModel @Inject constructor(
                     note = it.note,
                     amount = it.amount,
                     date = it.date,
-                    time = it.time
+                    time = it.time,
+                    month = it.month,
+                    year = it.year
                 )
                 if (transactions[it.date] != null) {
                     transactions.getValue(it.date).add(transaction)

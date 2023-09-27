@@ -17,7 +17,9 @@ data class TransactionModel(
     val date: LocalDate,
     val time: LocalTime,
     val note: String = "",
-    val edit: Boolean = false
+    val edit: Boolean = false,
+    val month: Int,
+    val year: Int,
 ) : Parcelable {
 
     private companion object : Parceler<TransactionModel> {
@@ -38,6 +40,8 @@ data class TransactionModel(
                 time = LocalTime.ofNanoOfDay(parcel.readLong()),
                 note = parcel.readString()!!,
                 edit = parcel.readBoolean(),
+                month = parcel.readInt(),
+                year = parcel.readInt()
             )
         }
 
@@ -49,6 +53,8 @@ data class TransactionModel(
             parcel.writeLong(time.toNanoOfDay())
             parcel.writeString(note)
             parcel.writeBoolean(edit)
+            parcel.writeInt(month)
+            parcel.writeInt(year)
         }
 
     }

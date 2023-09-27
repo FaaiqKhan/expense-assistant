@@ -207,9 +207,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
             )
         }
         composable(route = Screens.MONTHLY_STATEMENT.name) {
-            StatementScreen(
-                modifier.padding(dimensionResource(id = R.dimen.screen_content_padding))
-            )
+            StatementScreen(modifier)
         }
     }
 }

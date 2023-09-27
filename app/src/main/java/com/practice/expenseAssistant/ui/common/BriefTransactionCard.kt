@@ -55,6 +55,8 @@ private fun PreviewBriefTransactionCard() {
             amount = 100.00,
             date = LocalDate.now(),
             time = LocalTime.now(),
+            month = LocalDate.now().monthValue,
+            year = LocalDate.now().year
         )
     ) {}
 }
