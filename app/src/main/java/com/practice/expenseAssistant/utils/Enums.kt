@@ -17,11 +17,10 @@ enum class Screens(@StringRes val title: Int) {
     CATEGORY(title = R.string.category),
     TRANSACTION(title = R.string.transaction),
     PROFILE(title = R.string.profile),
-    EXPENSE(title = R.string.expense),
-    INCOME(title = R.string.income),
     MONTHLY_STATEMENT(title = R.string.monthly_statement),
     MONTHLY_EXPENSES(title = R.string.monthly_expenses),
-    MONTHLY_INCOMES(title = R.string.monthly_incomes)
+    MONTHLY_INCOMES(title = R.string.monthly_incomes),
+    ABOUT(title = R.string.about),
 }
 
 @Parcelize

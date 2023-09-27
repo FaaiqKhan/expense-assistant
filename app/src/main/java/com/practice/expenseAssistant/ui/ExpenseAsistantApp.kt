@@ -15,11 +15,15 @@ import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.TransactionModel
+import com.practice.expenseAssistant.ui.aboutScreen.AboutScreen
 import com.practice.expenseAssistant.ui.categoryScreen.*
 import com.practice.expenseAssistant.ui.common.NoRippleButton
+import com.practice.expenseAssistant.ui.expensesScreen.ExpensesScreen
 import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
+import com.practice.expenseAssistant.ui.incomesScreen.IncomesScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.profileScreen.ProfileScreen
+import com.practice.expenseAssistant.ui.statementScreen.StatementScreen
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
 import com.practice.expenseAssistant.utils.*
@@ -131,7 +135,8 @@ fun ExpenseAssistantTopBar(
                             .padding(horizontal = dimensionResource(id = R.dimen.eight_dp)),
                         text = R.string.about,
                     ) {
-
+                        isMenuOpen = false
+                        controller.navigate(Screens.ABOUT.name)
                     }
                 }
             }
@@ -175,6 +180,16 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
                 }
             )
         }
+        composable(route = Screens.MONTHLY_EXPENSES.name) {
+            ExpensesScreen(
+                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
+            )
+        }
+        composable(route = Screens.MONTHLY_INCOMES.name) {
+            IncomesScreen(
+                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
+            )
+        }
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(
                 modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
@@ -184,6 +199,16 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         composable(route = Screens.PROFILE.name) {
             ProfileScreen(
                 modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
+            )
+        }
+        composable(route = Screens.ABOUT.name) {
+            AboutScreen(
+                modifier.padding(dimensionResource(id = R.dimen.screen_content_padding))
+            )
+        }
+        composable(route = Screens.MONTHLY_STATEMENT.name) {
+            StatementScreen(
+                modifier.padding(dimensionResource(id = R.dimen.screen_content_padding))
             )
         }
     }
