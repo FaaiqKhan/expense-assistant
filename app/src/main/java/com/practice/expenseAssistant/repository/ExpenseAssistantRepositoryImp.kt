@@ -36,7 +36,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     private val _calender = MutableStateFlow<List<CalendarDateModel>>(listOf())
     private val calender = _calender.asStateFlow()
 
-    private val _monthCashFlow = MutableStateFlow(
+    private var _monthCashFlow = MutableStateFlow(
         MonthCashFlow(
             income = 0.0,
             expense = 0.0,
@@ -66,15 +66,12 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         totalExpenseOfMonth = expense
     }
 
-    override fun setMonthCashFLow(cashFlow: Map<LocalDate, MonthCashFlow>) {
-        _monthCashFlow.update {
-            cashFlow[selectedDate] ?: MonthCashFlow(
-                income = 0.0,
-                expense = 0.0,
-                openingAmount = 0.0,
-                closingAmount = 0.0
-            )
-        }
+    override fun setTotalIncomeOfMonth(income: Double) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setMonthCashFLow(cashFlow: MonthCashFlow) {
+        _monthCashFlow.emit(cashFlow)
     }
 
     override fun updateCategoryAndType(category: String, categoryType: CategoryType) {
@@ -89,6 +86,11 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     override suspend fun updateCalendar(calendar: List<CalendarDateModel>) {
         _calender.value = calendar
         _calender.emit(calendar)
+    }
+
+    override suspend fun fetchAllTransactionsOfUser(userId: Int): Map<LocalDate, List<TransactionModel>> {
+        val rawTransactions = transactionDao.getAllTransactions(userId)
+        return parseTransactions(rawTransactions)
     }
 
     override suspend fun addTransaction(transaction: TransactionModel, bankAccount: BankAccount) {
@@ -138,17 +140,37 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     override fun getSelectedDate(): LocalDate = selectedDate
     override fun getTransactionsOfSelectedDate() = user.transactions[selectedDate]
     override fun getMonthCashFlow(): StateFlow<MonthCashFlow> = monthCashFlow
+    override fun getCashFlowOfMonth(localDate: LocalDate): MonthCashFlow = monthCashFlow.value
 
-    override suspend fun insertCashFlowIntoDb(cashFlow: CashFlow) =
+    override suspend fun insertCashFlowIntoDb(cashFlow: CashFlow) {
         cashFlowDao.insertCashFlow(cashFlow)
+        _monthCashFlow.emit(
+            MonthCashFlow(
+                income = cashFlow.income,
+                expense = cashFlow.expense,
+                openingAmount = cashFlow.openingAmount,
+                closingAmount = cashFlow.closingAmount,
+            )
+        )
+    }
 
-    override suspend fun getCashFlowFromDb(): List<CashFlow> = cashFlowDao.getAllCashFlows()
+    override suspend fun fetchCashFlowOfMonth(month: Int, year: Int): MonthCashFlow {
+        val cashFlow = cashFlowDao.getCashFlowOfMonth(month, year)
+        return MonthCashFlow(
+            income = cashFlow?.income ?: 0.0,
+            expense = cashFlow?.expense ?: 0.0,
+            openingAmount = cashFlow?.openingAmount ?: 0.0,
+            closingAmount = cashFlow?.closingAmount ?: 0.0,
+        )
+    }
 
     override suspend fun updateMonthCashFlow(cashFlow: MonthCashFlow, isExpense: Boolean) {
-        _monthCashFlow.value = cashFlow
-        if (isExpense) cashFlowDao.updateExpense(selectedDate, cashFlow.expense)
-        else cashFlowDao.updateIncome(selectedDate, cashFlow.income)
-        cashFlowDao.updateClosingBalance(selectedDate, cashFlow.closingAmount)
+        val month = selectedDate.monthValue
+        val year = selectedDate.year
+        if (isExpense) cashFlowDao.updateExpense(month, year, cashFlow.expense)
+        else cashFlowDao.updateIncome(month, year, cashFlow.income)
+        cashFlowDao.updateClosingBalance(month, year, cashFlow.closingAmount)
+        _monthCashFlow.emit(cashFlow)
     }
 
     override suspend fun fetchAllTransactionsOfMonthAndYear(
@@ -180,5 +202,27 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
             allTransactions[transaction.date] = transactions
         }
         return allTransactions
+    }
+
+    private fun parseTransactions(transactions: List<Transaction>): Map<LocalDate, MutableList<TransactionModel>> {
+        val transactionsData: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
+        transactions.forEach {
+            val transaction = TransactionModel(
+                categoryType = it.categoryType,
+                category = it.category,
+                note = it.note,
+                amount = it.amount,
+                date = it.date,
+                time = it.time,
+                month = it.month,
+                year = it.year
+            )
+            if (transactionsData[it.date] != null) {
+                transactionsData.getValue(it.date).add(transaction)
+            } else {
+                transactionsData[it.date] = mutableListOf(transaction)
+            }
+        }
+        return transactionsData
     }
 }

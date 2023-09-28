@@ -24,7 +24,6 @@ class StatementScreenViewModel @Inject constructor(
 
     fun getAllTransactionsOfMonth(date: LocalDate) {
         viewModelScope.launch {
-            _uiState.emit(StatementScreenUiState.Loading)
             val data = repository.fetchAllTransactionsOfMonthAndYear(
                 date.monthValue,
                 date.year,
