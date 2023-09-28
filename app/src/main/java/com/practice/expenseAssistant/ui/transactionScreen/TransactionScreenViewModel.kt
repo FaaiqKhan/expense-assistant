@@ -23,33 +23,27 @@ class TransactionScreenViewModel @Inject constructor(
                 if (it.date != transaction.date) {
                     it.copy(isSelected = it.date == expenseAssistantRepository.getSelectedDate())
                 } else {
-                    var todayTotalIncome = it.todayTotalIncome
-                    var todayTotalExpense = it.todayTotalExpense
-                    val monthCashFlow = expenseAssistantRepository.getCashFlowOfMonth(
-                        transaction.date
+                    val data = processTransaction(
+                        calendarDateModel = it,
+                        transaction = transaction,
+                        monthCashFlow = expenseAssistantRepository.getMonthCashFlow().value,
+                        processToRemove = false,
                     )
-                    val updatedMonthCashFlow: MonthCashFlow
-                    if (transaction.categoryType == CategoryType.EXPENSE) {
-                        val totalExpense = monthCashFlow.expense + transaction.amount
-                        todayTotalExpense += transaction.amount
-                        updatedMonthCashFlow = monthCashFlow.copy(
-                            expense = totalExpense,
-                            closingAmount = monthCashFlow.closingAmount - transaction.amount
-                        )
-                        expenseAssistantRepository.setTotalExpenseOfMonth(totalExpense)
-                    } else {
-                        val totalIncome = monthCashFlow.income + transaction.amount
-                        todayTotalIncome += transaction.amount
-                        updatedMonthCashFlow = monthCashFlow.copy(
-                            income = totalIncome,
-                            closingAmount = monthCashFlow.closingAmount - transaction.amount
-                        )
-                        expenseAssistantRepository.setTotalIncomeOfMonth(totalIncome)
+
+                    val totalAmount = data[0] as Double
+                    val todayTotalIncome = data[1] as Double
+                    val todayTotalExpense = data[2] as Double
+                    val monthUpdatedCashFlow = data[3] as MonthCashFlow
+
+                    if (transaction.categoryType == CategoryType.INCOME) {
+                        expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
                     }
+
                     expenseAssistantRepository.updateMonthCashFlow(
-                        cashFlow = updatedMonthCashFlow,
+                        cashFlow = monthUpdatedCashFlow,
                         isExpense = transaction.categoryType == CategoryType.EXPENSE
                     )
+
                     val todayTransactions = it.todayTransactions?.toMutableList() ?: mutableListOf()
                     todayTransactions.add(transaction)
 
@@ -73,39 +67,26 @@ class TransactionScreenViewModel @Inject constructor(
                 if (it.date != transaction.date) {
                     it.copy(isSelected = it.date == expenseAssistantRepository.getSelectedDate())
                 } else {
-                    var todayTotalIncome = it.todayTotalIncome
-                    var todayTotalExpense = it.todayTotalExpense
+                    val data = processTransaction(
+                        calendarDateModel = it,
+                        transaction = transaction,
+                        monthCashFlow = expenseAssistantRepository.getMonthCashFlow().value,
+                        processToRemove = true,
+                    )
 
-                    if (transaction.categoryType == CategoryType.EXPENSE) {
-                        val cashFlow =
-                            expenseAssistantRepository.getCashFlowOfMonth(transaction.date)
-                        val totalAmount = cashFlow.expense - transaction.amount
-                        val closingAmountDiff = cashFlow.closingAmount + transaction.amount
-                        val updatedCashFlow = cashFlow.copy(
-                            expense = totalAmount,
-                            closingAmount = closingAmountDiff
-                        )
-                        expenseAssistantRepository.updateMonthCashFlow(
-                            updatedCashFlow,
-                            isExpense = true
-                        )
+                    val totalAmount = data[0] as Double
+                    val todayTotalIncome = data[1] as Double
+                    val todayTotalExpense = data[2] as Double
+                    val monthUpdatedCashFlow = data[3] as MonthCashFlow
+
+                    if (transaction.categoryType == CategoryType.INCOME) {
                         expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
-                        todayTotalExpense -= transaction.amount
-                    } else {
-                        val cashFlow =
-                            expenseAssistantRepository.getCashFlowOfMonth(transaction.date)
-                        val totalAmount = cashFlow.income - transaction.amount
-                        val closingAmountDelta = cashFlow.closingAmount - transaction.amount
-                        val updatedCashFlow = cashFlow.copy(
-                            income = totalAmount,
-                            closingAmount = closingAmountDelta
-                        )
-                        expenseAssistantRepository.updateMonthCashFlow(
-                            updatedCashFlow,
-                            isExpense = false
-                        )
-                        todayTotalIncome -= transaction.amount
                     }
+
+                    expenseAssistantRepository.updateMonthCashFlow(
+                        cashFlow = monthUpdatedCashFlow,
+                        isExpense = transaction.categoryType == CategoryType.EXPENSE
+                    )
 
                     val todayTransactions = it.todayTransactions!!.toMutableList()
                     todayTransactions.remove(transaction)
@@ -126,4 +107,47 @@ class TransactionScreenViewModel @Inject constructor(
     fun getCategoryType(): CategoryType = expenseAssistantRepository.getCategoryType()
 
     fun getCategory(): String = expenseAssistantRepository.getCategory()
+
+    private fun processTransaction(
+        calendarDateModel: CalendarDateModel,
+        transaction: TransactionModel,
+        monthCashFlow: MonthCashFlow,
+        processToRemove: Boolean
+    ): List<Any> {
+        val totalAmount: Double
+        val monthUpdatedCashFlow: MonthCashFlow
+        var closingAmount = monthCashFlow.closingAmount
+        var todayTotalIncome = calendarDateModel.todayTotalIncome
+        var todayTotalExpense = calendarDateModel.todayTotalExpense
+        if (transaction.categoryType == CategoryType.INCOME) {
+            totalAmount = if (processToRemove) {
+                closingAmount -= transaction.amount
+                todayTotalIncome -= transaction.amount
+                monthCashFlow.income - transaction.amount
+            } else {
+                closingAmount += transaction.amount
+                todayTotalIncome += transaction.amount
+                monthCashFlow.income + transaction.amount
+            }
+            monthUpdatedCashFlow = monthCashFlow.copy(
+                income = totalAmount,
+                closingAmount = closingAmount
+            )
+        } else {
+            totalAmount = if (processToRemove) {
+                closingAmount += transaction.amount
+                todayTotalExpense -= transaction.amount
+                monthCashFlow.expense - transaction.amount
+            } else {
+                closingAmount -= transaction.amount
+                todayTotalExpense += transaction.amount
+                monthCashFlow.expense + transaction.amount
+            }
+            monthUpdatedCashFlow = monthCashFlow.copy(
+                expense = totalAmount,
+                closingAmount = closingAmount
+            )
+        }
+        return listOf(totalAmount, todayTotalIncome, todayTotalExpense, monthUpdatedCashFlow)
+    }
 }

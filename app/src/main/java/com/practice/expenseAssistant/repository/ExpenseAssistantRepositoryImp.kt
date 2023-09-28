@@ -66,10 +66,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         totalExpenseOfMonth = expense
     }
 
-    override fun setTotalIncomeOfMonth(income: Double) {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun setMonthCashFLow(cashFlow: MonthCashFlow) {
         _monthCashFlow.emit(cashFlow)
     }
