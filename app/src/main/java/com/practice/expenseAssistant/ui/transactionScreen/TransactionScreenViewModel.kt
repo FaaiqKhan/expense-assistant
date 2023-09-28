@@ -36,6 +36,8 @@ class TransactionScreenViewModel @Inject constructor(
                     val monthUpdatedCashFlow = data[3] as MonthCashFlow
 
                     if (transaction.categoryType == CategoryType.INCOME) {
+                        expenseAssistantRepository.setTotalIncomeOfMonth(totalAmount)
+                    } else {
                         expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
                     }
 
@@ -80,6 +82,8 @@ class TransactionScreenViewModel @Inject constructor(
                     val monthUpdatedCashFlow = data[3] as MonthCashFlow
 
                     if (transaction.categoryType == CategoryType.INCOME) {
+                        expenseAssistantRepository.setTotalIncomeOfMonth(totalAmount)
+                    } else {
                         expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
                     }
 

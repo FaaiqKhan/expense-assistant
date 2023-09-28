@@ -32,6 +32,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     private var categoryType: CategoryType = CategoryType.EXPENSE
     private var category: String = ExpenseType.OTHERS.name
     private var totalExpenseOfMonth: Double = 0.0
+    private var totalIncomeOfMonth: Double = 0.0
 
     private val _calender = MutableStateFlow<List<CalendarDateModel>>(listOf())
     private val calender = _calender.asStateFlow()
@@ -64,6 +65,10 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     override fun setTotalExpenseOfMonth(expense: Double) {
         totalExpenseOfMonth = expense
+    }
+
+    override fun setTotalIncomeOfMonth(income: Double) {
+        totalIncomeOfMonth = income
     }
 
     override suspend fun setMonthCashFLow(cashFlow: MonthCashFlow) {
@@ -133,6 +138,8 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     override fun getCategoryType(): CategoryType = categoryType
     override fun getCategory(): String = category
     override fun getTotalExpenseOfMonth(): Double = totalExpenseOfMonth
+    override fun getTotalIncomeOfMonth(): Double = totalIncomeOfMonth
+
     override fun getSelectedDate(): LocalDate = selectedDate
     override fun getTransactionsOfSelectedDate() = user.transactions[selectedDate]
     override fun getMonthCashFlow(): StateFlow<MonthCashFlow> = monthCashFlow
@@ -172,8 +179,31 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     override suspend fun fetchAllTransactionsOfMonthAndYear(
         month: Int,
         year: Int
-    ): List<Transaction> {
-        return transactionDao.getAllTransactionOfMonthAndYear(month, year, user.id)
+    ): List<TransactionModel> {
+        val rawTransactions = transactionDao.getAllTransactionOfMonthAndYear(month, year, user.id)
+        val transactions = mutableListOf<TransactionModel>()
+        rawTransactions.forEach {
+            transactions.add(convertTransactionToTransactionModel(it))
+        }
+        return transactions
+    }
+
+    override suspend fun fetchAllTransactionsOfTypeWithMonthAndYear(
+        month: Int,
+        year: Int,
+        categoryType: CategoryType
+    ): List<TransactionModel> {
+        val rawTransactions = transactionDao.fetchAllTransactionsOfTypeWithMonthAndYear(
+            month = month,
+            year = year,
+            userId = user.id,
+            categoryType = categoryType
+        )
+        val transactions = mutableListOf<TransactionModel>()
+        rawTransactions.forEach {
+            transactions.add(convertTransactionToTransactionModel(it))
+        }
+        return transactions
     }
 
     private fun addTransaction(transaction: TransactionModel): Map<LocalDate, List<TransactionModel>> {
@@ -203,16 +233,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
     private fun parseTransactions(transactions: List<Transaction>): Map<LocalDate, MutableList<TransactionModel>> {
         val transactionsData: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
         transactions.forEach {
-            val transaction = TransactionModel(
-                categoryType = it.categoryType,
-                category = it.category,
-                note = it.note,
-                amount = it.amount,
-                date = it.date,
-                time = it.time,
-                month = it.month,
-                year = it.year
-            )
+            val transaction = convertTransactionToTransactionModel(it)
             if (transactionsData[it.date] != null) {
                 transactionsData.getValue(it.date).add(transaction)
             } else {
@@ -220,5 +241,18 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
             }
         }
         return transactionsData
+    }
+
+    private fun convertTransactionToTransactionModel(transaction: Transaction): TransactionModel {
+        return TransactionModel(
+            categoryType = transaction.categoryType,
+            category = transaction.category,
+            note = transaction.note,
+            amount = transaction.amount,
+            date = transaction.date,
+            time = transaction.time,
+            month = transaction.month,
+            year = transaction.year
+        )
     }
 }

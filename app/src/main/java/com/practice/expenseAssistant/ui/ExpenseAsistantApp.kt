@@ -111,7 +111,8 @@ fun ExpenseAssistantTopBar(
                             .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
                         text = R.string.view_all_expenses,
                     ) {
-
+                        isMenuOpen = false
+                        controller.navigate(Screens.MONTHLY_EXPENSES.name)
                     }
                     NoRippleButton(
                         modifier = Modifier
@@ -119,7 +120,8 @@ fun ExpenseAssistantTopBar(
                             .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
                         text = R.string.view_all_income,
                     ) {
-
+                        isMenuOpen = false
+                        controller.navigate(Screens.MONTHLY_INCOMES.name)
                     }
                     NoRippleButton(
                         modifier = Modifier
@@ -180,34 +182,26 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screens.MONTHLY_EXPENSES.name) {
-            ExpensesScreen(
-                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
-            )
-        }
-        composable(route = Screens.MONTHLY_INCOMES.name) {
-            IncomesScreen(
-                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
-            )
-        }
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(
                 modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
                 navController = navController,
             )
         }
+        composable(route = Screens.MONTHLY_EXPENSES.name) {
+            ExpensesScreen(modifier = modifier)
+        }
+        composable(route = Screens.MONTHLY_INCOMES.name) {
+            IncomesScreen(modifier = modifier)
+        }
         composable(route = Screens.PROFILE.name) {
-            ProfileScreen(
-                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
-            )
+            ProfileScreen(modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)))
         }
         composable(route = Screens.ABOUT.name) {
-            AboutScreen(
-                modifier.padding(dimensionResource(id = R.dimen.screen_content_padding))
-            )
+            AboutScreen(modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)))
         }
         composable(route = Screens.MONTHLY_STATEMENT.name) {
-            StatementScreen(modifier)
+            StatementScreen(modifier = modifier)
         }
     }
 }

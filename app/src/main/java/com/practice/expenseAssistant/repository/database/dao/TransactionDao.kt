@@ -22,14 +22,29 @@ interface TransactionDao {
     suspend fun getAllTransactions(userId: Int): List<Transaction>
 
     @Query("SELECT * from `transaction` WHERE category_type = :categoryType AND user_id = :userId")
-    suspend fun getTransactionsByCategory(categoryType: CategoryType, userId: Int): List<Transaction>
+    suspend fun getTransactionsByCategory(
+        categoryType: CategoryType,
+        userId: Int,
+    ): List<Transaction>
 
     @Query("SELECT * from `transaction` WHERE transaction_month = :month AND transaction_year = :year AND user_id = :userId")
-    suspend fun getAllTransactionOfMonthAndYear(month: Int, year: Int, userId: Int): List<Transaction>
+    suspend fun getAllTransactionOfMonthAndYear(
+        month: Int,
+        year: Int,
+        userId: Int,
+    ): List<Transaction>
 
     @Query("SELECT * from `transaction` WHERE transaction_month = :month AND user_id = :userId")
     suspend fun getAllTransactionOfMonth(month: Int, userId: Int): List<Transaction>
 
     @Query("SELECT * from `transaction` WHERE transaction_year = :year AND user_id = :userId")
     suspend fun getAllTransactionOfYear(year: Int, userId: Int): List<Transaction>
+
+    @Query("SELECT * from `transaction` WHERE transaction_month = :month AND transaction_year = :year AND user_id = :userId AND category_type = :categoryType")
+    suspend fun fetchAllTransactionsOfTypeWithMonthAndYear(
+        month: Int,
+        year: Int,
+        userId: Int,
+        categoryType: CategoryType,
+    ): List<Transaction>
 }
