@@ -94,14 +94,18 @@ private fun PreviewCalendarCard() {
                         date = LocalDate.now().plusDays(it.toLong()),
                         isSelected = it == 3,
                         isCurrentMonthDate = it == 2,
-                        todayTransactions = listOf(TransactionModel(
-                            categoryType = CategoryType.EXPENSE,
-                            category = ExpenseType.BILL,
-                            note = "Water and pipe maintenance",
-                            amount = it * 200.0,
-                            date = LocalDate.now(),
-                            time = LocalTime.now()
-                        ))
+                        todayTransactions = listOf(
+                            TransactionModel(
+                                categoryType = CategoryType.EXPENSE,
+                                category = ExpenseType.BILL,
+                                note = "Water and pipe maintenance",
+                                amount = it * 200.0,
+                                date = LocalDate.now(),
+                                time = LocalTime.now(),
+                                month = LocalDate.now().monthValue,
+                                year = LocalDate.now().year
+                            )
+                        )
                     ),
                     onSelect = { }
                 )

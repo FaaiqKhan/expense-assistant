@@ -23,7 +23,8 @@ import java.time.LocalTime
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
-    onTransactionSelect: (transaction: TransactionModel) -> Unit
+    onTransactionSelect: (transaction: TransactionModel) -> Unit,
+    viewStatement: () -> Unit
 ) {
     val calendar by homeViewModel.getCalender().collectAsState()
     val transactions = homeViewModel.getTransactionsBySelectedDate()
@@ -37,7 +38,8 @@ fun HomeScreen(
         cashFlow = monthCashFlow.value,
         onToday = homeViewModel::backToToday,
         onDateUpdate = homeViewModel::updateSelectedDate,
-        onSelect = onTransactionSelect
+        onSelect = onTransactionSelect,
+        viewStatement = viewStatement
     )
 }
 
@@ -50,7 +52,8 @@ private fun HomeScreenContent(
     cashFlow: MonthCashFlow,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
-    onSelect: (transaction: TransactionModel) -> Unit
+    onSelect: (transaction: TransactionModel) -> Unit,
+    viewStatement: () -> Unit,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -64,7 +67,7 @@ private fun HomeScreenContent(
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
             totalExpense = cashFlow.expense,
-            onClickViewAll = { }
+            onClickViewAll = viewStatement
         )
         CalendarView(
             date = LocalDate.now(),
@@ -124,6 +127,8 @@ private fun PreviewHomeScreen() {
                     amount = 100.00,
                     date = LocalDate.now(),
                     time = LocalTime.now(),
+                    month = LocalDate.now().monthValue,
+                    year = LocalDate.now().year
                 ),
                 TransactionModel(
                     categoryType = CategoryType.EXPENSE,
@@ -132,9 +137,12 @@ private fun PreviewHomeScreen() {
                     amount = 100.00,
                     date = LocalDate.now(),
                     time = LocalTime.now(),
+                    month = LocalDate.now().monthValue,
+                    year = LocalDate.now().year
                 )
             ),
-            onSelect = {}
+            onSelect = {},
+            viewStatement = {}
         )
     }
 }

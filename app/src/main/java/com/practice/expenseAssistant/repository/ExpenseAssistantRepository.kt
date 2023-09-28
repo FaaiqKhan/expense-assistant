@@ -2,6 +2,7 @@ package com.practice.expenseAssistant.repository
 
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.database.entities.CashFlow
+import com.practice.expenseAssistant.repository.database.entities.Transaction
 import com.practice.expenseAssistant.utils.CategoryType
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
@@ -14,10 +15,11 @@ interface ExpenseAssistantRepository {
     fun setCategoryType(categoryType: CategoryType)
     fun setCategory(category: String)
     fun setTotalExpenseOfMonth(expense: Double)
-    fun setMonthCashFLow(cashFlow: Map<LocalDate, MonthCashFlow>)
+    suspend fun setMonthCashFLow(cashFlow: MonthCashFlow)
     fun updateCategoryAndType(category: String, categoryType: CategoryType)
     suspend fun updateSelectedDate(date: LocalDate)
     suspend fun updateCalendar(calendar: List<CalendarDateModel>)
+    suspend fun fetchAllTransactionsOfUser(userId: Int): Map<LocalDate, List<TransactionModel>>
     suspend fun addTransaction(transaction: TransactionModel, bankAccount: BankAccount)
     suspend fun removeTransaction(transaction: TransactionModel)
     fun getUser(): UserModel
@@ -34,7 +36,12 @@ interface ExpenseAssistantRepository {
     fun getSelectedDate(): LocalDate
     fun getTransactionsOfSelectedDate(): List<TransactionModel>?
     fun getMonthCashFlow(): StateFlow<MonthCashFlow>
+    fun getCashFlowOfMonth(localDate: LocalDate): MonthCashFlow
     suspend fun insertCashFlowIntoDb(cashFlow: CashFlow)
-    suspend fun getCashFlowFromDb(): List<CashFlow>
+    suspend fun fetchCashFlowOfMonth(month: Int, year: Int): MonthCashFlow
     suspend fun updateMonthCashFlow(cashFlow: MonthCashFlow, isExpense: Boolean)
+    suspend fun fetchAllTransactionsOfMonthAndYear(
+        month: Int,
+        year: Int,
+    ): List<Transaction>
 }

@@ -49,4 +49,15 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="update">Update</string>
+    <string name="monthly_statement">Monthly Statement</string>
+    <string name="monthly_expenses">Monthly Expense</string>
+    <string name="monthly_incomes">Monthly Incomes</string>
+    <string name="about_me_header">I am a qualified and professional software engineer with 5+ years of experience in mobile application development both native and hybrid. Know how to deliver quality work in all aspects using the latest architectures and modern techniques.</string>
+    <string name="about_me_body">With a Bachelor\'s degree in Computer System Engineering from NED University and 5+ years of experience in the software Industry, I possess a strong foundation in software development, particularly in Android app engineering. Throughout my academic journey, I have gained a solid grasp of programming languages such as Java and Kotlin and honed my skills in creating user-centric mobile applications. Additionally, I am a proven expert in Leadership and communication skills. My previous roles have strengthened my time management and teamwork abilities, as well as my focused attention to detail and high accuracy. I am thrilled at the prospect of bringing my talents to your company.</string>
+    <string name="my_name">Faiq Ali Khan</string>
+    <string name="my_email_address">My email address</string>
+    <string name="faiqalikhan49_gmail_com">faiqalikhan49@gmail.com</string>
+    <string name="about_application">I built this application to practice Kotlin, Jetpack Compose, and Android new concepts.</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
 </resources>

@@ -1,14 +1,15 @@
 package com.practice.expenseAssistant.repository.database.entities
 
 import androidx.room.*
-import java.time.LocalDate
 
 @Entity("cash_flow")
 data class CashFlow(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo("month")
-    val month: LocalDate,
+    val month: Int,
+    @ColumnInfo("year")
+    val year: Int,
     @ColumnInfo("month_income")
     val income: Double = 0.0,
     @ColumnInfo("month_expense")

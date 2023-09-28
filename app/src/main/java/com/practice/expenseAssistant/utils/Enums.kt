@@ -17,13 +17,15 @@ enum class Screens(@StringRes val title: Int) {
     CATEGORY(title = R.string.category),
     TRANSACTION(title = R.string.transaction),
     PROFILE(title = R.string.profile),
-    VIEW_ALL(title = R.string.view_all),
-    EXPENSE(title = R.string.expense),
-    INCOME(title = R.string.income)
+    MONTHLY_STATEMENT(title = R.string.monthly_statement),
+    MONTHLY_EXPENSES(title = R.string.monthly_expenses),
+    MONTHLY_INCOMES(title = R.string.monthly_incomes),
+    ABOUT(title = R.string.about),
 }
 
 @Parcelize
-enum class CategoryType: Parcelable {
+enum class CategoryType : Parcelable {
+
     EXPENSE,
     INCOME
 }
