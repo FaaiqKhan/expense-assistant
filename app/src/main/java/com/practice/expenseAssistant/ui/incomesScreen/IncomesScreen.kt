@@ -11,11 +11,3 @@ import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 fun IncomesScreen(modifier: Modifier = Modifier) {
     CircularProgressIndicator()
 }
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-private fun IncomesScreenPreview() {
-    ExpenseAssistantTheme {
-        IncomesScreen()
-    }
-}

@@ -2,7 +2,6 @@ package com.practice.expenseAssistant.repository
 
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.database.entities.CashFlow
-import com.practice.expenseAssistant.repository.database.entities.Transaction
 import com.practice.expenseAssistant.utils.CategoryType
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
@@ -14,7 +13,6 @@ interface ExpenseAssistantRepository {
     fun setCalenderData(data: CalendarDataModel)
     fun setCategoryType(categoryType: CategoryType)
     fun setCategory(category: String)
-    fun setTotalExpenseOfMonth(expense: Double)
     suspend fun setMonthCashFLow(cashFlow: MonthCashFlow)
     fun updateCategoryAndType(category: String, categoryType: CategoryType)
     suspend fun updateSelectedDate(date: LocalDate)
@@ -33,6 +31,7 @@ interface ExpenseAssistantRepository {
     fun getCategoryType(): CategoryType
     fun getCategory(): String
     fun getTotalExpenseOfMonth(): Double
+    fun getTotalIncomeOfMonth(): Double
     fun getSelectedDate(): LocalDate
     fun getTransactionsOfSelectedDate(): List<TransactionModel>?
     fun getMonthCashFlow(): StateFlow<MonthCashFlow>
@@ -43,5 +42,10 @@ interface ExpenseAssistantRepository {
     suspend fun fetchAllTransactionsOfMonthAndYear(
         month: Int,
         year: Int,
-    ): List<Transaction>
+    ): List<TransactionModel>
+    suspend fun fetchAllTransactionsOfTypeWithMonthAndYear(
+        month: Int,
+        year: Int,
+        categoryType: CategoryType
+    ): List<TransactionModel>
 }

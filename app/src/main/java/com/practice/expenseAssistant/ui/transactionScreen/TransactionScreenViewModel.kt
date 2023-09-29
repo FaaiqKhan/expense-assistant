@@ -30,14 +30,9 @@ class TransactionScreenViewModel @Inject constructor(
                         processToRemove = false,
                     )
 
-                    val totalAmount = data[0] as Double
-                    val todayTotalIncome = data[1] as Double
-                    val todayTotalExpense = data[2] as Double
-                    val monthUpdatedCashFlow = data[3] as MonthCashFlow
-
-                    if (transaction.categoryType == CategoryType.INCOME) {
-                        expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
-                    }
+                    val todayTotalIncome = data[0] as Double
+                    val todayTotalExpense = data[1] as Double
+                    val monthUpdatedCashFlow = data[2] as MonthCashFlow
 
                     expenseAssistantRepository.updateMonthCashFlow(
                         cashFlow = monthUpdatedCashFlow,
@@ -74,14 +69,9 @@ class TransactionScreenViewModel @Inject constructor(
                         processToRemove = true,
                     )
 
-                    val totalAmount = data[0] as Double
-                    val todayTotalIncome = data[1] as Double
-                    val todayTotalExpense = data[2] as Double
-                    val monthUpdatedCashFlow = data[3] as MonthCashFlow
-
-                    if (transaction.categoryType == CategoryType.INCOME) {
-                        expenseAssistantRepository.setTotalExpenseOfMonth(totalAmount)
-                    }
+                    val todayTotalIncome = data[0] as Double
+                    val todayTotalExpense = data[1] as Double
+                    val monthUpdatedCashFlow = data[2] as MonthCashFlow
 
                     expenseAssistantRepository.updateMonthCashFlow(
                         cashFlow = monthUpdatedCashFlow,
@@ -114,13 +104,12 @@ class TransactionScreenViewModel @Inject constructor(
         monthCashFlow: MonthCashFlow,
         processToRemove: Boolean
     ): List<Any> {
-        val totalAmount: Double
         val monthUpdatedCashFlow: MonthCashFlow
         var closingAmount = monthCashFlow.closingAmount
         var todayTotalIncome = calendarDateModel.todayTotalIncome
         var todayTotalExpense = calendarDateModel.todayTotalExpense
         if (transaction.categoryType == CategoryType.INCOME) {
-            totalAmount = if (processToRemove) {
+            val totalAmount = if (processToRemove) {
                 closingAmount -= transaction.amount
                 todayTotalIncome -= transaction.amount
                 monthCashFlow.income - transaction.amount
@@ -134,7 +123,7 @@ class TransactionScreenViewModel @Inject constructor(
                 closingAmount = closingAmount
             )
         } else {
-            totalAmount = if (processToRemove) {
+            val totalAmount = if (processToRemove) {
                 closingAmount += transaction.amount
                 todayTotalExpense -= transaction.amount
                 monthCashFlow.expense - transaction.amount
@@ -148,6 +137,6 @@ class TransactionScreenViewModel @Inject constructor(
                 closingAmount = closingAmount
             )
         }
-        return listOf(totalAmount, todayTotalIncome, todayTotalExpense, monthUpdatedCashFlow)
+        return listOf(todayTotalIncome, todayTotalExpense, monthUpdatedCashFlow)
     }
 }
