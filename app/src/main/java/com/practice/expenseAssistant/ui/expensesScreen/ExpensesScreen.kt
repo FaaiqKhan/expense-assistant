@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.ui.common.MonthNavigatorView
 import com.practice.expenseAssistant.ui.common.TransactionsView
 import java.time.LocalDate
 
@@ -22,14 +24,8 @@ fun ExpensesScreen(
     ExpensesScreenContent(
         modifier = modifier,
         uiState = uiState.value,
-        onClick = {
-            val date = if (it) {
-                LocalDate.now().minusMonths(1)
-            } else {
-                LocalDate.now().plusMonths(1)
-            }
-            expensesViewModel.getAllTransactionsOfMonth(date)
-        },
+        selectedMonth = expensesViewModel.getSelectedMonth(),
+        onClick = { expensesViewModel.getAllTransactionsOfMonth(it) },
     )
 }
 
@@ -37,29 +33,27 @@ fun ExpensesScreen(
 private fun ExpensesScreenContent(
     modifier: Modifier,
     uiState: ExpensesScreenUiState,
-    onClick: (moveBack: Boolean) -> Unit,
+    selectedMonth: LocalDate,
+    onClick: (date: LocalDate) -> Unit,
 ) {
     Column(modifier = modifier) {
+        MonthNavigatorView(date = selectedMonth, onClick = onClick)
         when (uiState) {
             is ExpensesScreenUiState.Loading -> CircularProgressIndicator()
             is ExpensesScreenUiState.Failure -> Text(text = uiState.message)
             is ExpensesScreenUiState.Success -> {
                 if (uiState.transactions.isEmpty()) {
-                    Text(text = "No Expenses yet!")
+                    Text(text = stringResource(R.string.no_expenses_yet))
                     return
                 }
-                TransactionsView(
-                    date = LocalDate.now(),
-                    transactions = uiState.transactions,
-                    onClick = onClick,
-                )
+                TransactionsView(transactions = uiState.transactions)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(id = R.dimen.screen_content_padding)),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "Total Expense: ${uiState.totalExpense}")
+                    Text(text = stringResource(R.string.total_expense, uiState.totalExpense))
                 }
             }
         }

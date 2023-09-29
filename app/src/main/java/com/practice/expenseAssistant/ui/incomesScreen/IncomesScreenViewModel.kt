@@ -1,4 +1,4 @@
-package com.practice.expenseAssistant.ui.expensesScreen
+package com.practice.expenseAssistant.ui.incomesScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,11 +12,11 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class ExpensesScreenViewModel @Inject constructor(
+class IncomesScreenViewModel @Inject constructor(
     val repository: ExpenseAssistantRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<ExpensesScreenUiState>(ExpensesScreenUiState.Loading)
+    private val _uiState = MutableStateFlow<IncomesScreenUiState>(IncomesScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -25,17 +25,17 @@ class ExpensesScreenViewModel @Inject constructor(
 
     fun getAllTransactionsOfMonth(localDate: LocalDate) {
         viewModelScope.launch {
-            _uiState.emit(ExpensesScreenUiState.Loading)
+            _uiState.emit(IncomesScreenUiState.Loading)
             val transactions = repository.fetchAllTransactionsOfTypeWithMonthAndYear(
                 month = localDate.monthValue,
                 year = localDate.year,
-                categoryType = CategoryType.EXPENSE
+                categoryType = CategoryType.INCOME,
             )
             _uiState.emit(
-                ExpensesScreenUiState.Success(
-                    transactions,
-                    localDate,
-                    repository.getTotalExpenseOfMonth(),
+                IncomesScreenUiState.Success(
+                    transactions = transactions,
+                    date = localDate,
+                    totalIncome = repository.getTotalIncomeOfMonth(),
                 )
             )
         }

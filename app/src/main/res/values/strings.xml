@@ -60,4 +60,9 @@
     <string name="about_application">I built this application to practice Kotlin, Jetpack Compose, and Android new concepts.</string>
     <string name="previous_month">Previous month</string>
     <string name="next_month">Next month</string>
+    <string name="total_income">Total Income: %1$s</string>
+    <string name="no_income_yet">No Income yet!</string>
+    <string name="no_expenses_yet">No Expenses yet!</string>
+    <string name="total_expense">Total Expense: %1$s</string>
+    <string name="no_transactions_yet">No transactions yet!</string>
 </resources>

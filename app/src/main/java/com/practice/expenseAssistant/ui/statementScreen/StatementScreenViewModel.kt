@@ -29,11 +29,16 @@ class StatementScreenViewModel @Inject constructor(
                 date.monthValue,
                 date.year,
             )
-            _uiState.emit(StatementScreenUiState.Success(transactions, date))
+            _uiState.emit(
+                StatementScreenUiState.Success(
+                    transactions = transactions,
+                    date = date,
+                    totalIncome = repository.getTotalIncomeOfMonth(),
+                    totalExpense = repository.getTotalExpenseOfMonth()
+                )
+            )
         }
     }
 
-    fun getTotalExpense(): Double = repository.getTotalExpenseOfMonth()
-
-    fun getTotalIncome(): Double = repository.getTotalIncomeOfMonth()
+    fun getSelectedMonth(): LocalDate = repository.getCurrentMonth()
 }
