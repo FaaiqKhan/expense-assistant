@@ -31,8 +31,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     private var categoryType: CategoryType = CategoryType.EXPENSE
     private var category: String = ExpenseType.OTHERS.name
-    private var totalExpenseOfMonth: Double = 0.0
-    private var totalIncomeOfMonth: Double = 0.0
 
     private val _calender = MutableStateFlow<List<CalendarDateModel>>(listOf())
     private val calender = _calender.asStateFlow()
@@ -61,14 +59,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     override fun setCategory(category: String) {
         this.category = category
-    }
-
-    override fun setTotalExpenseOfMonth(expense: Double) {
-        totalExpenseOfMonth = expense
-    }
-
-    override fun setTotalIncomeOfMonth(income: Double) {
-        totalIncomeOfMonth = income
     }
 
     override suspend fun setMonthCashFLow(cashFlow: MonthCashFlow) {

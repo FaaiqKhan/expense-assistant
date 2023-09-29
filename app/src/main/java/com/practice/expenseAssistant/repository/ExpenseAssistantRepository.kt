@@ -13,8 +13,6 @@ interface ExpenseAssistantRepository {
     fun setCalenderData(data: CalendarDataModel)
     fun setCategoryType(categoryType: CategoryType)
     fun setCategory(category: String)
-    fun setTotalExpenseOfMonth(expense: Double)
-    fun setTotalIncomeOfMonth(income: Double)
     suspend fun setMonthCashFLow(cashFlow: MonthCashFlow)
     fun updateCategoryAndType(category: String, categoryType: CategoryType)
     suspend fun updateSelectedDate(date: LocalDate)
