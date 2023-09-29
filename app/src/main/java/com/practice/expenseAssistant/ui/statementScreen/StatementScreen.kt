@@ -8,10 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.TransactionModel
+import com.practice.expenseAssistant.ui.common.MonthNavigatorView
 import com.practice.expenseAssistant.ui.common.TransactionsView
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.*
@@ -25,17 +27,10 @@ fun StatementScreen(
 ) {
     val uiState = statementViewModel.uiState.collectAsState()
     StatementScreenContent(
-        modifier = modifier, uiState = uiState.value,
-        getTotalExpense = statementViewModel::getTotalExpense,
-        getTotalIncome = statementViewModel::getTotalIncome,
-        onClick = {
-            val date = if (it) {
-                LocalDate.now().minusMonths(1)
-            } else {
-                LocalDate.now().plusMonths(1)
-            }
-            statementViewModel.getAllTransactionsOfMonth(date)
-        },
+        modifier = modifier,
+        uiState = uiState.value,
+        selectedMonth = statementViewModel.getSelectedMonth(),
+        onClick = { statementViewModel.getAllTransactionsOfMonth(it) },
     )
 }
 
@@ -43,13 +38,11 @@ fun StatementScreen(
 private fun StatementScreenContent(
     modifier: Modifier,
     uiState: StatementScreenUiState,
-    onClick: (moveBack: Boolean) -> Unit,
-    getTotalExpense: () -> Double,
-    getTotalIncome: () -> Double
+    selectedMonth: LocalDate,
+    onClick: (date: LocalDate) -> Unit,
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
+        MonthNavigatorView(date = selectedMonth, onClick = onClick)
         when (uiState) {
             is StatementScreenUiState.Loading -> {
                 CircularProgressIndicator()
@@ -61,18 +54,18 @@ private fun StatementScreenContent(
 
             is StatementScreenUiState.Success -> {
                 if (uiState.transactions.isEmpty()) {
-                    Text(text = "No transactions yet!")
+                    Text(text = stringResource(R.string.no_transactions_yet))
                     return
                 }
-                TransactionsView(LocalDate.now(), uiState.transactions, onClick)
+                TransactionsView(uiState.transactions)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(dimensionResource(id = R.dimen.screen_content_padding)),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Total Income: ${getTotalIncome()}")
-                    Text(text = "Total Expense: ${getTotalExpense()}")
+                    Text(text = stringResource(R.string.total_income, uiState.totalIncome))
+                    Text(text = stringResource(R.string.total_expense, uiState.totalExpense))
                 }
             }
         }
@@ -86,7 +79,7 @@ private fun StatementScreenPreview() {
         StatementScreenContent(
             modifier = Modifier,
             uiState = StatementScreenUiState.Success(
-                listOf(
+                transactions = listOf(
                     TransactionModel(
                         categoryType = CategoryType.INCOME,
                         category = IncomeType.BUSINESS_INCOME,
@@ -121,13 +114,12 @@ private fun StatementScreenPreview() {
                         year = LocalDate.now().year
                     )
                 ),
-                LocalDate.now()
+                date = LocalDate.now(),
+                totalIncome = 3000.0,
+                totalExpense = 200.0,
             ),
             onClick = {},
-            getTotalExpense = {
-                0.0
-            },
-            getTotalIncome = { 0.0 }
+            selectedMonth = LocalDate.now()
         )
     }
 }
