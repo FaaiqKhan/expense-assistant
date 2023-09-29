@@ -106,6 +106,15 @@ fun ExpenseAssistantTopBar(
                         modifier = Modifier
                             .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
                             .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                        text = R.string.statements
+                    ) {
+                        isMenuOpen = false
+                        controller.navigate(Screens.MONTHLY_STATEMENT.name)
+                    }
+                    NoRippleButton(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                            .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
                         text = R.string.view_all_expenses,
                     ) {
                         isMenuOpen = false
@@ -164,9 +173,6 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
                     )
                     navController.navigate(Screens.TRANSACTION.name)
                 },
-                viewStatement = {
-                    navController.navigate(Screens.MONTHLY_STATEMENT.name)
-                }
             )
         }
         composable(route = Screens.CATEGORY.name) {

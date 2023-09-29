@@ -24,7 +24,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
     onTransactionSelect: (transaction: TransactionModel) -> Unit,
-    viewStatement: () -> Unit
 ) {
     val calendar by homeViewModel.getCalender().collectAsState()
     val transactions = homeViewModel.getTransactionsBySelectedDate()
@@ -39,7 +38,6 @@ fun HomeScreen(
         onToday = homeViewModel::backToToday,
         onDateUpdate = homeViewModel::updateSelectedDate,
         onSelect = onTransactionSelect,
-        viewStatement = viewStatement
     )
 }
 
@@ -53,7 +51,6 @@ private fun HomeScreenContent(
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
     onSelect: (transaction: TransactionModel) -> Unit,
-    viewStatement: () -> Unit,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -67,7 +64,6 @@ private fun HomeScreenContent(
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
             totalExpense = cashFlow.expense,
-            onClickViewAll = viewStatement
         )
         CalendarView(
             date = LocalDate.now(),
@@ -142,7 +138,6 @@ private fun PreviewHomeScreen() {
                 )
             ),
             onSelect = {},
-            viewStatement = {}
         )
     }
 }

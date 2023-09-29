@@ -2,7 +2,7 @@
     <string name="app_name">Expense Assistant</string>
     <string name="euro_symbol">€ %1$s</string>
     <string name="total_expense_till_now">Total expense till now</string>
-    <string name="view_all">View all</string>
+    <string name="statements">Statements</string>
     <string name="view_all_expenses">Expenses</string>
     <string name="view_all_income">Income</string>
     <string name="closing_balance">Closing: %1$s</string>

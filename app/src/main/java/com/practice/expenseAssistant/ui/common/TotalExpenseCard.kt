@@ -11,14 +11,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import com.practice.expenseAssistant.utils.Utils
-import java.time.LocalDate
 
 @Composable
 fun TotalExpenseCard(
     modifier: Modifier = Modifier,
     totalExpense: Double = 0.0,
-    onClickViewAll: () -> Unit,
 ) {
     Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(
@@ -37,12 +34,6 @@ fun TotalExpenseCard(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
-            TextButton(onClick = onClickViewAll) {
-                Text(
-                    text = stringResource(id = R.string.view_all),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
         }
     }
 }
@@ -50,12 +41,10 @@ fun TotalExpenseCard(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewShowTotalExpenseCard() {
-    val dates = Utils.createCalenderDays(LocalDate.now(), LocalDate.now())
     ExpenseAssistantTheme {
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
             totalExpense = 3000.0,
-            onClickViewAll = {}
         )
     }
 }
