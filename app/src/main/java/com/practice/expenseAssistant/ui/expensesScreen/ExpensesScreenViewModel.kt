@@ -31,9 +31,13 @@ class ExpensesScreenViewModel @Inject constructor(
                 year = localDate.year,
                 categoryType = CategoryType.EXPENSE
             )
-            _uiState.emit(ExpensesScreenUiState.Success(transactions))
+            _uiState.emit(
+                ExpensesScreenUiState.Success(
+                    transactions,
+                    localDate,
+                    repository.getTotalExpenseOfMonth(),
+                )
+            )
         }
     }
-
-    fun getTotalExpenses(): Double = repository.getTotalExpenseOfMonth()
 }

@@ -22,7 +22,6 @@ fun ExpensesScreen(
     ExpensesScreenContent(
         modifier = modifier,
         uiState = uiState.value,
-        getTotalExpense = expensesViewModel::getTotalExpenses,
         onClick = {
             val date = if (it) {
                 LocalDate.now().minusMonths(1)
@@ -38,12 +37,9 @@ fun ExpensesScreen(
 private fun ExpensesScreenContent(
     modifier: Modifier,
     uiState: ExpensesScreenUiState,
-    getTotalExpense: () -> Double,
     onClick: (moveBack: Boolean) -> Unit,
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         when (uiState) {
             is ExpensesScreenUiState.Loading -> CircularProgressIndicator()
             is ExpensesScreenUiState.Failure -> Text(text = uiState.message)
@@ -63,7 +59,7 @@ private fun ExpensesScreenContent(
                         .padding(dimensionResource(id = R.dimen.screen_content_padding)),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "Total Expense: ${getTotalExpense()}")
+                    Text(text = "Total Expense: ${uiState.totalExpense}")
                 }
             }
         }
