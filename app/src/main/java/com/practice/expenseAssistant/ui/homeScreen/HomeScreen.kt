@@ -1,10 +1,11 @@
 package com.practice.expenseAssistant.ui.homeScreen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.pager.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,29 +20,57 @@ import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
     onTransactionSelect: (transaction: TransactionModel) -> Unit,
 ) {
-    val calendar by homeViewModel.getCalender().collectAsState()
-    val transactions = homeViewModel.getTransactionsBySelectedDate()
-    val monthCashFlow = homeViewModel.getMonthCashFlow().collectAsState()
+    var prevPage by remember { mutableStateOf(2) }
 
-    HomeScreenContent(
-        modifier = modifier,
-        calendar = calendar,
-        transactions = transactions,
-        userName = homeViewModel.getUser().name,
-        cashFlow = monthCashFlow.value,
-        onToday = homeViewModel::backToToday,
-        onDateUpdate = homeViewModel::updateSelectedDate,
-        onSelect = onTransactionSelect,
-    )
+    val uiState by homeViewModel.uiState.collectAsState()
+    val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
+
+    val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3)
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page: Int ->
+            if (page < prevPage) {
+                homeViewModel.updateCalenderOfMonthYear(
+                    homeViewModel.getCurrentMonth().minusMonths(1)
+                )
+            } else if (page > prevPage) {
+                homeViewModel.updateCalenderOfMonthYear(
+                    homeViewModel.getCurrentMonth().plusMonths(1)
+                )
+            }
+            prevPage = page
+
+        }
+    }
+
+    when (uiState) {
+        is HomeScreenUiState.Loading -> CircularProgressIndicator()
+        is HomeScreenUiState.Failure -> Text(text = "Fuck it's")
+        is HomeScreenUiState.Success -> {
+            HomeScreenContent(
+                modifier = modifier,
+                calendar = (uiState as HomeScreenUiState.Success).calendar,
+                transactions = homeViewModel.getTransactionsBySelectedDate(),
+                userName = homeViewModel.getUser().name,
+                cashFlow = monthCashFlow,
+                onToday = homeViewModel::backToToday,
+                onDateUpdate = homeViewModel::updateSelectedDate,
+                onSelect = onTransactionSelect,
+                pagerState = pagerState
+            )
+        }
+    }
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun HomeScreenContent(
     modifier: Modifier,
     userName: String,
@@ -51,6 +80,7 @@ private fun HomeScreenContent(
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
     onSelect: (transaction: TransactionModel) -> Unit,
+    pagerState: PagerState
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -65,6 +95,33 @@ private fun HomeScreenContent(
             modifier = Modifier.fillMaxWidth(),
             totalExpense = cashFlow.expense,
         )
+        HorizontalPager(
+            state = pagerState,
+            pageSpacing = dimensionResource(id = R.dimen.screen_content_padding)
+        ) {
+            HomeScreenPagerViewContent(
+                calendar,
+                transactions,
+                cashFlow,
+                onToday,
+                onDateUpdate,
+                onSelect,
+            )
+        }
+
+    }
+}
+
+@Composable
+fun HomeScreenPagerViewContent(
+    calendar: List<CalendarDateModel>,
+    transactions: List<TransactionModel>,
+    cashFlow: MonthCashFlow,
+    onToday: () -> Unit,
+    onDateUpdate: (index: Int) -> Unit,
+    onSelect: (transaction: TransactionModel) -> Unit,
+) {
+    Column {
         CalendarView(
             date = LocalDate.now(),
             calendar = calendar,
@@ -96,12 +153,14 @@ private fun HomeScreenContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewHomeScreen() {
-    val dates =
-        Utils.createCalenderDays(LocalDate.of(2023, LocalDate.now().month, 1), LocalDate.now())
+    val dates = Utils.createCalenderDays(
+        LocalDate.of(2023, LocalDate.now().month, 1),
+        LocalDate.now(),
+    )
     ExpenseAssistantTheme {
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
@@ -138,6 +197,7 @@ private fun PreviewHomeScreen() {
                 )
             ),
             onSelect = {},
+            pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3)
         )
     }
 }

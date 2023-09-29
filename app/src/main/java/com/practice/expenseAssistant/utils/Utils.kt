@@ -2,6 +2,7 @@ package com.practice.expenseAssistant.utils
 
 import com.practice.expenseAssistant.data.CalendarDateModel
 import com.practice.expenseAssistant.data.TransactionModel
+import com.practice.expenseAssistant.repository.database.entities.Transaction
 import java.time.LocalDate
 
 object Utils {
@@ -103,4 +104,42 @@ object Utils {
 
     fun getTotal(transactions: List<TransactionModel>, type: CategoryType): Double =
         transactions.sumOf { if (it.categoryType == type) it.amount else 0.0 }
+
+    fun parseTransactions(transactions: List<Transaction>): Map<LocalDate, MutableList<TransactionModel>> {
+        val transactionsData: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
+        transactions.forEach {
+            val transaction = convertTransactionToTransactionModel(it)
+            if (transactionsData[it.date] != null) {
+                transactionsData.getValue(it.date).add(transaction)
+            } else {
+                transactionsData[it.date] = mutableListOf(transaction)
+            }
+        }
+        return transactionsData
+    }
+
+    fun parseTransactions2(transactions: List<TransactionModel>): Map<LocalDate, MutableList<TransactionModel>> {
+        val transactionsData: MutableMap<LocalDate, MutableList<TransactionModel>> = mutableMapOf()
+        transactions.forEach {
+            if (transactionsData[it.date] != null) {
+                transactionsData.getValue(it.date).add(it)
+            } else {
+                transactionsData[it.date] = mutableListOf(it)
+            }
+        }
+        return transactionsData
+    }
+
+    fun convertTransactionToTransactionModel(transaction: Transaction): TransactionModel {
+        return TransactionModel(
+            categoryType = transaction.categoryType,
+            category = transaction.category,
+            note = transaction.note,
+            amount = transaction.amount,
+            date = transaction.date,
+            time = transaction.time,
+            month = transaction.month,
+            year = transaction.year
+        )
+    }
 }

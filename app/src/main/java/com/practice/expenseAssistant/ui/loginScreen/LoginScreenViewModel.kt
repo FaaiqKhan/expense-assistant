@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
     private val userDao: UserDao,
-    private val expenseAssistantRepository: ExpenseAssistantRepository,
+    private val repository: ExpenseAssistantRepository,
 ) : ViewModel() {
 
     private val _loginScreenViewState =
@@ -43,8 +43,8 @@ class LoginScreenViewModel @Inject constructor(
                 _loginScreenViewState.emit(LoginScreenUiState.Failure("Invalid username of password"))
                 return@launch
             }
-            val transactions = expenseAssistantRepository.fetchAllTransactionsOfUser(user.id)
-            expenseAssistantRepository.setUser(
+            val transactions = repository.fetchAllTransactionsOfUser(user.id)
+            repository.setUser(
                 UserModel(
                     id = user.id,
                     name = user.name,
@@ -54,12 +54,23 @@ class LoginScreenViewModel @Inject constructor(
                     selectedBankAccount = user.selectedBankAccount,
                 )
             )
-            val monthCashFlow = expenseAssistantRepository.fetchCashFlowOfMonth(
-                month = expenseAssistantRepository.getSelectedDate().monthValue,
-                year = expenseAssistantRepository.getSelectedDate().year,
+            val monthCashFlow = repository.fetchCashFlowOfMonth(
+                month = repository.getSelectedDate().monthValue,
+                year = repository.getSelectedDate().year,
             )
-            expenseAssistantRepository.setMonthCashFLow(monthCashFlow)
-            initCalendar()
+            repository.setMonthCashFLow(monthCashFlow)
+            val calendar = Utils.createCalenderDays(
+                transactions = transactions,
+                month = repository.getCurrentMonth(),
+                todayDate = repository.getSelectedDate(),
+            )
+            repository.updateCalendar(calendar)
+            repository.setCalenderData(
+                CalendarDataModel(
+                    localDate = repository.getCurrentMonth(),
+                    localCalendar = calendar,
+                ),
+            )
             _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
     }
@@ -95,7 +106,7 @@ class LoginScreenViewModel @Inject constructor(
                     selectedBankAccount = selectedBankAccount
                 )
                 userDao.setUser(user)
-                expenseAssistantRepository.setUser(
+                repository.setUser(
                     UserModel(
                         name = user.name,
                         bankAccounts = user.bankAccount,
@@ -104,7 +115,7 @@ class LoginScreenViewModel @Inject constructor(
                         id = user.id
                     )
                 )
-                val selectedDate = expenseAssistantRepository.getSelectedDate()
+                val selectedDate = repository.getSelectedDate()
                 val cashFlow = CashFlow(
                     userId = user.id,
                     year = selectedDate.year,
@@ -112,25 +123,20 @@ class LoginScreenViewModel @Inject constructor(
                     openingAmount = selectedBankAccount.balance,
                     closingAmount = selectedBankAccount.balance,
                 )
-                expenseAssistantRepository.insertCashFlowIntoDb(cashFlow)
-                initCalendar()
+                repository.insertCashFlowIntoDb(cashFlow)
+                val calendar = Utils.createCalenderDays(
+                    month = repository.getCurrentMonth(),
+                    todayDate = repository.getSelectedDate(),
+                )
+                repository.updateCalendar(calendar)
+                repository.setCalenderData(
+                    CalendarDataModel(
+                        localDate = repository.getCurrentMonth(),
+                        localCalendar = calendar,
+                    ),
+                )
                 _loginScreenViewState.emit(LoginScreenUiState.Success)
             }
         }
-    }
-
-    private suspend fun initCalendar() {
-        val calendar = Utils.createCalenderDays(
-            todayDate = expenseAssistantRepository.getTodayDate(),
-            month = expenseAssistantRepository.getCurrentMonth(),
-            transactions = expenseAssistantRepository.getUser().transactions,
-        )
-        expenseAssistantRepository.updateCalendar(calendar)
-        expenseAssistantRepository.setCalenderData(
-            CalendarDataModel(
-                localDate = expenseAssistantRepository.getCurrentMonth(),
-                localCalendar = calendar
-            ),
-        )
     }
 }

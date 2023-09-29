@@ -24,9 +24,7 @@ interface ExpenseAssistantRepository {
     fun getTransaction(date: LocalDate, time: LocalTime): TransactionModel?
     fun getTransactionsByDate(date: LocalDate): List<TransactionModel>?
     fun getAllTransactions(): Map<LocalDate, List<TransactionModel>>
-    fun getTodayDate(): LocalDate
     fun getCurrentMonth(): LocalDate
-    fun getMonthCalenderModel(): CalendarDataModel
     fun getCalender(): StateFlow<List<CalendarDateModel>>
     fun getCategoryType(): CategoryType
     fun getCategory(): String
@@ -43,6 +41,7 @@ interface ExpenseAssistantRepository {
         month: Int,
         year: Int,
     ): List<TransactionModel>
+
     suspend fun fetchAllTransactionsOfTypeWithMonthAndYear(
         month: Int,
         year: Int,

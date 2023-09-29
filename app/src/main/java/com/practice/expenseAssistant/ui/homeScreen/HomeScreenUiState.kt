@@ -1,11 +1,12 @@
 package com.practice.expenseAssistant.ui.homeScreen
 
 import com.practice.expenseAssistant.data.CalendarDataModel
+import com.practice.expenseAssistant.data.CalendarDateModel
 
 sealed class HomeScreenUiState {
     object Loading : HomeScreenUiState()
     data class Failure(val message: String) : HomeScreenUiState()
     data class Success(
-        val calendarData: CalendarDataModel,
+        val calendar: List<CalendarDateModel>,
     ) : HomeScreenUiState()
 }
