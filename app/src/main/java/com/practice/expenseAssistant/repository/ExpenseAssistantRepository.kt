@@ -5,12 +5,10 @@ import com.practice.expenseAssistant.repository.database.entities.CashFlow
 import com.practice.expenseAssistant.utils.CategoryType
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
-import java.time.LocalTime
 
 interface ExpenseAssistantRepository {
 
     fun setUser(user: UserModel)
-    fun setCalenderData(data: CalendarDataModel)
     fun setCategoryType(categoryType: CategoryType)
     fun setCategory(category: String)
     suspend fun setMonthCashFLow(cashFlow: MonthCashFlow)

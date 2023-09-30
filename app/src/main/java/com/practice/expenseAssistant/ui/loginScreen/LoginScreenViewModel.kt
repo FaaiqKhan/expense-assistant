@@ -11,8 +11,7 @@ import com.practice.expenseAssistant.utils.CurrencyType
 import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,10 +20,10 @@ class LoginScreenViewModel @Inject constructor(
     private val repository: ExpenseAssistantRepository,
 ) : ViewModel() {
 
-    private val _loginScreenViewState =
-        MutableStateFlow<LoginScreenUiState>(LoginScreenUiState.Ideal)
-
-    val loginScreenUiState: StateFlow<LoginScreenUiState> = _loginScreenViewState
+    private val _loginScreenViewState = MutableStateFlow<LoginScreenUiState>(
+        LoginScreenUiState.Ideal
+    )
+    val loginScreenUiState: StateFlow<LoginScreenUiState> = _loginScreenViewState.asStateFlow()
 
     fun signIn(userName: String, password: String) {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -66,12 +65,6 @@ class LoginScreenViewModel @Inject constructor(
                 date = repository.getSelectedDate().dayOfMonth,
             )
             repository.updateCalendar(calendar)
-            repository.setCalenderData(
-                CalendarDataModel(
-                    localDate = repository.getCurrentMonth(),
-                    localCalendar = calendar,
-                ),
-            )
             _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
     }
@@ -131,12 +124,6 @@ class LoginScreenViewModel @Inject constructor(
                     date = repository.getSelectedDate().dayOfMonth,
                 )
                 repository.updateCalendar(calendar)
-                repository.setCalenderData(
-                    CalendarDataModel(
-                        localDate = repository.getCurrentMonth(),
-                        localCalendar = calendar,
-                    ),
-                )
                 _loginScreenViewState.emit(LoginScreenUiState.Success)
             }
         }

@@ -19,8 +19,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     private lateinit var user: UserModel
 
-    private lateinit var calendarData: CalendarDataModel
-
     private val currentMonth: LocalDate = LocalDate.of(
         selectedDate.year,
         selectedDate.monthValue,
@@ -45,10 +43,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     override fun setUser(user: UserModel) {
         this.user = user
-    }
-
-    override fun setCalenderData(data: CalendarDataModel) {
-        calendarData = data
     }
 
     override fun setCategoryType(categoryType: CategoryType) {
