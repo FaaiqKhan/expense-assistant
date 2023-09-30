@@ -8,7 +8,6 @@ import com.practice.expenseAssistant.repository.database.entities.Transaction
 import com.practice.expenseAssistant.utils.*
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
-import java.time.LocalTime
 import javax.inject.Inject
 
 class ExpenseAssistantRepositoryImp @Inject constructor(
@@ -107,10 +106,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
             time = transaction.time,
             userId = user.id
         )
-    }
-
-    override fun getTransaction(date: LocalDate, time: LocalTime): TransactionModel? {
-        return user.transactions[date]?.find { it.time == time }
     }
 
     override fun getTransactionsByDate(date: LocalDate) = user.transactions[date]

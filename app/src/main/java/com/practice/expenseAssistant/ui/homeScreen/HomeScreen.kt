@@ -29,7 +29,7 @@ fun HomeScreen(
 ) {
     var prevPage by remember { mutableStateOf(2) }
 
-    val uiState by homeViewModel.uiState.collectAsState()
+    val calendar by homeViewModel.getCalender().collectAsState()
     val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
 
     val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3)
@@ -46,27 +46,21 @@ fun HomeScreen(
                 )
             }
             prevPage = page
-
         }
     }
 
-    when (uiState) {
-        is HomeScreenUiState.Loading -> CircularProgressIndicator()
-        is HomeScreenUiState.Failure -> Text(text = "Fuck it's")
-        is HomeScreenUiState.Success -> {
-            HomeScreenContent(
-                modifier = modifier,
-                calendar = (uiState as HomeScreenUiState.Success).calendar,
-                transactions = homeViewModel.getTransactionsBySelectedDate(),
-                userName = homeViewModel.getUser().name,
-                cashFlow = monthCashFlow,
-                onToday = homeViewModel::backToToday,
-                onDateUpdate = homeViewModel::updateSelectedDate,
-                onSelect = onTransactionSelect,
-                pagerState = pagerState
-            )
-        }
-    }
+    HomeScreenContent(
+        modifier = modifier,
+        calendar = calendar,
+        transactions = homeViewModel.getTransactionsBySelectedDate(),
+        userName = homeViewModel.getUser().name,
+        cashFlow = monthCashFlow,
+        onToday = homeViewModel::backToToday,
+        onDateUpdate = homeViewModel::updateSelectedDate,
+        onSelect = onTransactionSelect,
+        pagerState = pagerState,
+        localDate = homeViewModel.getCurrentMonth()
+    )
 }
 
 @Composable
@@ -80,7 +74,8 @@ private fun HomeScreenContent(
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
     onSelect: (transaction: TransactionModel) -> Unit,
-    pagerState: PagerState
+    pagerState: PagerState,
+    localDate: LocalDate
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -97,12 +92,13 @@ private fun HomeScreenContent(
         )
         HorizontalPager(
             state = pagerState,
-            pageSpacing = dimensionResource(id = R.dimen.screen_content_padding)
+            pageSpacing = dimensionResource(id = R.dimen.screen_content_padding),
         ) {
             HomeScreenPagerViewContent(
                 calendar,
                 transactions,
                 cashFlow,
+                localDate,
                 onToday,
                 onDateUpdate,
                 onSelect,
@@ -117,13 +113,14 @@ fun HomeScreenPagerViewContent(
     calendar: List<CalendarDateModel>,
     transactions: List<TransactionModel>,
     cashFlow: MonthCashFlow,
+    localDate: LocalDate,
     onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
     onSelect: (transaction: TransactionModel) -> Unit,
 ) {
     Column {
         CalendarView(
-            date = LocalDate.now(),
+            localDate = localDate,
             calendar = calendar,
             backToToday = onToday,
             updateDate = onDateUpdate,
@@ -157,10 +154,7 @@ fun HomeScreenPagerViewContent(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun PreviewHomeScreen() {
-    val dates = Utils.createCalenderDays(
-        LocalDate.of(2023, LocalDate.now().month, 1),
-        LocalDate.now(),
-    )
+    val date = LocalDate.now()
     ExpenseAssistantTheme {
         HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
@@ -173,7 +167,11 @@ private fun PreviewHomeScreen() {
             ),
             onToday = {},
             onDateUpdate = {},
-            calendar = dates,
+            calendar = Utils.createCalenderDays(
+                year = date.year,
+                month = date.monthValue,
+                date = date.dayOfMonth,
+            ),
             transactions = listOf(
                 TransactionModel(
                     categoryType = CategoryType.EXPENSE,
@@ -197,7 +195,8 @@ private fun PreviewHomeScreen() {
                 )
             ),
             onSelect = {},
-            pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3)
+            pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3),
+            localDate = LocalDate.now()
         )
     }
 }

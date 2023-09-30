@@ -16,14 +16,7 @@ class HomeScreenViewModel @Inject constructor(
     private val repository: ExpenseAssistantRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
     private var currentMonth = repository.getCurrentMonth()
-
-    init {
-        _uiState.value = (HomeScreenUiState.Success(repository.getCalender().value))
-    }
 
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
@@ -36,7 +29,6 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             repository.updateCalendar(updatedCalendar)
-            _uiState.emit(HomeScreenUiState.Success(updatedCalendar))
         }
     }
 
@@ -51,7 +43,6 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             repository.updateCalendar(selectTodayDate)
-            _uiState.emit(HomeScreenUiState.Success(selectTodayDate))
         }
     }
 
@@ -67,10 +58,10 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateCalenderOfMonthYear(date: LocalDate) {
         viewModelScope.launch {
-            _uiState.emit(HomeScreenUiState.Loading)
             val calender = Utils.createCalenderDays(
-                month = date,
-                todayDate = date,
+                year = date.year,
+                month = date.monthValue,
+                date = date.dayOfMonth,
                 transactions = Utils.parseTransactions2(
                     repository.fetchAllTransactionsOfMonthAndYear(
                         month = date.monthValue,
@@ -79,7 +70,7 @@ class HomeScreenViewModel @Inject constructor(
                 )
             )
             currentMonth = date
-            _uiState.emit(HomeScreenUiState.Success(calendar = calender))
+            repository.updateCalendar(calender)
         }
     }
 }

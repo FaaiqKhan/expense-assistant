@@ -61,8 +61,9 @@ class LoginScreenViewModel @Inject constructor(
             repository.setMonthCashFLow(monthCashFlow)
             val calendar = Utils.createCalenderDays(
                 transactions = transactions,
-                month = repository.getCurrentMonth(),
-                todayDate = repository.getSelectedDate(),
+                year = repository.getCurrentMonth().year,
+                month = repository.getCurrentMonth().monthValue,
+                date = repository.getSelectedDate().dayOfMonth,
             )
             repository.updateCalendar(calendar)
             repository.setCalenderData(
@@ -125,8 +126,9 @@ class LoginScreenViewModel @Inject constructor(
                 )
                 repository.insertCashFlowIntoDb(cashFlow)
                 val calendar = Utils.createCalenderDays(
-                    month = repository.getCurrentMonth(),
-                    todayDate = repository.getSelectedDate(),
+                    year = repository.getCurrentMonth().year,
+                    month = repository.getCurrentMonth().monthValue,
+                    date = repository.getSelectedDate().dayOfMonth,
                 )
                 repository.updateCalendar(calendar)
                 repository.setCalenderData(

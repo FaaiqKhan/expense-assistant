@@ -21,7 +21,6 @@ interface ExpenseAssistantRepository {
     suspend fun addTransaction(transaction: TransactionModel, bankAccount: BankAccount)
     suspend fun removeTransaction(transaction: TransactionModel)
     fun getUser(): UserModel
-    fun getTransaction(date: LocalDate, time: LocalTime): TransactionModel?
     fun getTransactionsByDate(date: LocalDate): List<TransactionModel>?
     fun getAllTransactions(): Map<LocalDate, List<TransactionModel>>
     fun getCurrentMonth(): LocalDate

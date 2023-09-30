@@ -22,7 +22,7 @@ import java.time.LocalDate
 @Composable
 fun CalendarView(
     modifier: Modifier = Modifier,
-    date: LocalDate,
+    localDate: LocalDate,
     calendar: List<CalendarDateModel>,
     backToToday: () -> Unit,
     updateDate: (index: Int) -> Unit,
@@ -36,11 +36,11 @@ fun CalendarView(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = "${date.month} ${date.year}",
+                text = "${localDate.month} ${localDate.year}",
                 style = MaterialTheme.typography.displaySmall
             )
             Text(
-                text = "01 - ${date.month.maxLength()} ${date.month}",
+                text = "01 - ${localDate.month.maxLength()} ${localDate.month}",
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
@@ -75,12 +75,14 @@ fun CalendarView(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun PreviewCalendarView() {
+    val date = LocalDate.now().minusMonths(1)
     ExpenseAssistantTheme {
         CalendarView(
-            date = LocalDate.now(),
+            localDate = date,
             calendar = Utils.createCalenderDays(
-                LocalDate.of(2023, 8, 1),
-                LocalDate.now(),
+                year = date.year,
+                month = date.monthValue,
+                date = date.dayOfMonth,
             ),
             backToToday = {},
             updateDate = {},
