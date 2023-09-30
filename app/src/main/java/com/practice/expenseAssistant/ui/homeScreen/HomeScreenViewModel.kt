@@ -16,7 +16,12 @@ class HomeScreenViewModel @Inject constructor(
     private val repository: ExpenseAssistantRepository
 ) : ViewModel() {
 
-    private var currentMonth = repository.getCurrentMonth()
+    private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
+    val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
+
+    init {
+        updateCalenderWithMonthYear(repository.getSelectedDate())
+    }
 
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
@@ -29,6 +34,7 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             repository.updateCalendar(updatedCalendar)
+            _uiState.emit(HomeScreenUiState.Success(updatedCalendar))
         }
     }
 
@@ -43,34 +49,35 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             repository.updateCalendar(selectTodayDate)
+            _uiState.emit(HomeScreenUiState.Success(selectTodayDate))
         }
     }
 
     fun getUser(): UserModel = repository.getUser()
 
-    fun getCalender() = repository.getCalender()
-
     fun getTransactionsBySelectedDate() = repository.getTransactionsOfSelectedDate() ?: listOf()
 
     fun getMonthCashFlow(): StateFlow<MonthCashFlow> = repository.getMonthCashFlow()
 
-    fun getCurrentMonth(): LocalDate = currentMonth
+    fun getSelectedDate(): LocalDate = repository.getSelectedDate()
 
-    fun updateCalenderOfMonthYear(date: LocalDate) {
+    fun updateCalenderWithMonthYear(date: LocalDate) {
         viewModelScope.launch {
+            _uiState.emit(HomeScreenUiState.Loading)
+            val data = repository.fetchAllTransactionsOfMonthAndYear(
+                month = date.monthValue,
+                year = date.year
+            )
+            val transactions = Utils.parseTransactions2(data)
             val calender = Utils.createCalenderDays(
                 year = date.year,
                 month = date.monthValue,
                 date = date.dayOfMonth,
-                transactions = Utils.parseTransactions2(
-                    repository.fetchAllTransactionsOfMonthAndYear(
-                        month = date.monthValue,
-                        year = date.year
-                    )
-                )
+                transactions = transactions
             )
-            currentMonth = date
+            repository.updateSelectedDate(date)
             repository.updateCalendar(calender)
+            _uiState.emit(HomeScreenUiState.Success(calender))
         }
     }
 }

@@ -19,12 +19,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     private lateinit var user: UserModel
 
-    private val currentMonth: LocalDate = LocalDate.of(
-        selectedDate.year,
-        selectedDate.monthValue,
-        1,
-    )
-
     private var categoryType: CategoryType = CategoryType.EXPENSE
     private var category: String = ExpenseType.OTHERS.name
 
@@ -62,7 +56,7 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
         this.categoryType = categoryType
     }
 
-    override suspend fun updateSelectedDate(date: LocalDate) {
+    override fun updateSelectedDate(date: LocalDate) {
         selectedDate = date
     }
 
@@ -104,7 +98,6 @@ class ExpenseAssistantRepositoryImp @Inject constructor(
 
     override fun getTransactionsByDate(date: LocalDate) = user.transactions[date]
     override fun getAllTransactions(): Map<LocalDate, List<TransactionModel>> = user.transactions
-    override fun getCurrentMonth(): LocalDate = currentMonth
     override fun getCalender(): StateFlow<List<CalendarDateModel>> = calender
     override fun getUser(): UserModel = user
     override fun getCategoryType(): CategoryType = categoryType

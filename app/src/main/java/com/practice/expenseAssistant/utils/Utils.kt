@@ -141,4 +141,18 @@ object Utils {
             year = transaction.year
         )
     }
+
+    fun decapitalizeStringExpectFirstLetter(string: String): String {
+        var decapitalize = false
+        val stringBuilder = StringBuilder()
+        string.forEach {
+            if (decapitalize) {
+                stringBuilder.append(it.lowercase())
+            } else {
+                decapitalize = true
+                stringBuilder.append(it)
+            }
+        }
+        return stringBuilder.toString()
+    }
 }

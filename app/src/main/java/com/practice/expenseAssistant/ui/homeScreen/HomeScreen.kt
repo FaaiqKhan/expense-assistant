@@ -5,11 +5,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIos
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
@@ -20,62 +24,53 @@ import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
     onTransactionSelect: (transaction: TransactionModel) -> Unit,
 ) {
-    var prevPage by remember { mutableStateOf(2) }
 
-    val calendar by homeViewModel.getCalender().collectAsState()
+    val uiState by homeViewModel.uiState.collectAsState()
     val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
 
-    val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3)
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page: Int ->
-            if (page < prevPage) {
-                homeViewModel.updateCalenderOfMonthYear(
-                    homeViewModel.getCurrentMonth().minusMonths(1)
-                )
-            } else if (page > prevPage) {
-                homeViewModel.updateCalenderOfMonthYear(
-                    homeViewModel.getCurrentMonth().plusMonths(1)
-                )
-            }
-            prevPage = page
+    when (uiState) {
+        is HomeScreenUiState.Loading -> CircularProgressIndicator()
+        is HomeScreenUiState.Failure -> Text(text = "Hello there!")
+        is HomeScreenUiState.Success -> {
+            HomeScreenContent(
+                modifier = modifier,
+                userName = homeViewModel.getUser().name,
+                calendar = (uiState as HomeScreenUiState.Success).calendar,
+                transactions = homeViewModel.getTransactionsBySelectedDate(),
+                cashFlow = monthCashFlow,
+                onDateUpdate = homeViewModel::updateSelectedDate,
+                onSelect = onTransactionSelect,
+                currentMonth = homeViewModel.getSelectedDate(),
+                viewMonth = { previous ->
+                    val date = if (previous) {
+                        homeViewModel.getSelectedDate().minusMonths(1)
+                    } else {
+                        homeViewModel.getSelectedDate().plusMonths(1)
+                    }
+                    homeViewModel.updateCalenderWithMonthYear(date)
+                }
+            )
         }
     }
-
-    HomeScreenContent(
-        modifier = modifier,
-        calendar = calendar,
-        transactions = homeViewModel.getTransactionsBySelectedDate(),
-        userName = homeViewModel.getUser().name,
-        cashFlow = monthCashFlow,
-        onToday = homeViewModel::backToToday,
-        onDateUpdate = homeViewModel::updateSelectedDate,
-        onSelect = onTransactionSelect,
-        pagerState = pagerState,
-        localDate = homeViewModel.getCurrentMonth()
-    )
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun HomeScreenContent(
     modifier: Modifier,
     userName: String,
     calendar: List<CalendarDateModel>,
     transactions: List<TransactionModel>,
     cashFlow: MonthCashFlow,
-    onToday: () -> Unit,
     onDateUpdate: (index: Int) -> Unit,
     onSelect: (transaction: TransactionModel) -> Unit,
-    pagerState: PagerState,
-    localDate: LocalDate
+    currentMonth: LocalDate,
+    viewMonth: (previous: Boolean) -> Unit
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.End) {
         Text(
@@ -86,45 +81,10 @@ private fun HomeScreenContent(
                 .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
-        TotalExpenseCard(
-            modifier = Modifier.fillMaxWidth(),
-            totalExpense = cashFlow.expense,
-        )
-        HorizontalPager(
-            state = pagerState,
-            pageSpacing = dimensionResource(id = R.dimen.screen_content_padding),
-        ) {
-            HomeScreenPagerViewContent(
-                calendar,
-                transactions,
-                cashFlow,
-                localDate,
-                onToday,
-                onDateUpdate,
-                onSelect,
-            )
-        }
-
-    }
-}
-
-@Composable
-fun HomeScreenPagerViewContent(
-    calendar: List<CalendarDateModel>,
-    transactions: List<TransactionModel>,
-    cashFlow: MonthCashFlow,
-    localDate: LocalDate,
-    onToday: () -> Unit,
-    onDateUpdate: (index: Int) -> Unit,
-    onSelect: (transaction: TransactionModel) -> Unit,
-) {
-    Column {
-        CalendarView(
-            localDate = localDate,
-            calendar = calendar,
-            backToToday = onToday,
-            updateDate = onDateUpdate,
-        )
+        TotalExpenseCard(modifier = Modifier.fillMaxWidth(), totalExpense = cashFlow.expense)
+        CalenderNavigator(currentDate = currentMonth, viewMonth = viewMonth)
+        Divider()
+        CalendarView(calendar = calendar, updateDate = onDateUpdate)
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
         OpenCloseBalanceCard(
             modifier = Modifier.fillMaxWidth(),
@@ -137,7 +97,7 @@ fun HomeScreenPagerViewContent(
                 horizontal = dimensionResource(id = R.dimen.border_stroke)
             ),
             verticalArrangement = Arrangement.spacedBy(
-                dimensionResource(id = R.dimen.element_spacing)
+                space = dimensionResource(id = R.dimen.element_spacing)
             )
         ) {
             items(count = transactions.size, key = { transactions[it].time.nano }) {
@@ -146,6 +106,50 @@ fun HomeScreenPagerViewContent(
                     onClick = { onSelect(transactions[it]) },
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        TextButton(onClick = { viewMonth(true) }) {
+            Icon(
+                imageVector = Icons.Default.ArrowBackIos,
+                contentDescription = stringResource(id = R.string.previous_month),
+            )
+            Text(
+                text = Utils.decapitalizeStringExpectFirstLetter(
+                    currentDate.minusMonths(1).month.name.substring(
+                        0,
+                        3
+                    )
+                ),
+                style = MaterialTheme.typography.headlineLarge,
+            )
+        }
+        Text(
+            text = "${Utils.decapitalizeStringExpectFirstLetter(currentDate.month.name)} ${currentDate.year}",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        TextButton(onClick = { viewMonth(false) }) {
+            Text(
+                text = Utils.decapitalizeStringExpectFirstLetter(
+                    currentDate.plusMonths(1).month.name.substring(
+                        0,
+                        3
+                    )
+                ),
+                style = MaterialTheme.typography.headlineLarge,
+            )
+            Icon(
+                imageVector = Icons.Default.ArrowForwardIos,
+                contentDescription = stringResource(id = R.string.next_month),
+            )
         }
     }
 }
@@ -165,7 +169,6 @@ private fun PreviewHomeScreen() {
                 openingAmount = 3000.0,
                 closingAmount = 2000.0
             ),
-            onToday = {},
             onDateUpdate = {},
             calendar = Utils.createCalenderDays(
                 year = date.year,
@@ -195,8 +198,8 @@ private fun PreviewHomeScreen() {
                 )
             ),
             onSelect = {},
-            pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 3),
-            localDate = LocalDate.now()
+            currentMonth = LocalDate.now(),
+            viewMonth = {}
         )
     }
 }

@@ -13,7 +13,7 @@ interface ExpenseAssistantRepository {
     fun setCategory(category: String)
     suspend fun setMonthCashFLow(cashFlow: MonthCashFlow)
     fun updateCategoryAndType(category: String, categoryType: CategoryType)
-    suspend fun updateSelectedDate(date: LocalDate)
+    fun updateSelectedDate(date: LocalDate)
     suspend fun updateCalendar(calendar: List<CalendarDateModel>)
     suspend fun fetchAllTransactionsOfUser(userId: Int): Map<LocalDate, List<TransactionModel>>
     suspend fun addTransaction(transaction: TransactionModel, bankAccount: BankAccount)
@@ -21,7 +21,6 @@ interface ExpenseAssistantRepository {
     fun getUser(): UserModel
     fun getTransactionsByDate(date: LocalDate): List<TransactionModel>?
     fun getAllTransactions(): Map<LocalDate, List<TransactionModel>>
-    fun getCurrentMonth(): LocalDate
     fun getCalender(): StateFlow<List<CalendarDateModel>>
     fun getCategoryType(): CategoryType
     fun getCategory(): String

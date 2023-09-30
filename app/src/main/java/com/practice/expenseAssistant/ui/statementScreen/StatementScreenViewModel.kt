@@ -19,7 +19,7 @@ class StatementScreenViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        getAllTransactionsOfMonth(repository.getCurrentMonth())
+        getAllTransactionsOfMonth(repository.getSelectedDate())
     }
 
     fun getAllTransactionsOfMonth(date: LocalDate) {
@@ -40,5 +40,5 @@ class StatementScreenViewModel @Inject constructor(
         }
     }
 
-    fun getSelectedMonth(): LocalDate = repository.getCurrentMonth()
+    fun getSelectedMonth(): LocalDate = repository.getSelectedDate()
 }
