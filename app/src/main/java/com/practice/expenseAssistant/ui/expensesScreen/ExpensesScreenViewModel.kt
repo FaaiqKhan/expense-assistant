@@ -41,5 +41,5 @@ class ExpensesScreenViewModel @Inject constructor(
         }
     }
 
-    fun getSelectedMonth(): LocalDate = repository.getCurrentMonth()
+    fun getSelectedMonth(): LocalDate = repository.getSelectedDate()
 }

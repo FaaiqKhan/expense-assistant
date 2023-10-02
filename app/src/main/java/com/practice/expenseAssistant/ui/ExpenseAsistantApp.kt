@@ -1,6 +1,5 @@
 package com.practice.expenseAssistant.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -9,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.*
@@ -24,7 +22,6 @@ import com.practice.expenseAssistant.ui.incomesScreen.IncomesScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.profileScreen.ProfileScreen
 import com.practice.expenseAssistant.ui.statementScreen.StatementScreen
-import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
 import com.practice.expenseAssistant.utils.*
 
@@ -33,20 +30,7 @@ import com.practice.expenseAssistant.utils.*
 fun ExpenseAssistantApp(
     navController: NavHostController = rememberNavController()
 ) {
-
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = Screens.valueOf(
-        backStackEntry?.destination?.route ?: Screens.HOME.name
-    )
-
-    Scaffold(
-        topBar = {
-            ExpenseAssistantTopBar(
-                screen = currentScreen,
-                controller = navController,
-            )
-        },
-    ) {
+    Scaffold {
         NavigationHost(modifier = Modifier.padding(it), navController = navController)
     }
 }
@@ -109,6 +93,15 @@ fun ExpenseAssistantTopBar(
                         modifier = Modifier
                             .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
                             .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                        text = R.string.statements
+                    ) {
+                        isMenuOpen = false
+                        controller.navigate(Screens.MONTHLY_STATEMENT.name)
+                    }
+                    NoRippleButton(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                            .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
                         text = R.string.view_all_expenses,
                     ) {
                         isMenuOpen = false
@@ -160,6 +153,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         composable(route = Screens.HOME.name) {
             HomeScreen(
                 modifier = modifier.fillMaxSize(),
+                controller = navController,
                 onTransactionSelect = { transaction ->
                     navController.currentBackStackEntry?.savedStateHandle?.set(
                         "transaction",
@@ -167,9 +161,6 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
                     )
                     navController.navigate(Screens.TRANSACTION.name)
                 },
-                viewStatement = {
-                    navController.navigate(Screens.MONTHLY_STATEMENT.name)
-                }
             )
         }
         composable(route = Screens.CATEGORY.name) {
@@ -203,14 +194,5 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         composable(route = Screens.MONTHLY_STATEMENT.name) {
             StatementScreen(modifier = modifier)
         }
-    }
-}
-
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun PreviewExpenseAssistantApp() {
-    ExpenseAssistantTheme {
-        ExpenseAssistantApp()
     }
 }

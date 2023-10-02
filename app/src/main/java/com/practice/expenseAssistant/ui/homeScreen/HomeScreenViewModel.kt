@@ -4,54 +4,111 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
+import com.practice.expenseAssistant.utils.CategoryType
+import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val expenseAssistantRepository: ExpenseAssistantRepository
+    private val repository: ExpenseAssistantRepository
 ) : ViewModel() {
+
+    private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
+    val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
+
+    fun getMonthCashFlow() = repository.getMonthCashFlowAsState()
+    fun getCalender() = repository.getCalender()
+    fun getUserName() = repository.getUser().name
+
+    init {
+        updateCalenderWithMonthYear(repository.getSelectedDate())
+    }
 
     fun updateSelectedDate(listIndex: Int) {
         viewModelScope.launch {
-            val updatedCalendar = expenseAssistantRepository.getCalender().value.map {
+            val updatedCalendar = repository.getCalender().value.map {
                 if (it.id == listIndex) {
-                    expenseAssistantRepository.updateSelectedDate(it.date)
+                    repository.updateSelectedDate(it.date)
                     it.copy(isSelected = true)
                 } else {
                     it.copy(isSelected = false)
                 }
             }
-            expenseAssistantRepository.updateCalendar(updatedCalendar)
+            repository.updateCalendar(updatedCalendar)
+            _uiState.emit(HomeScreenUiState.Success(repository.getUser()))
         }
     }
 
     fun backToToday() {
         viewModelScope.launch {
-            val selectTodayDate = expenseAssistantRepository.getCalender().value.map {
+            val selectTodayDate = repository.getCalender().value.map {
                 if (it.date == LocalDate.now()) {
-                    expenseAssistantRepository.updateSelectedDate(it.date)
+                    repository.updateSelectedDate(it.date)
                     it.copy(isSelected = true)
                 } else {
                     it.copy(isSelected = false)
                 }
             }
-            expenseAssistantRepository.updateCalendar(selectTodayDate)
+            repository.updateCalendar(selectTodayDate)
+//            _uiState.emit(HomeScreenUiState.Success(selectTodayDate))
         }
     }
 
-    fun getUser(): UserModel = expenseAssistantRepository.getUser()
+    fun getTransactionsBySelectedDate() = repository.getTransactionsOfSelectedDate() ?: listOf()
 
-    fun getCalender() = expenseAssistantRepository.getCalender()
+    fun getSelectedDate(): LocalDate = repository.getSelectedDate()
 
-    fun getTransactionsBySelectedDate(): List<TransactionModel> {
-        return expenseAssistantRepository.getTransactionsOfSelectedDate() ?: listOf()
+    fun updateCalenderWithMonthYear(date: LocalDate) {
+        viewModelScope.launch {
+            _uiState.emit(HomeScreenUiState.Loading)
+            val data = repository.fetchAllTransactionsOfMonthAndYear(
+                month = date.monthValue,
+                year = date.year
+            )
+            val transactions = Utils.parseTransactions2(data)
+            val calender = Utils.createCalenderDays(
+                year = date.year,
+                month = date.monthValue,
+                date = date.dayOfMonth,
+                transactions = transactions
+            )
+            val monthCashFlow = calculateMonthCashFlow(date, data)
+            repository.updateSelectedDate(date)
+            repository.updateCalendar(calender)
+            repository.setMonthCashFLow(monthCashFlow)
+            delay(timeMillis = 500L)
+            _uiState.emit(HomeScreenUiState.Success(repository.getUser()))
+        }
     }
 
-    fun getMonthCashFlow(): StateFlow<MonthCashFlow> {
-        return expenseAssistantRepository.getMonthCashFlow()
+    private suspend fun calculateMonthCashFlow(
+        date: LocalDate,
+        transactions: List<TransactionModel>
+    ): MonthCashFlow {
+        val prevMonthCashFlow = repository.fetchCashFlowOfMonth(
+            month = date.minusMonths(1).monthValue,
+            year = date.minusMonths(1).year
+        )
+        val monthCashFlow = repository.fetchCashFlowOfMonth(
+            month = date.monthValue,
+            year = date.year,
+        )
+        if (prevMonthCashFlow.openingAmount != 0.0) {
+            var closingAmount = prevMonthCashFlow.closingAmount
+            transactions.forEach {
+                if (it.categoryType == CategoryType.INCOME) closingAmount += it.amount
+                else closingAmount -= it.amount
+            }
+            return monthCashFlow.copy(
+                openingAmount = prevMonthCashFlow.closingAmount,
+                closingAmount = closingAmount,
+            )
+        }
+        return monthCashFlow
     }
 }

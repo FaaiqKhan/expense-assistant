@@ -11,20 +11,19 @@ import com.practice.expenseAssistant.utils.CurrencyType
 import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
     private val userDao: UserDao,
-    private val expenseAssistantRepository: ExpenseAssistantRepository,
+    private val repository: ExpenseAssistantRepository,
 ) : ViewModel() {
 
-    private val _loginScreenViewState =
-        MutableStateFlow<LoginScreenUiState>(LoginScreenUiState.Ideal)
-
-    val loginScreenUiState: StateFlow<LoginScreenUiState> = _loginScreenViewState
+    private val _loginScreenViewState = MutableStateFlow<LoginScreenUiState>(
+        LoginScreenUiState.Ideal
+    )
+    val loginScreenUiState: StateFlow<LoginScreenUiState> = _loginScreenViewState.asStateFlow()
 
     fun signIn(userName: String, password: String) {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -43,8 +42,8 @@ class LoginScreenViewModel @Inject constructor(
                 _loginScreenViewState.emit(LoginScreenUiState.Failure("Invalid username of password"))
                 return@launch
             }
-            val transactions = expenseAssistantRepository.fetchAllTransactionsOfUser(user.id)
-            expenseAssistantRepository.setUser(
+            val transactions = repository.fetchAllTransactionsOfUser(user.id)
+            repository.setUser(
                 UserModel(
                     id = user.id,
                     name = user.name,
@@ -54,12 +53,30 @@ class LoginScreenViewModel @Inject constructor(
                     selectedBankAccount = user.selectedBankAccount,
                 )
             )
-            val monthCashFlow = expenseAssistantRepository.fetchCashFlowOfMonth(
-                month = expenseAssistantRepository.getSelectedDate().monthValue,
-                year = expenseAssistantRepository.getSelectedDate().year,
+            val monthCashFlow = repository.fetchCashFlowOfMonthFromDB(
+                month = repository.getSelectedDate().monthValue,
+                year = repository.getSelectedDate().year,
             )
-            expenseAssistantRepository.setMonthCashFLow(monthCashFlow)
-            initCalendar()
+            if (monthCashFlow == null) {
+                val selectedDate = repository.getSelectedDate()
+                val cashFlow = CashFlow(
+                    userId = user.id,
+                    year = selectedDate.year,
+                    month = selectedDate.monthValue,
+                    openingAmount = user.selectedBankAccount.balance,
+                    closingAmount = user.selectedBankAccount.balance,
+                )
+                repository.insertCashFlowIntoDb(cashFlow)
+            } else {
+                repository.setMonthCashFLow(monthCashFlow)
+            }
+            val calendar = Utils.createCalenderDays(
+                transactions = transactions,
+                year = repository.getSelectedDate().year,
+                month = repository.getSelectedDate().monthValue,
+                date = repository.getSelectedDate().dayOfMonth,
+            )
+            repository.updateCalendar(calendar)
             _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
     }
@@ -95,7 +112,7 @@ class LoginScreenViewModel @Inject constructor(
                     selectedBankAccount = selectedBankAccount
                 )
                 userDao.setUser(user)
-                expenseAssistantRepository.setUser(
+                repository.setUser(
                     UserModel(
                         name = user.name,
                         bankAccounts = user.bankAccount,
@@ -104,7 +121,7 @@ class LoginScreenViewModel @Inject constructor(
                         id = user.id
                     )
                 )
-                val selectedDate = expenseAssistantRepository.getSelectedDate()
+                val selectedDate = repository.getSelectedDate()
                 val cashFlow = CashFlow(
                     userId = user.id,
                     year = selectedDate.year,
@@ -112,25 +129,15 @@ class LoginScreenViewModel @Inject constructor(
                     openingAmount = selectedBankAccount.balance,
                     closingAmount = selectedBankAccount.balance,
                 )
-                expenseAssistantRepository.insertCashFlowIntoDb(cashFlow)
-                initCalendar()
+                repository.insertCashFlowIntoDb(cashFlow)
+                val calendar = Utils.createCalenderDays(
+                    year = repository.getSelectedDate().year,
+                    month = repository.getSelectedDate().monthValue,
+                    date = repository.getSelectedDate().dayOfMonth,
+                )
+                repository.updateCalendar(calendar)
                 _loginScreenViewState.emit(LoginScreenUiState.Success)
             }
         }
-    }
-
-    private suspend fun initCalendar() {
-        val calendar = Utils.createCalenderDays(
-            todayDate = expenseAssistantRepository.getTodayDate(),
-            month = expenseAssistantRepository.getCurrentMonth(),
-            transactions = expenseAssistantRepository.getUser().transactions,
-        )
-        expenseAssistantRepository.updateCalendar(calendar)
-        expenseAssistantRepository.setCalenderData(
-            CalendarDataModel(
-                localDate = expenseAssistantRepository.getCurrentMonth(),
-                localCalendar = calendar
-            ),
-        )
     }
 }

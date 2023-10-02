@@ -26,7 +26,7 @@ class TransactionScreenViewModel @Inject constructor(
                     val data = processTransaction(
                         calendarDateModel = it,
                         transaction = transaction,
-                        monthCashFlow = expenseAssistantRepository.getMonthCashFlow().value,
+                        monthCashFlow = expenseAssistantRepository.getMonthCashFlow(),
                         processToRemove = false,
                     )
 
@@ -65,7 +65,7 @@ class TransactionScreenViewModel @Inject constructor(
                     val data = processTransaction(
                         calendarDateModel = it,
                         transaction = transaction,
-                        monthCashFlow = expenseAssistantRepository.getMonthCashFlow().value,
+                        monthCashFlow = expenseAssistantRepository.getMonthCashFlow(),
                         processToRemove = true,
                     )
 
