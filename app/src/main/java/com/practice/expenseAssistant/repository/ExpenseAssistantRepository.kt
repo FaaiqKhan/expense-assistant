@@ -28,10 +28,10 @@ interface ExpenseAssistantRepository {
     fun getTotalIncomeOfMonth(): Double
     fun getSelectedDate(): LocalDate
     fun getTransactionsOfSelectedDate(): List<TransactionModel>?
-    fun getMonthCashFlow(): StateFlow<MonthCashFlow>
-    fun getCashFlowOfMonth(localDate: LocalDate): MonthCashFlow
+    fun getMonthCashFlow(): MonthCashFlow
     suspend fun insertCashFlowIntoDb(cashFlow: CashFlow)
     suspend fun fetchCashFlowOfMonth(month: Int, year: Int): MonthCashFlow
+    suspend fun fetchCashFlowOfMonthFromDB(month: Int, year: Int): MonthCashFlow?
     suspend fun updateMonthCashFlow(cashFlow: MonthCashFlow, isExpense: Boolean)
     suspend fun fetchAllTransactionsOfMonthAndYear(
         month: Int,
@@ -43,4 +43,5 @@ interface ExpenseAssistantRepository {
         year: Int,
         categoryType: CategoryType
     ): List<TransactionModel>
+    fun getMonthCashFlowAsState(): StateFlow<MonthCashFlow>
 }

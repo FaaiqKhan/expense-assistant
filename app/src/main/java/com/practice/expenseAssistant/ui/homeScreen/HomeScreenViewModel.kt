@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
+import com.practice.expenseAssistant.utils.CategoryType
 import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -18,6 +20,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
     val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
+
+    fun getMonthCashFlow() = repository.getMonthCashFlowAsState()
+    fun getCalender() = repository.getCalender()
 
     init {
         updateCalenderWithMonthYear(repository.getSelectedDate())
@@ -34,7 +39,7 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             repository.updateCalendar(updatedCalendar)
-            _uiState.emit(HomeScreenUiState.Success(updatedCalendar))
+            _uiState.emit(HomeScreenUiState.Success(repository.getUser()))
         }
     }
 
@@ -49,15 +54,11 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             repository.updateCalendar(selectTodayDate)
-            _uiState.emit(HomeScreenUiState.Success(selectTodayDate))
+//            _uiState.emit(HomeScreenUiState.Success(selectTodayDate))
         }
     }
 
-    fun getUser(): UserModel = repository.getUser()
-
     fun getTransactionsBySelectedDate() = repository.getTransactionsOfSelectedDate() ?: listOf()
-
-    fun getMonthCashFlow(): StateFlow<MonthCashFlow> = repository.getMonthCashFlow()
 
     fun getSelectedDate(): LocalDate = repository.getSelectedDate()
 
@@ -75,9 +76,38 @@ class HomeScreenViewModel @Inject constructor(
                 date = date.dayOfMonth,
                 transactions = transactions
             )
+            val monthCashFlow = calculateMonthCashFlow(date, data)
             repository.updateSelectedDate(date)
             repository.updateCalendar(calender)
-            _uiState.emit(HomeScreenUiState.Success(calender))
+            repository.setMonthCashFLow(monthCashFlow)
+            delay(timeMillis = 500L)
+            _uiState.emit(HomeScreenUiState.Success(repository.getUser()))
         }
+    }
+
+    private suspend fun calculateMonthCashFlow(
+        date: LocalDate,
+        transactions: List<TransactionModel>
+    ): MonthCashFlow {
+        val prevMonthCashFlow = repository.fetchCashFlowOfMonth(
+            month = date.minusMonths(1).monthValue,
+            year = date.minusMonths(1).year
+        )
+        val monthCashFlow = repository.fetchCashFlowOfMonth(
+            month = date.monthValue,
+            year = date.year,
+        )
+        if (prevMonthCashFlow.openingAmount != 0.0) {
+            var closingAmount = prevMonthCashFlow.closingAmount
+            transactions.forEach {
+                if (it.categoryType == CategoryType.INCOME) closingAmount += it.amount
+                else closingAmount -= it.amount
+            }
+            return monthCashFlow.copy(
+                openingAmount = prevMonthCashFlow.closingAmount,
+                closingAmount = closingAmount,
+            )
+        }
+        return monthCashFlow
     }
 }

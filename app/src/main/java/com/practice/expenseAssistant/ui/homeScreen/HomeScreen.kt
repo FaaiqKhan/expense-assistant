@@ -1,10 +1,8 @@
 package com.practice.expenseAssistant.ui.homeScreen
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.ArrowForwardIos
@@ -12,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,37 +31,38 @@ fun HomeScreen(
 ) {
 
     val uiState by homeViewModel.uiState.collectAsState()
-    val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
-
-    when (uiState) {
-        is HomeScreenUiState.Loading -> CircularProgressIndicator()
-        is HomeScreenUiState.Failure -> Text(text = "Hello there!")
-        is HomeScreenUiState.Success -> {
-            HomeScreenContent(
-                modifier = modifier,
-                userName = homeViewModel.getUser().name,
-                calendar = (uiState as HomeScreenUiState.Success).calendar,
-                transactions = homeViewModel.getTransactionsBySelectedDate(),
-                cashFlow = monthCashFlow,
-                onDateUpdate = homeViewModel::updateSelectedDate,
-                onSelect = onTransactionSelect,
-                currentMonth = homeViewModel.getSelectedDate(),
-                viewMonth = { previous ->
-                    val date = if (previous) {
-                        homeViewModel.getSelectedDate().minusMonths(1)
-                    } else {
-                        homeViewModel.getSelectedDate().plusMonths(1)
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        when (uiState) {
+            is HomeScreenUiState.Loading -> CircularProgressIndicator()
+            is HomeScreenUiState.Failure -> Text(text = "Hello there!")
+            is HomeScreenUiState.Success -> {
+                val successUiStatus = (uiState as HomeScreenUiState.Success)
+                val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
+                val calender by homeViewModel.getCalender().collectAsState()
+                HomeScreenContent(
+                    userName = successUiStatus.user.name,
+                    calendar = calender,
+                    transactions = homeViewModel.getTransactionsBySelectedDate(),
+                    cashFlow = monthCashFlow,
+                    onDateUpdate = homeViewModel::updateSelectedDate,
+                    onSelect = onTransactionSelect,
+                    currentMonth = homeViewModel.getSelectedDate(),
+                    viewMonth = { previous ->
+                        val date = if (previous) {
+                            homeViewModel.getSelectedDate().minusMonths(1)
+                        } else {
+                            homeViewModel.getSelectedDate().plusMonths(1)
+                        }
+                        homeViewModel.updateCalenderWithMonthYear(date)
                     }
-                    homeViewModel.updateCalenderWithMonthYear(date)
-                }
-            )
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun HomeScreenContent(
-    modifier: Modifier,
     userName: String,
     calendar: List<CalendarDateModel>,
     transactions: List<TransactionModel>,
@@ -72,7 +72,7 @@ private fun HomeScreenContent(
     currentMonth: LocalDate,
     viewMonth: (previous: Boolean) -> Unit
 ) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.End) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.End) {
         Text(
             text = "Hi $userName",
             style = MaterialTheme.typography.displayLarge,
@@ -112,6 +112,8 @@ private fun HomeScreenContent(
 
 @Composable
 fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> Unit) {
+    val isCurrentMonth = currentDate.month == LocalDate.now().month
+        && currentDate.year == LocalDate.now().year
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -124,10 +126,7 @@ fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> 
             )
             Text(
                 text = Utils.decapitalizeStringExpectFirstLetter(
-                    currentDate.minusMonths(1).month.name.substring(
-                        0,
-                        3
-                    )
+                    currentDate.minusMonths(1).month.name.substring(0, 3)
                 ),
                 style = MaterialTheme.typography.headlineLarge,
             )
@@ -136,13 +135,14 @@ fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> 
             text = "${Utils.decapitalizeStringExpectFirstLetter(currentDate.month.name)} ${currentDate.year}",
             style = MaterialTheme.typography.headlineMedium
         )
-        TextButton(onClick = { viewMonth(false) }) {
+        TextButton(
+            modifier = Modifier.alpha(if (isCurrentMonth) 0f else 1.0f),
+            onClick = { viewMonth(false) },
+            enabled = !isCurrentMonth
+        ) {
             Text(
                 text = Utils.decapitalizeStringExpectFirstLetter(
-                    currentDate.plusMonths(1).month.name.substring(
-                        0,
-                        3
-                    )
+                    currentDate.plusMonths(1).month.name.substring(0, 3)
                 ),
                 style = MaterialTheme.typography.headlineLarge,
             )
@@ -154,14 +154,12 @@ fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> 
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun PreviewHomeScreen() {
     val date = LocalDate.now()
     ExpenseAssistantTheme {
         HomeScreenContent(
-            modifier = Modifier.fillMaxSize(),
             userName = "Faiq Ali Khan",
             cashFlow = MonthCashFlow(
                 income = 3000.0,

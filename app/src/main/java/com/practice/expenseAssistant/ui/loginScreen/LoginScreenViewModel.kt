@@ -53,11 +53,23 @@ class LoginScreenViewModel @Inject constructor(
                     selectedBankAccount = user.selectedBankAccount,
                 )
             )
-            val monthCashFlow = repository.fetchCashFlowOfMonth(
+            val monthCashFlow = repository.fetchCashFlowOfMonthFromDB(
                 month = repository.getSelectedDate().monthValue,
                 year = repository.getSelectedDate().year,
             )
-            repository.setMonthCashFLow(monthCashFlow)
+            if (monthCashFlow == null) {
+                val selectedDate = repository.getSelectedDate()
+                val cashFlow = CashFlow(
+                    userId = user.id,
+                    year = selectedDate.year,
+                    month = selectedDate.monthValue,
+                    openingAmount = user.selectedBankAccount.balance,
+                    closingAmount = user.selectedBankAccount.balance,
+                )
+                repository.insertCashFlowIntoDb(cashFlow)
+            } else {
+                repository.setMonthCashFLow(monthCashFlow)
+            }
             val calendar = Utils.createCalenderDays(
                 transactions = transactions,
                 year = repository.getSelectedDate().year,
