@@ -30,20 +30,7 @@ import com.practice.expenseAssistant.utils.*
 fun ExpenseAssistantApp(
     navController: NavHostController = rememberNavController()
 ) {
-
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = Screens.valueOf(
-        backStackEntry?.destination?.route ?: Screens.HOME.name
-    )
-
-    Scaffold(
-        topBar = {
-            ExpenseAssistantTopBar(
-                screen = currentScreen,
-                controller = navController,
-            )
-        },
-    ) {
+    Scaffold {
         NavigationHost(modifier = Modifier.padding(it), navController = navController)
     }
 }
@@ -166,6 +153,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         composable(route = Screens.HOME.name) {
             HomeScreen(
                 modifier = modifier.fillMaxSize(),
+                controller = navController,
                 onTransactionSelect = { transaction ->
                     navController.currentBackStackEntry?.savedStateHandle?.set(
                         "transaction",

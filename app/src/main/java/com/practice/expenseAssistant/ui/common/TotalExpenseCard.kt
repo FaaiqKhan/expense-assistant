@@ -1,21 +1,27 @@
 package com.practice.expenseAssistant.ui.common
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import java.time.LocalDate
 
 @Composable
 fun TotalExpenseCard(
     modifier: Modifier = Modifier,
     totalExpense: Double = 0.0,
+    onClick: () -> Unit,
 ) {
     Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
         Row(
@@ -34,6 +40,16 @@ fun TotalExpenseCard(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
+            Column(
+                modifier = Modifier
+                    .size(30.dp)
+                    .border(1.dp, color = Color.Red)
+                    .clickable { onClick() },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Divider(color = Color.Red, modifier = Modifier.padding(top = 5.dp))
+                Text(text = LocalDate.now().dayOfMonth.toString())
+            }
         }
     }
 }
@@ -45,6 +61,6 @@ private fun PreviewShowTotalExpenseCard() {
         TotalExpenseCard(
             modifier = Modifier.fillMaxWidth(),
             totalExpense = 3000.0,
-        )
+        ) {}
     }
 }

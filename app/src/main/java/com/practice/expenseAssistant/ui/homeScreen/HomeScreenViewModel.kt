@@ -23,6 +23,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getMonthCashFlow() = repository.getMonthCashFlowAsState()
     fun getCalender() = repository.getCalender()
+    fun getUserName() = repository.getUser().name
 
     init {
         updateCalenderWithMonthYear(repository.getSelectedDate())

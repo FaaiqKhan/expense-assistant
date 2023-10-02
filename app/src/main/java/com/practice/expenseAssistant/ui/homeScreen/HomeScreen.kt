@@ -1,23 +1,29 @@
 package com.practice.expenseAssistant.ui.homeScreen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIos
-import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
+import com.practice.expenseAssistant.ui.theme.NoRippleTheme
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
@@ -28,19 +34,28 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeScreenViewModel = hiltViewModel(),
     onTransactionSelect: (transaction: TransactionModel) -> Unit,
+    controller: NavHostController
 ) {
 
     val uiState by homeViewModel.uiState.collectAsState()
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
+
+    Column(modifier = modifier) {
+        ScreenHeader(
+            controller = controller,
+            userName = homeViewModel.getUserName(),
+        )
+        TotalExpenseCard(
+            modifier = Modifier.fillMaxWidth(),
+            totalExpense = monthCashFlow.expense,
+            onClick = {},
+        )
         when (uiState) {
             is HomeScreenUiState.Loading -> CircularProgressIndicator()
             is HomeScreenUiState.Failure -> Text(text = "Hello there!")
             is HomeScreenUiState.Success -> {
-                val successUiStatus = (uiState as HomeScreenUiState.Success)
-                val monthCashFlow by homeViewModel.getMonthCashFlow().collectAsState()
                 val calender by homeViewModel.getCalender().collectAsState()
                 HomeScreenContent(
-                    userName = successUiStatus.user.name,
                     calendar = calender,
                     transactions = homeViewModel.getTransactionsBySelectedDate(),
                     cashFlow = monthCashFlow,
@@ -63,7 +78,6 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    userName: String,
     calendar: List<CalendarDateModel>,
     transactions: List<TransactionModel>,
     cashFlow: MonthCashFlow,
@@ -73,16 +87,14 @@ private fun HomeScreenContent(
     viewMonth: (previous: Boolean) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.End) {
-        Text(
-            text = "Hi $userName",
-            style = MaterialTheme.typography.displayLarge,
+        Divider()
+        CalenderNavigator(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
+                .padding(vertical = dimensionResource(id = R.dimen.element_spacing))
+                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+            currentDate = currentMonth, viewMonth = viewMonth,
         )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
-        TotalExpenseCard(modifier = Modifier.fillMaxWidth(), totalExpense = cashFlow.expense)
-        CalenderNavigator(currentDate = currentMonth, viewMonth = viewMonth)
         Divider()
         CalendarView(calendar = calendar, updateDate = onDateUpdate)
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.calendar_padding)))
@@ -111,16 +123,27 @@ private fun HomeScreenContent(
 }
 
 @Composable
-fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> Unit) {
+fun CalenderNavigator(
+    modifier: Modifier,
+    currentDate: LocalDate,
+    viewMonth: (previous: Boolean) -> Unit
+) {
     val isCurrentMonth = currentDate.month == LocalDate.now().month
         && currentDate.year == LocalDate.now().year
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        TextButton(onClick = { viewMonth(true) }) {
+        Row(
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = MutableInteractionSource()
+            ) { viewMonth(true) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
+                modifier = Modifier.size(dimensionResource(id = R.dimen.icon_18_dp)),
                 imageVector = Icons.Default.ArrowBackIos,
                 contentDescription = stringResource(id = R.string.previous_month),
             )
@@ -135,10 +158,14 @@ fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> 
             text = "${Utils.decapitalizeStringExpectFirstLetter(currentDate.month.name)} ${currentDate.year}",
             style = MaterialTheme.typography.headlineMedium
         )
-        TextButton(
-            modifier = Modifier.alpha(if (isCurrentMonth) 0f else 1.0f),
-            onClick = { viewMonth(false) },
-            enabled = !isCurrentMonth
+        Row(
+            modifier = Modifier
+                .alpha(if (isCurrentMonth) 0f else 1.0f)
+                .clickable(
+                    indication = null,
+                    interactionSource = MutableInteractionSource()
+                ) { if (!isCurrentMonth) viewMonth(false) },
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = Utils.decapitalizeStringExpectFirstLetter(
@@ -147,9 +174,92 @@ fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> 
                 style = MaterialTheme.typography.headlineLarge,
             )
             Icon(
+                modifier = Modifier.size(dimensionResource(id = R.dimen.icon_18_dp)),
                 imageVector = Icons.Default.ArrowForwardIos,
                 contentDescription = stringResource(id = R.string.next_month),
             )
+        }
+    }
+}
+
+@Composable
+fun ScreenHeader(userName: String, controller: NavHostController) {
+    var isMenuOpen by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Hi $userName",
+            style = MaterialTheme.typography.displayLarge,
+            modifier = Modifier
+                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
+        )
+        Row {
+            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+                IconButton(onClick = { controller.navigate(Screens.CATEGORY.name) }) {
+                    Icon(
+                        tint = Color.Red,
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(id = R.string.add_expense),
+                    )
+                }
+                IconButton(onClick = { isMenuOpen = !isMenuOpen }) {
+                    Icon(
+                        tint = Color.Red,
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = stringResource(id = R.string.menu),
+                    )
+                }
+            }
+            DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
+                NoRippleButton(
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                        .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                    text = R.string.statements
+                ) {
+                    isMenuOpen = false
+                    controller.navigate(Screens.MONTHLY_STATEMENT.name)
+                }
+                NoRippleButton(
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                        .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                    text = R.string.view_all_expenses,
+                ) {
+                    isMenuOpen = false
+                    controller.navigate(Screens.MONTHLY_EXPENSES.name)
+                }
+                NoRippleButton(
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                        .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                    text = R.string.view_all_income,
+                ) {
+                    isMenuOpen = false
+                    controller.navigate(Screens.MONTHLY_INCOMES.name)
+                }
+                NoRippleButton(
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(id = R.dimen.eight_dp))
+                        .padding(bottom = dimensionResource(id = R.dimen.eight_dp)),
+                    text = R.string.profile,
+                ) {
+                    isMenuOpen = false
+                    controller.navigate(Screens.PROFILE.name)
+                }
+                NoRippleButton(
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(id = R.dimen.eight_dp)),
+                    text = R.string.about,
+                ) {
+                    isMenuOpen = false
+                    controller.navigate(Screens.ABOUT.name)
+                }
+            }
         }
     }
 }
@@ -159,45 +269,47 @@ fun CalenderNavigator(currentDate: LocalDate, viewMonth: (previous: Boolean) -> 
 private fun PreviewHomeScreen() {
     val date = LocalDate.now()
     ExpenseAssistantTheme {
-        HomeScreenContent(
-            userName = "Faiq Ali Khan",
-            cashFlow = MonthCashFlow(
-                income = 3000.0,
-                expense = 1000.0,
-                openingAmount = 3000.0,
-                closingAmount = 2000.0
-            ),
-            onDateUpdate = {},
-            calendar = Utils.createCalenderDays(
-                year = date.year,
-                month = date.monthValue,
-                date = date.dayOfMonth,
-            ),
-            transactions = listOf(
-                TransactionModel(
-                    categoryType = CategoryType.EXPENSE,
-                    category = ExpenseType.BILL,
-                    note = "Electricity bill with Gas bill and Water bill",
-                    amount = 100.00,
-                    date = LocalDate.now(),
-                    time = LocalTime.now(),
-                    month = LocalDate.now().monthValue,
-                    year = LocalDate.now().year
+        Column {
+            ScreenHeader(userName = "Faiq Ali Khan", controller = rememberNavController())
+            HomeScreenContent(
+                cashFlow = MonthCashFlow(
+                    income = 3000.0,
+                    expense = 1000.0,
+                    openingAmount = 3000.0,
+                    closingAmount = 2000.0
                 ),
-                TransactionModel(
-                    categoryType = CategoryType.EXPENSE,
-                    category = ExpenseType.BILL,
-                    note = "Electricity bill with ",
-                    amount = 100.00,
-                    date = LocalDate.now(),
-                    time = LocalTime.now(),
-                    month = LocalDate.now().monthValue,
-                    year = LocalDate.now().year
-                )
-            ),
-            onSelect = {},
-            currentMonth = LocalDate.now(),
-            viewMonth = {}
-        )
+                onDateUpdate = {},
+                calendar = Utils.createCalenderDays(
+                    year = date.year,
+                    month = date.monthValue,
+                    date = date.dayOfMonth,
+                ),
+                transactions = listOf(
+                    TransactionModel(
+                        categoryType = CategoryType.EXPENSE,
+                        category = ExpenseType.BILL,
+                        note = "Electricity bill with Gas bill and Water bill",
+                        amount = 100.00,
+                        date = LocalDate.now(),
+                        time = LocalTime.now(),
+                        month = LocalDate.now().monthValue,
+                        year = LocalDate.now().year
+                    ),
+                    TransactionModel(
+                        categoryType = CategoryType.EXPENSE,
+                        category = ExpenseType.BILL,
+                        note = "Electricity bill with ",
+                        amount = 100.00,
+                        date = LocalDate.now(),
+                        time = LocalTime.now(),
+                        month = LocalDate.now().monthValue,
+                        year = LocalDate.now().year
+                    )
+                ),
+                onSelect = {},
+                currentMonth = LocalDate.now(),
+                viewMonth = {}
+            )
+        }
     }
 }
