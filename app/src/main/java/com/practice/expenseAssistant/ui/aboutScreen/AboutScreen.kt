@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier) {
