@@ -3,8 +3,7 @@ package com.practice.expenseAssistant.ui.loginScreen
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +17,7 @@ import androidx.navigation.NavController
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.BankAccount
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.Screens
 
 @Composable
@@ -94,13 +94,19 @@ private fun LoginScreenContent(
 @Composable
 private fun PreviewLoginScreen() {
     ExpenseAssistantTheme {
-        LoginScreenContent(
-            modifier = Modifier,
-            isSignUp = false,
-            loginScreenUiState = LoginScreenUiState.Ideal,
-            signIn = { _, _ -> },
-            signUp = { _, _, _, _ -> },
-            onClick = {},
-        )
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = MaterialTheme.spacing.large)
+        ) {
+            LoginScreenContent(
+                modifier = Modifier,
+                isSignUp = false,
+                loginScreenUiState = LoginScreenUiState.Ideal,
+                signIn = { _, _ -> },
+                signUp = { _, _, _, _ -> },
+                onClick = {},
+            )
+        }
     }
 }

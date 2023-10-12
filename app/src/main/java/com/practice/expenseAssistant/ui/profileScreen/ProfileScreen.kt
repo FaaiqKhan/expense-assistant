@@ -36,6 +36,7 @@ import com.practice.expenseAssistant.data.UserModel
 import com.practice.expenseAssistant.ui.common.BankAccountDetailsView
 import com.practice.expenseAssistant.ui.common.BriefAccountDetailsCard
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.CurrencyType
 import kotlinx.coroutines.launch
 
@@ -78,8 +79,8 @@ private fun ProfileScreenContent(
                 ChangePasswordSheetContent(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
-                        .padding(bottom = dimensionResource(id = R.dimen.screen_content_padding)),
+                        .padding(all = MaterialTheme.spacing.large)
+                        .padding(bottom = MaterialTheme.spacing.large),
                     updatePassword = { oldPassword, newPassword ->
                         updatePassword(
                             oldPassword,
@@ -110,8 +111,8 @@ private fun ProfileScreenContent(
             } else {
                 BankAccountDetailsView(
                     modifier = Modifier
-                        .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
-                        .padding(bottom = dimensionResource(id = R.dimen.screen_content_padding)),
+                        .padding(all = MaterialTheme.spacing.large)
+                        .padding(bottom = MaterialTheme.spacing.large),
                     addBankAccount = { }
                 )
             }
@@ -311,7 +312,7 @@ private fun PreviewProfileScreen() {
         ProfileScreenContent(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = dimensionResource(id = R.dimen.screen_content_padding)),
+                .padding(all = MaterialTheme.spacing.large),
             user = UserModel(
                 name = "Faiq",
                 bankAccounts = listOf(

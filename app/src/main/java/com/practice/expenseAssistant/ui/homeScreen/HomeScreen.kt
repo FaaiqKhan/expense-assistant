@@ -21,8 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
-import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import com.practice.expenseAssistant.ui.theme.NoRippleTheme
+import com.practice.expenseAssistant.ui.theme.*
 import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -130,7 +129,7 @@ fun ScreenHeader(userName: String, controller: NavHostController) {
             text = "Hi $userName",
             style = MaterialTheme.typography.displayLarge,
             modifier = Modifier
-                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding))
+                .padding(horizontal = MaterialTheme.spacing.large)
         )
         Row {
             CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
@@ -205,7 +204,7 @@ private fun PreviewHomeScreen() {
     val date = LocalDate.now()
     ExpenseAssistantTheme {
         Surface(
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.screen_content_padding))
+            modifier = Modifier.padding(MaterialTheme.spacing.large)
         ) {
             Column {
                 ScreenHeader(userName = "Faiq Ali Khan", controller = rememberNavController())

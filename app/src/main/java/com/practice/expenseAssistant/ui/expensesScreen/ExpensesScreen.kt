@@ -1,17 +1,16 @@
 package com.practice.expenseAssistant.ui.expensesScreen
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.common.MonthNavigatorView
 import com.practice.expenseAssistant.ui.common.TransactionsView
+import com.practice.expenseAssistant.ui.theme.spacing
 import java.time.LocalDate
 
 @Composable
@@ -50,7 +49,7 @@ private fun ExpensesScreenContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(dimensionResource(id = R.dimen.screen_content_padding)),
+                        .padding(MaterialTheme.spacing.large),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(text = stringResource(R.string.total_expense, uiState.totalExpense))

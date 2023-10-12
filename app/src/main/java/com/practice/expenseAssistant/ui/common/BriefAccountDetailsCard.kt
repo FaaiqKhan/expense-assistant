@@ -14,6 +14,7 @@ import com.library.slide_to_dismiss.SlideToDismiss
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.BankAccount
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 
 @Composable
 fun BriefAccountDetailsCard(
@@ -24,7 +25,7 @@ fun BriefAccountDetailsCard(
     Card(modifier = Modifier.fillMaxWidth()) {
         SlideToDismiss(
             modifier = Modifier
-                .padding(start = dimensionResource(id = R.dimen.screen_content_padding))
+                .padding(start = MaterialTheme.spacing.large)
                 .padding(vertical = dimensionResource(id = R.dimen.card_padding))
                 .fillMaxWidth(),
             data = bankAccount,

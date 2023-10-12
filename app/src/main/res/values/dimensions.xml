@@ -2,7 +2,6 @@
 <resources>
     <dimen name="zero">0dp</dimen>
     <dimen name="card_padding">8dp</dimen>
-    <dimen name="screen_content_padding">10dp</dimen>
     <dimen name="element_spacing">4dp</dimen>
     <dimen name="calendar_padding">2dp</dimen>
     <dimen name="border_stroke">1dp</dimen>

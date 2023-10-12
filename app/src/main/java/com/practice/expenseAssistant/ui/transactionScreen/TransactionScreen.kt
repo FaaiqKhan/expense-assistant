@@ -24,6 +24,7 @@ import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.*
 import com.practice.expenseAssistant.ui.common.*
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -99,7 +100,7 @@ private fun TransactionScreenContent(
             Text(
                 text = "Category: ${transaction.category}",
                 modifier = Modifier
-                    .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+                    .padding(horizontal = MaterialTheme.spacing.large),
                 style = MaterialTheme.typography.headlineLarge,
             )
             Row {
@@ -142,7 +143,7 @@ private fun TransactionScreenContent(
             Modifier
                 .fillMaxWidth()
                 .height(height)
-                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+                .padding(horizontal = MaterialTheme.spacing.large),
             date = transaction.date,
             onSelect = { transactionDate = it },
         )
@@ -152,7 +153,7 @@ private fun TransactionScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(height)
-                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+                .padding(horizontal = MaterialTheme.spacing.large),
             onSelect = { transactionTime = it },
         )
         OutlinedTextField(
@@ -176,7 +177,7 @@ private fun TransactionScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(dimensionResource(id = R.dimen.screen_content_padding)),
+                .padding(MaterialTheme.spacing.large),
             contentAlignment = Alignment.BottomEnd
         ) {
             FloatingActionButton(
@@ -214,7 +215,7 @@ private fun PreviewTransactionScreen() {
         TransactionScreenContent(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+                .padding(horizontal = MaterialTheme.spacing.large),
             user = UserModel(
                 id = 1,
                 name = "Faiq",

@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.CalendarDateModel
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.Utils
 import java.time.LocalDate
 
@@ -65,7 +66,7 @@ fun CalenderNavigation(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(all = dimensionResource(id = R.dimen.screen_content_padding)),
+            .padding(all = MaterialTheme.spacing.large),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -120,7 +121,7 @@ private fun PreviewCalendarView() {
             CalendarView(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(id = R.dimen.screen_content_padding)),
+                    .padding(horizontal = MaterialTheme.spacing.large),
                 calendar = Utils.createCalenderDays(
                     year = date.year,
                     month = date.monthValue,

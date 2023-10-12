@@ -22,6 +22,7 @@ import com.practice.expenseAssistant.ui.incomesScreen.IncomesScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.profileScreen.ProfileScreen
 import com.practice.expenseAssistant.ui.statementScreen.StatementScreen
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
 import com.practice.expenseAssistant.utils.*
 
@@ -30,9 +31,12 @@ import com.practice.expenseAssistant.utils.*
 fun ExpenseAssistantApp(
     navController: NavHostController = rememberNavController()
 ) {
-    Scaffold {
-        NavigationHost(modifier = Modifier.padding(it), navController = navController)
-    }
+
+//    var selectedScreen by remember { mutableStateOf(NavigationBarItems.values().first()) }
+
+    Scaffold(
+        content = { NavigationHost(modifier = Modifier.padding(it), navController = navController) }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,7 +150,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
             LoginScreen(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(dimensionResource(id = R.dimen.screen_content_padding)),
+                    .padding(MaterialTheme.spacing.large),
                 navController = navController
             )
         }
@@ -175,7 +179,7 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
         }
         composable(route = Screens.TRANSACTION.name) {
             TransactionScreen(
-                modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)),
+                modifier = modifier.padding(MaterialTheme.spacing.large),
                 navController = navController,
             )
         }
@@ -186,10 +190,10 @@ fun NavigationHost(modifier: Modifier, navController: NavHostController) {
             IncomesScreen(modifier = modifier)
         }
         composable(route = Screens.PROFILE.name) {
-            ProfileScreen(modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)))
+            ProfileScreen(modifier = modifier.padding(MaterialTheme.spacing.large))
         }
         composable(route = Screens.ABOUT.name) {
-            AboutScreen(modifier = modifier.padding(dimensionResource(id = R.dimen.screen_content_padding)))
+            AboutScreen(modifier = modifier.padding(MaterialTheme.spacing.large))
         }
         composable(route = Screens.MONTHLY_STATEMENT.name) {
             StatementScreen(modifier = modifier)

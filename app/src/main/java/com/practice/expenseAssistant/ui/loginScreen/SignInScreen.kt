@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +92,7 @@ fun SignInScreen(
             isError = uiState is LoginScreenUiState.Failure,
             modifier = Modifier.fillMaxWidth(),
         )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_content_padding)))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
         Button(
             modifier = Modifier.width(dimensionResource(id = R.dimen.button_width)),
             onClick = {
