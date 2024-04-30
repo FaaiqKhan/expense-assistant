@@ -141,4 +141,10 @@ class LoginScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateState(state: LoginScreenUiState) {
+        viewModelScope.launch {
+            _loginScreenViewState.emit(state)
+        }
+    }
 }

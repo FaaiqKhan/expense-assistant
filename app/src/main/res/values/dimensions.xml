@@ -21,4 +21,5 @@
     <dimen name="eight_dp">8dp</dimen>
     <dimen name="eighteen_dp">18dp</dimen>
     <dimen name="twenty_dp">20dp</dimen>
+    <dimen name="image_height">120dp</dimen>
 </resources>
