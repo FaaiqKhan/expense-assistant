@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.practice.expenseAssistant.R
 import kotlinx.parcelize.Parcelize
 
-enum class NavigationItemType {
+enum class NavigationBarItems {
     HOME,
     PROFILE,
     INFO

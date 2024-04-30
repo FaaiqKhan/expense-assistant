@@ -2,7 +2,6 @@
 <resources>
     <dimen name="zero">0dp</dimen>
     <dimen name="card_padding">8dp</dimen>
-    <dimen name="screen_content_padding">10dp</dimen>
     <dimen name="element_spacing">4dp</dimen>
     <dimen name="calendar_padding">2dp</dimen>
     <dimen name="border_stroke">1dp</dimen>
@@ -15,8 +14,12 @@
     <dimen name="button_width">120dp</dimen>
     <dimen name="circular_indicator_height">22dp</dimen>
     <dimen name="circle">100dp</dimen>
+    <dimen name="circular_button_size">38dp</dimen>
+    <dimen name="circular_text_button_size">32dp</dimen>
     <dimen name="two_dp">2dp</dimen>
+    <dimen name="six_dp">6dp</dimen>
     <dimen name="eight_dp">8dp</dimen>
+    <dimen name="eighteen_dp">18dp</dimen>
     <dimen name="twenty_dp">20dp</dimen>
-    <dimen name="icon_18_dp">18dp</dimen>
+    <dimen name="image_height">120dp</dimen>
 </resources>

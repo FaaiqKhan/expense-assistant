@@ -2,7 +2,8 @@ package com.practice.expenseAssistant.ui.loginScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.practice.expenseAssistant.data.*
+import com.practice.expenseAssistant.data.BankAccount
+import com.practice.expenseAssistant.data.UserModel
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
 import com.practice.expenseAssistant.repository.database.dao.UserDao
 import com.practice.expenseAssistant.repository.database.entities.CashFlow
@@ -138,6 +139,12 @@ class LoginScreenViewModel @Inject constructor(
                 repository.updateCalendar(calendar)
                 _loginScreenViewState.emit(LoginScreenUiState.Success)
             }
+        }
+    }
+
+    fun updateState(state: LoginScreenUiState) {
+        viewModelScope.launch {
+            _loginScreenViewState.emit(state)
         }
     }
 }

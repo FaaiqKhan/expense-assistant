@@ -2,12 +2,10 @@ package com.practice.expenseAssistant.ui.statementScreen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,6 +14,7 @@ import com.practice.expenseAssistant.data.TransactionModel
 import com.practice.expenseAssistant.ui.common.MonthNavigatorView
 import com.practice.expenseAssistant.ui.common.TransactionsView
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -61,7 +60,7 @@ private fun StatementScreenContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(dimensionResource(id = R.dimen.screen_content_padding)),
+                        .padding(MaterialTheme.spacing.large),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = stringResource(R.string.total_income, uiState.totalIncome))

@@ -11,8 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.R
+import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier) {
@@ -57,7 +58,7 @@ private fun AboutScreenPreview() {
         AboutScreen(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = dimensionResource(id = R.dimen.screen_content_padding))
+                .padding(all = MaterialTheme.spacing.large)
         )
     }
 }

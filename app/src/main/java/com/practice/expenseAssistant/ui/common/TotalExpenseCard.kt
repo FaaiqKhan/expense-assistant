@@ -3,7 +3,6 @@ package com.practice.expenseAssistant.ui.common
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +22,7 @@ fun TotalExpenseCard(
     totalExpense: Double = 0.0,
     onClick: () -> Unit,
 ) {
-    Card(modifier = modifier, shape = RoundedCornerShape(dimensionResource(id = R.dimen.zero))) {
+    Card(modifier = modifier) {
         Row(
             modifier = modifier.padding(dimensionResource(id = R.dimen.card_padding)),
             verticalAlignment = Alignment.CenterVertically,
@@ -54,7 +53,7 @@ fun TotalExpenseCard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun PreviewShowTotalExpenseCard() {
     ExpenseAssistantTheme {

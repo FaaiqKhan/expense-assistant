@@ -7,10 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.CategoryType
 
 @Composable
@@ -29,7 +28,7 @@ fun CategoryScreen(
             ExpenseCategories(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(all = dimensionResource(id = R.dimen.screen_content_padding)),
+                    .padding(all = MaterialTheme.spacing.large),
                 onSelect = { onSelect(it, CategoryType.EXPENSE) }
             )
         }
@@ -41,7 +40,7 @@ fun CategoryScreen(
             IncomeCategories(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(all = dimensionResource(id = R.dimen.screen_content_padding)),
+                    .padding(all = MaterialTheme.spacing.large),
                 onSelect = { onSelect(it, CategoryType.INCOME) }
             )
         }

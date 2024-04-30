@@ -3,21 +3,34 @@ package com.practice.expenseAssistant.ui.loginScreen
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.library.slide_to_dismiss.SlideToDismiss
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.BankAccount
+import com.practice.expenseAssistant.ui.common.BankAccountDetailsView
 import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
+import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.utils.Screens
 
 @Composable
@@ -46,10 +59,13 @@ fun LoginScreen(
     LoginScreenContent(
         modifier = modifier,
         isSignUp = isSignUp,
-        loginScreenUiState = uiState,
+        uiState = uiState,
         signIn = loginViewModel::signIn,
         signUp = loginViewModel::signUp,
-        onClick = { isSignUp = !isSignUp },
+        onClick = {
+            loginViewModel.updateState(LoginScreenUiState.Ideal)
+            isSignUp = !isSignUp
+        },
     )
 }
 
@@ -57,7 +73,7 @@ fun LoginScreen(
 private fun LoginScreenContent(
     modifier: Modifier,
     isSignUp: Boolean,
-    loginScreenUiState: LoginScreenUiState,
+    uiState: LoginScreenUiState,
     signIn: (name: String, password: String) -> Unit,
     signUp: (
         name: String,
@@ -70,19 +86,20 @@ private fun LoginScreenContent(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = stringResource(R.string.hello_there),
-            style = MaterialTheme.typography.displayLarge,
-            modifier = Modifier.padding(
-                vertical = dimensionResource(id = R.dimen.field_height)
-            ),
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dimensionResource(id = R.dimen.image_height)),
+            model = "file:///android_asset/images/optimise_expenses.jpg",
+            contentDescription = "",
         )
-        AnimatedVisibility(visible = isSignUp) {
-            SignUpScreen(uiState = loginScreenUiState, signUp = signUp)
-        }
         AnimatedVisibility(visible = isSignUp.not()) {
-            SignInScreen(uiState = loginScreenUiState, signIn = signIn)
+            SignInScreen(uiState = uiState, signIn = signIn)
+        }
+        AnimatedVisibility(visible = isSignUp) {
+            SignUpScreen(uiState = uiState, signUp = signUp)
         }
         TextButton(onClick = onClick) {
             Text(text = stringResource(id = if (isSignUp) R.string.sign_in else R.string.sign_up))
@@ -94,13 +111,19 @@ private fun LoginScreenContent(
 @Composable
 private fun PreviewLoginScreen() {
     ExpenseAssistantTheme {
-        LoginScreenContent(
-            modifier = Modifier,
-            isSignUp = false,
-            loginScreenUiState = LoginScreenUiState.Ideal,
-            signIn = { _, _ -> },
-            signUp = { _, _, _, _ -> },
-            onClick = {},
-        )
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = MaterialTheme.spacing.large)
+        ) {
+            LoginScreenContent(
+                modifier = Modifier,
+                isSignUp = false,
+                uiState = LoginScreenUiState.Ideal,
+                signIn = { _, _ -> },
+                signUp = { _, _, _, _ -> },
+                onClick = {},
+            )
+        }
     }
 }

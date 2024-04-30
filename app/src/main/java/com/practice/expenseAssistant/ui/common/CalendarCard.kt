@@ -3,9 +3,11 @@ package com.practice.expenseAssistant.ui.common
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,6 +82,38 @@ fun CalendarCard(
     }
 }
 
+@Composable
+fun CircularCalenderCard(onSelect: (listIndex: Int) -> Unit, item: CalendarDateModel) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .clickable(
+                indication = null,
+                interactionSource = MutableInteractionSource()
+            ) { onSelect(item.id) }
+    ) {
+        Box(
+            modifier = Modifier
+                .size(dimensionResource(id = R.dimen.circular_text_button_size))
+                .background(
+                    shape = CircleShape,
+                    color = if (item.isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        Color.Transparent
+                    },
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                style = MaterialTheme.typography.bodyMedium,
+                text = item.date.dayOfMonth.toString(),
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -90,6 +124,39 @@ private fun PreviewCalendarCard() {
                 CalendarCard(
                     indexInList = it,
                     calendarDateState = CalendarDateModel(
+                        id = it,
+                        date = LocalDate.now().plusDays(it.toLong()),
+                        isSelected = it == 3,
+                        isCurrentMonthDate = it == 2,
+                        todayTransactions = listOf(
+                            TransactionModel(
+                                categoryType = CategoryType.EXPENSE,
+                                category = ExpenseType.BILL,
+                                note = "Water and pipe maintenance",
+                                amount = it * 200.0,
+                                date = LocalDate.now(),
+                                time = LocalTime.now(),
+                                month = LocalDate.now().monthValue,
+                                year = LocalDate.now().year
+                            )
+                        )
+                    ),
+                    onSelect = { }
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun PreviewCircularCalendarCard() {
+    ExpenseAssistantTheme {
+        LazyVerticalGrid(columns = GridCells.Fixed(3)) {
+            items(6) {
+                CircularCalenderCard(
+                    item = CalendarDateModel(
                         id = it,
                         date = LocalDate.now().plusDays(it.toLong()),
                         isSelected = it == 3,
