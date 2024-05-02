@@ -2,7 +2,7 @@ package com.practice.expenseAssistant.utils
 
 import com.practice.expenseAssistant.data.CalendarDateModel
 import com.practice.expenseAssistant.data.TransactionModel
-import com.practice.expenseAssistant.repository.database.entities.Transaction
+import com.practice.expenseAssistant.data.datasource.database.entities.Transaction
 import java.time.LocalDate
 
 object Utils {

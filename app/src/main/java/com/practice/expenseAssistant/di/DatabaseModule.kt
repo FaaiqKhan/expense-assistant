@@ -3,9 +3,10 @@ package com.practice.expenseAssistant.di
 import android.content.Context
 import androidx.room.Room
 import com.practice.expenseAssistant.R
-import com.practice.expenseAssistant.repository.database.AppDatabase
-import com.practice.expenseAssistant.repository.database.dao.*
-import dagger.*
+import com.practice.expenseAssistant.data.datasource.database.AppDatabase
+import com.practice.expenseAssistant.data.datasource.database.dao.*
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent

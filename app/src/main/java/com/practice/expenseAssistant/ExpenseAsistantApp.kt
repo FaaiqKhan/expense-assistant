@@ -1,4 +1,4 @@
-package com.practice.expenseAssistant.ui
+package com.practice.expenseAssistant
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -15,6 +15,7 @@ import com.practice.expenseAssistant.ui.homeScreen.HomeScreen
 import com.practice.expenseAssistant.ui.incomesScreen.IncomesScreen
 import com.practice.expenseAssistant.ui.loginScreen.LoginScreen
 import com.practice.expenseAssistant.ui.profileScreen.ProfileScreen
+import com.practice.expenseAssistant.ui.splashScreen.SplashScreen
 import com.practice.expenseAssistant.ui.statementScreen.StatementScreen
 import com.practice.expenseAssistant.ui.theme.spacing
 import com.practice.expenseAssistant.ui.transactionScreen.TransactionScreen
@@ -30,8 +31,11 @@ fun ExpenseAssistantApp(
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = Screens.LOGIN.name
+                startDestination = Screens.SPLASH.name
             ) {
+                composable(route = Screens.SPLASH.name) {
+                    SplashScreen(modifier = Modifier.fillMaxSize(), navController = navController)
+                }
                 composable(route = Screens.LOGIN.name) {
                     LoginScreen(
                         modifier = Modifier

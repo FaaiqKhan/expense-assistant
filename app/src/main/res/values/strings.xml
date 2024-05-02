@@ -65,4 +65,5 @@
     <string name="no_expenses_yet">No Expenses yet!</string>
     <string name="total_expense">Total Expense: %1$s</string>
     <string name="no_transactions_yet">No transactions yet!</string>
+    <string name="splash">Splash</string>
 </resources>

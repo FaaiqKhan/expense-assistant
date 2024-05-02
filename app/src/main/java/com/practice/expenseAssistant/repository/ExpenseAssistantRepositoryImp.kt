@@ -1,10 +1,10 @@
 package com.practice.expenseAssistant.repository
 
 import com.practice.expenseAssistant.data.*
-import com.practice.expenseAssistant.repository.database.dao.CashFlowDao
-import com.practice.expenseAssistant.repository.database.dao.TransactionDao
-import com.practice.expenseAssistant.repository.database.entities.CashFlow
-import com.practice.expenseAssistant.repository.database.entities.Transaction
+import com.practice.expenseAssistant.data.datasource.database.dao.CashFlowDao
+import com.practice.expenseAssistant.data.datasource.database.dao.TransactionDao
+import com.practice.expenseAssistant.data.datasource.database.entities.CashFlow
+import com.practice.expenseAssistant.data.datasource.database.entities.Transaction
 import com.practice.expenseAssistant.utils.*
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
