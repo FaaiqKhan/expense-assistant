@@ -112,7 +112,7 @@ private fun PreviewLoginScreen() {
                 isSignUp = false,
                 uiState = LoginScreenUiState.Ideal,
                 signIn = { _, _ -> },
-                signUp = { _, _, _, -> },
+                signUp = { _, _, _ -> },
                 onClick = {},
             )
         }
