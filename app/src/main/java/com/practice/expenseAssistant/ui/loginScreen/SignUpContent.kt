@@ -1,10 +1,7 @@
 package com.practice.expenseAssistant.ui.loginScreen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -17,10 +14,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.tooling.preview.Preview
 import com.library.slide_to_dismiss.SlideToDismiss
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.BankAccount
 import com.practice.expenseAssistant.ui.common.BankAccountDetailsView
+import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
 import com.practice.expenseAssistant.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,14 +27,14 @@ import com.practice.expenseAssistant.ui.theme.spacing
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     uiState: LoginScreenUiState,
-    signUp: (name: String, password: String, bankAccount: List<BankAccount>, selectedBankAccount: BankAccount) -> Unit
+    signUp: (name: String, password: String, bankAccount: BankAccount?) -> Unit
 ) {
 
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
+    var bankAccount by remember { mutableStateOf<BankAccount?>(null) }
 
-    val bankAccounts = remember { mutableStateListOf<BankAccount>() }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -98,57 +97,58 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
-        if (bankAccounts.isNotEmpty()) {
+        if (bankAccount != null) {
             Text(
-                text = "Bank account(s)",
+                text = "Bank account",
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.headlineMedium,
             )
-        }
-        AnimatedVisibility(visible = bankAccounts.isNotEmpty()) {
-            LazyColumn(
-                modifier = modifier.padding(
-                    vertical = dimensionResource(id = R.dimen.element_spacing)
-                ),
-                verticalArrangement = Arrangement.spacedBy(
-                    dimensionResource(id = R.dimen.calendar_padding)
-                )
+            SlideToDismiss(
+                data = bankAccount,
+                icon = Icons.Filled.Delete,
+                onDismiss = { bankAccount = null },
             ) {
-                items(items = bankAccounts) {
-                    SlideToDismiss(
-                        data = it,
-                        icon = Icons.Filled.Delete,
-                        onDismiss = { account -> bankAccounts.remove(account) },
-                    ) {
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                text = "Bank Name: ${it.name}",
-                                modifier = Modifier.padding(
-                                    horizontal = dimensionResource(id = R.dimen.card_padding)
-                                )
-                            )
-                            Text(
-                                text = "Account #: ${it.number}",
-                                modifier = Modifier.padding(
-                                    horizontal = dimensionResource(id = R.dimen.card_padding)
-                                )
-                            )
-                        }
-                    }
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "Bank Name: ${bankAccount!!.name}",
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.card_padding))
+                            .padding(top = dimensionResource(id = R.dimen.card_padding))
+                    )
+                    Text(
+                        text = "Account #: ${bankAccount!!.number}",
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.card_padding))
+                            .padding(bottom = dimensionResource(id = R.dimen.card_padding))
+                    )
                 }
             }
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Divider(modifier = Modifier.weight(1f))
+                Text(
+                    text = stringResource(R.string.account_details), modifier = Modifier.padding(
+                        horizontal = dimensionResource(
+                            id = R.dimen.six_dp
+                        )
+                    )
+                )
+                Divider(modifier = Modifier.weight(1f))
+            }
+            BankAccountDetailsView(
+                modifier = modifier,
+                addBankAccount = {
+                    bankAccount = it
+                    focusManager.clearFocus()
+                },
+            )
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
         }
-        BankAccountDetailsView(
-            modifier = modifier,
-            addBankAccount = {
-                bankAccounts.add(it)
-                focusManager.clearFocus()
-            },
-        )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
         Button(
             modifier = Modifier.width(dimensionResource(id = R.dimen.button_width)),
-            onClick = { signUp(userName, password, bankAccounts.toList(), bankAccounts.first()) },
+            onClick = { signUp(userName, password, bankAccount) },
         ) {
             if (uiState is LoginScreenUiState.Loading)
                 CircularProgressIndicator(
@@ -160,5 +160,18 @@ fun SignUpScreen(
             else
                 Text(text = stringResource(id = R.string.sign_up))
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewSignUpScreen() {
+    ExpenseAssistantTheme {
+        SignUpScreen(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = dimensionResource(id = R.dimen.element_spacing)),
+            uiState = LoginScreenUiState.Success,
+            signUp = { _, _, _ -> })
     }
 }

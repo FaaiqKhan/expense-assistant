@@ -178,3 +178,5 @@ Zapp/src/main/java/com/practice/expenseAssistant/data/datasource/localStore/Stor
 Mapp/src/main/java/com/practice/expenseAssistant/ui/common/TransactionsView.kt,6/6/66c7def4bbbf5d33ac2e1e1852e02b0aa03744fb
 ‡
 Wapp/src/main/java/com/practice/expenseAssistant/data/datasource/database/AppDatabase.kt,2/8/282f6257d189b1f345d1c44662fa92e6d0b79fa8
+ƒ
+Sapp/src/main/java/com/practice/expenseAssistant/ui/common/BankAccountDetailsView.kt,3/6/363dbdedbe1955f13203dd37786a7eca546c78fa

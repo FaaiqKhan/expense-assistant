@@ -43,7 +43,7 @@ fun DatePicker(
         Text(
             text = "Date: $selectedDate",
             modifier = Modifier.clickable { datePicker.show() },
-            style = MaterialTheme.typography.displayMedium
+            style = MaterialTheme.typography.headlineMedium
         )
         Text(text = "day/month/year", style = MaterialTheme.typography.labelMedium)
         TextButton(

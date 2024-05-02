@@ -66,4 +66,6 @@
     <string name="total_expense">Total Expense: %1$s</string>
     <string name="no_transactions_yet">No transactions yet!</string>
     <string name="splash">Splash</string>
+    <string name="spend_wisely">Spend Wisely</string>
+    <string name="account_details">Account Details</string>
 </resources>

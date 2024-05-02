@@ -1,6 +1,5 @@
 package com.practice.expenseAssistant.ui.common
 
-import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,7 +27,6 @@ fun BankAccountDetailsView(
 ) {
 
     var name by remember { mutableStateOf("") }
-    var iban by remember { mutableStateOf("") }
     var number by remember { mutableStateOf("") }
     var balance by remember { mutableStateOf("") }
 
@@ -50,24 +48,6 @@ fun BankAccountDetailsView(
             ),
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.bank_name)) },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
-        OutlinedTextField(
-            value = iban,
-            onValueChange = { iban = it },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.ConfirmationNumber,
-                    contentDescription = stringResource(id = R.string.iban)
-                )
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Characters
-            ),
-            singleLine = true,
-            label = { Text(text = stringResource(id = R.string.iban)) },
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
@@ -103,7 +83,7 @@ fun BankAccountDetailsView(
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.element_spacing)))
         Button(
             onClick = {
-                if (name.isBlank() || iban.isBlank() || number.isBlank() || balance.isBlank()) {
+                if (name.isBlank() || number.isBlank() || balance.isBlank()) {
                     Toast.makeText(
                         context,
                         "Field cannot be empty",
@@ -111,8 +91,7 @@ fun BankAccountDetailsView(
                     ).show()
                     return@Button
                 }
-                addBankAccount(BankAccount(name, iban, number, balance.toDouble()))
-                iban = ""
+                addBankAccount(BankAccount(name, number, balance.toDouble()))
                 number = ""
                 balance = ""
             },
@@ -126,8 +105,7 @@ fun BankAccountDetailsView(
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true)
 @Composable
 fun PreviewBankAccountDetailsView() {
     ExpenseAssistantTheme {

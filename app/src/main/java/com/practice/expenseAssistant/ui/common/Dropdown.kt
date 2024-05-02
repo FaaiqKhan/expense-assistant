@@ -66,20 +66,17 @@ private fun PreviewDropdown() {
             modifier = Modifier,
             data = listOf(
                 BankAccount(
-                    iBan = "HBL000928324321498213",
                     name = "Habib Bank Limited",
                     number = "0010031239412830",
                     balance = 60000.00
                 ),
                 BankAccount(
-                    iBan = "MZN000813415322408213",
                     name = "Mezzanine Bank Limited",
                     number = "00200395038219",
                     balance = 160000.00
                 ),
             ),
             bankAccount = BankAccount(
-                iBan = "MZN000813415322408213",
                 name = "Mezzanine Bank Limited",
                 number = "00200395038219",
                 balance = 160000.00
