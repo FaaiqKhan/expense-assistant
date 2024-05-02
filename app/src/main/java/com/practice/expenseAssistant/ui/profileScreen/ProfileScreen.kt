@@ -304,7 +304,6 @@ private fun ChangePasswordSheetContent(
 private fun PreviewProfileScreen() {
     val bankAccount = BankAccount(
         name = "Dutches",
-        iBan = "ABC-23123012412",
         number = "1234567890",
         balance = 3000.0
     )

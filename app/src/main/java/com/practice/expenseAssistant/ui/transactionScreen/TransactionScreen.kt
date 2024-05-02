@@ -222,7 +222,6 @@ private fun PreviewTransactionScreen() {
                 bankAccounts = listOf(
                     BankAccount(
                         name = "ABC",
-                        iBan = "DKL-325546A55MBA",
                         number = "1231212312",
                         balance = 30000.0
                     )
@@ -230,7 +229,6 @@ private fun PreviewTransactionScreen() {
                 currencyType = CurrencyType.Dollar,
                 selectedBankAccount = BankAccount(
                     name = "XYZ",
-                    iBan = "DKJ-325546A55MBA",
                     number = "1231212312",
                     balance = 6000.0
                 ),

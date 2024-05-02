@@ -14,11 +14,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.practice.expenseAssistant.R
 import com.practice.expenseAssistant.data.BankAccount
-import com.practice.expenseAssistant.ui.theme.ExpenseAssistantTheme
-import com.practice.expenseAssistant.ui.theme.spacing
+import com.practice.expenseAssistant.ui.theme.*
 import com.practice.expenseAssistant.utils.Screens
 
 @Composable
@@ -66,8 +64,7 @@ private fun LoginScreenContent(
     signUp: (
         name: String,
         password: String,
-        bankAccounts: List<BankAccount>,
-        selectedBankAccount: BankAccount,
+        bankAccount: BankAccount?,
     ) -> Unit,
     onClick: () -> Unit,
 ) {
@@ -76,12 +73,18 @@ private fun LoginScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimensionResource(id = R.dimen.image_height)),
-            model = "file:///android_asset/images/optimise_expenses.jpg",
-            contentDescription = "",
+        Text(
+            text = stringResource(id = R.string.app_name),
+            style = Typography.displayLarge,
+        )
+        Text(
+            text = stringResource(R.string.spend_wisely),
+            style = Typography.displaySmall,
+            modifier = Modifier.padding(
+                bottom = dimensionResource(
+                    id = R.dimen.six_dp
+                )
+            )
         )
         AnimatedVisibility(visible = isSignUp.not()) {
             SignInScreen(uiState = uiState, signIn = signIn)
@@ -109,7 +112,7 @@ private fun PreviewLoginScreen() {
                 isSignUp = false,
                 uiState = LoginScreenUiState.Ideal,
                 signIn = { _, _ -> },
-                signUp = { _, _, _, _ -> },
+                signUp = { _, _, _, -> },
                 onClick = {},
             )
         }

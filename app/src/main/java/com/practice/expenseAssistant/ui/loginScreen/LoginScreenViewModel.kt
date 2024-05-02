@@ -96,8 +96,7 @@ class LoginScreenViewModel @Inject constructor(
     fun signUp(
         userName: String,
         password: String,
-        bankAccounts: List<BankAccount>,
-        selectedBankAccount: BankAccount,
+        bankAccount: BankAccount?,
         dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -110,8 +109,8 @@ class LoginScreenViewModel @Inject constructor(
                     _loginScreenViewState.emit(LoginScreenUiState.Failure("User name & password cannot be empty"))
                     return@withContext
                 }
-                if (bankAccounts.isEmpty()) {
-                    _loginScreenViewState.emit(LoginScreenUiState.Failure("Please add bank account"))
+                if (bankAccount == null) {
+                    _loginScreenViewState.emit(LoginScreenUiState.Failure("Please add account details"))
                     return@withContext
                 }
                 _loginScreenViewState.emit(LoginScreenUiState.Loading)
@@ -119,9 +118,9 @@ class LoginScreenViewModel @Inject constructor(
                 val user = User(
                     name = userName,
                     password = password,
-                    bankAccount = bankAccounts,
+                    bankAccount = listOf(bankAccount),
                     currencyType = CurrencyType.Dollar,
-                    selectedBankAccount = selectedBankAccount
+                    selectedBankAccount = bankAccount
                 )
                 userDao.setUser(user)
                 repository.setUser(
@@ -138,8 +137,8 @@ class LoginScreenViewModel @Inject constructor(
                     userId = user.id,
                     year = selectedDate.year,
                     month = selectedDate.monthValue,
-                    openingAmount = selectedBankAccount.balance,
-                    closingAmount = selectedBankAccount.balance,
+                    openingAmount = bankAccount.balance,
+                    closingAmount = bankAccount.balance,
                 )
                 repository.insertCashFlowIntoDb(cashFlow)
                 val calendar = Utils.createCalenderDays(
