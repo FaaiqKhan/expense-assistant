@@ -1,4 +1,4 @@
-package com.practice.expenseAssistant.utils.typeConverters
+package com.practice.expenseAssistant.data.datasource.database.typeConverters
 
 import androidx.room.TypeConverter
 import java.time.LocalDate

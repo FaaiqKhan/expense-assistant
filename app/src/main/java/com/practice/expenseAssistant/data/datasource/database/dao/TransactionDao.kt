@@ -1,7 +1,7 @@
-package com.practice.expenseAssistant.repository.database.dao
+package com.practice.expenseAssistant.data.datasource.database.dao
 
 import androidx.room.*
-import com.practice.expenseAssistant.repository.database.entities.Transaction
+import com.practice.expenseAssistant.data.datasource.database.entities.Transaction
 import com.practice.expenseAssistant.utils.CategoryType
 import java.time.LocalDate
 import java.time.LocalTime

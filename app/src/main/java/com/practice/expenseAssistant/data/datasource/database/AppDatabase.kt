@@ -1,10 +1,10 @@
-package com.practice.expenseAssistant.repository.database
+package com.practice.expenseAssistant.data.datasource.database
 
 import androidx.room.*
-import com.practice.expenseAssistant.repository.database.dao.*
-import com.practice.expenseAssistant.repository.database.entities.*
-import com.practice.expenseAssistant.repository.database.entities.Transaction
-import com.practice.expenseAssistant.utils.typeConverters.*
+import com.practice.expenseAssistant.data.datasource.database.dao.*
+import com.practice.expenseAssistant.data.datasource.database.entities.*
+import com.practice.expenseAssistant.data.datasource.database.entities.Transaction
+import com.practice.expenseAssistant.data.datasource.database.typeConverters.*
 
 @Database(
     version = 1,

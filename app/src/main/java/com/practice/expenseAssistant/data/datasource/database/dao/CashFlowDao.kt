@@ -1,7 +1,7 @@
-package com.practice.expenseAssistant.repository.database.dao
+package com.practice.expenseAssistant.data.datasource.database.dao
 
 import androidx.room.*
-import com.practice.expenseAssistant.repository.database.entities.CashFlow
+import com.practice.expenseAssistant.data.datasource.database.entities.CashFlow
 
 @Dao
 interface CashFlowDao {

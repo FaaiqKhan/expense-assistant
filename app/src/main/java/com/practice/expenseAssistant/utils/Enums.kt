@@ -12,6 +12,7 @@ enum class NavigationBarItems {
 }
 
 enum class Screens(@StringRes val title: Int) {
+    SPLASH(title = R.string.splash),
     LOGIN(title = R.string.app_name),
     HOME(title = R.string.app_name),
     CATEGORY(title = R.string.category),

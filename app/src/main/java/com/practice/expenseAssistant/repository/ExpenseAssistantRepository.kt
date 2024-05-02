@@ -1,7 +1,7 @@
 package com.practice.expenseAssistant.repository
 
 import com.practice.expenseAssistant.data.*
-import com.practice.expenseAssistant.repository.database.entities.CashFlow
+import com.practice.expenseAssistant.data.datasource.database.entities.CashFlow
 import com.practice.expenseAssistant.utils.CategoryType
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate

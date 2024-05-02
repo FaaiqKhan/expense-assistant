@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.UserModel
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
-import com.practice.expenseAssistant.repository.database.dao.UserDao
+import com.practice.expenseAssistant.data.datasource.database.dao.UserDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

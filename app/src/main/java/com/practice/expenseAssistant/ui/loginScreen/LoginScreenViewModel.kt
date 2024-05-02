@@ -1,24 +1,30 @@
 package com.practice.expenseAssistant.ui.loginScreen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practice.expenseAssistant.data.BankAccount
 import com.practice.expenseAssistant.data.UserModel
+import com.practice.expenseAssistant.data.datasource.database.dao.UserDao
+import com.practice.expenseAssistant.data.datasource.database.entities.CashFlow
+import com.practice.expenseAssistant.data.datasource.database.entities.User
+import com.practice.expenseAssistant.data.datasource.localStore.StoreManager
 import com.practice.expenseAssistant.repository.ExpenseAssistantRepository
-import com.practice.expenseAssistant.repository.database.dao.UserDao
-import com.practice.expenseAssistant.repository.database.entities.CashFlow
-import com.practice.expenseAssistant.repository.database.entities.User
 import com.practice.expenseAssistant.utils.CurrencyType
 import com.practice.expenseAssistant.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginScreenViewModel @Inject constructor(
     private val userDao: UserDao,
     private val repository: ExpenseAssistantRepository,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _loginScreenViewState = MutableStateFlow<LoginScreenUiState>(
@@ -78,6 +84,11 @@ class LoginScreenViewModel @Inject constructor(
                 date = repository.getSelectedDate().dayOfMonth,
             )
             repository.updateCalendar(calendar)
+            StoreManager.saveLongValue(
+                context = context,
+                key = "last_login",
+                value = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+            )
             _loginScreenViewState.emit(LoginScreenUiState.Success)
         }
     }

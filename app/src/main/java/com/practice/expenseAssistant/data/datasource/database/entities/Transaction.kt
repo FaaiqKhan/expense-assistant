@@ -1,4 +1,4 @@
-package com.practice.expenseAssistant.repository.database.entities
+package com.practice.expenseAssistant.data.datasource.database.entities
 
 import androidx.room.*
 import com.practice.expenseAssistant.data.BankAccount
